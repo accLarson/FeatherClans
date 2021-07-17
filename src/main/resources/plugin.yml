@@ -1,0 +1,9 @@
+name: FeatherClans
+version: ${project.version}
+main: com.wasted_ticks.featherclans.FeatherClans
+api-version: 1.17
+authors: [Wasted_Ticks]
+commands:
+  clan:
+    description: gives access to clan related commands
+    usage: /clan
