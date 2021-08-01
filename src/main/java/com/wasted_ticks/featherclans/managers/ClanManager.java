@@ -74,7 +74,7 @@ public class ClanManager {
 
     public boolean setClanHome(Clan clan, Location location) {
         String data = FeatherClansUtil.locationToString(location);
-        clan.set("home = ?", data);
+        clan.set("home", data);
         return clan.save();
     }
 
@@ -86,5 +86,9 @@ public class ClanManager {
     public boolean hasClanHome(Clan clan) {
         String home = (String) clan.get("home");
         return home != null;
+    }
+
+    public boolean deleteClan(Clan clan) {
+        return clan.delete();
     }
 }

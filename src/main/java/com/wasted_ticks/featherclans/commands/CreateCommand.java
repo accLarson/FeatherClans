@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class CreateCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
@@ -30,8 +32,16 @@ public class CreateCommand implements CommandExecutor {
 
             String tag = args[1];
 
-            if(!tag.chars().allMatch(Character::isLetter) || tag.length() <= 5) {
+            int maxTagLength = this.plugin.getFeatherConfig().getTagSize();
+
+            if(!tag.chars().allMatch(Character::isLetter) || tag.length() > maxTagLength) {
                 player.sendMessage("Error: <tag> must be alphabetical and must not be longer than 5 characters.");
+                return false;
+            }
+
+            List<String> bannedTags = this.plugin.getFeatherConfig().getDenyTags();
+            if(bannedTags.contains(tag)) {
+                player.sendMessage("Error: <tag> requested has been deny-listed.");
                 return false;
             }
 
@@ -51,7 +61,7 @@ public class CreateCommand implements CommandExecutor {
             //check if has balance available to create.
 
             plugin.getClanManager().createClan(player, stack, tag);
-
+            player.sendMessage("Clan created: " + tag);
         }
 
         return true;

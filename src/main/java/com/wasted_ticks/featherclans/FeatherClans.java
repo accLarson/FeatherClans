@@ -9,6 +9,7 @@ import com.wasted_ticks.featherclans.managers.DatabaseManager;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Logger;
 
@@ -28,7 +29,6 @@ public final class FeatherClans extends JavaPlugin {
         databaseManager = new DatabaseManager(plugin);
         clanManager = new ClanManager(plugin);
         config = new FeatherClansConfig(plugin);
-
         registerCommands();
 
     }
@@ -49,6 +49,8 @@ public final class FeatherClans extends JavaPlugin {
     public ClanManager getClanManager() {
         return this.clanManager;
     }
+
+    public FeatherClansConfig getFeatherConfig() { return config; }
 
     private void registerCommands() {
 

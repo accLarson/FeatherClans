@@ -32,8 +32,6 @@ public class SetHomeCommand implements CommandExecutor {
                 Clan clan = plugin.getClanManager().getClanByClanMember(member);
                 Location location  = player.getLocation();
 
-                //check if location is in banned world and refuse.
-
                 //check if player has sufficient balance.
 
                 boolean isHomeSet = plugin.getClanManager().setClanHome(clan, location);

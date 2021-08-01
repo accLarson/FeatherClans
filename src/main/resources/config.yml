@@ -1,0 +1,34 @@
+#
+# FeatherClans
+#
+settings:
+  use-economy: false
+  economy:
+    creation-price: 100.0
+    invite-price: 100.0
+    set-home-price: 100.0
+  use-clean-up: false
+  clean-up:
+    archive-days: 30
+    delete-days: 45
+  clan:
+    teleport-delay-seconds: 5
+    tag-size: 5
+    max-members: 20
+  use-mysql: false
+  mysql:
+    username: ''
+    host: localhost
+    port: 3306
+    enable: false
+    password: ''
+    database: ''
+  deny-tags:
+    - "admin"
+    - "mods"
+    - "mod"
+    - "donor"
+    - "admln"
+    - "adnin"
+    - "admim"
+    - "adnim"

@@ -22,19 +22,19 @@ public class HelpCommand implements CommandExecutor {
 
             Player player = (Player) sender;
 
-            player.sendMessage(" /clan create <tag> — Create a new clan");
+            player.sendMessage(" /clan create <tag> — Create a new clan"); // just missing econ stuff
             player.sendMessage(" /clan invite <player> — Invite a player to your clan");
             player.sendMessage(" /clan kick <player> — Kick a player from your clan");
             player.sendMessage(" /clan accept — Accept invitation request");
             player.sendMessage(" /clan decline — Deny invitation request");
-            player.sendMessage(" /clan sethome — Set clan home to current location");
-            player.sendMessage(" /clan home — Teleport to your clan home");
+            player.sendMessage(" /clan sethome — Set clan home to current location"); // just missing econ stuff
+            player.sendMessage(" /clan home — Teleport to your clan home"); // done
             player.sendMessage(" /clan confer <player> — Relinquish control of clan to a player");
-            player.sendMessage(" /clan disband — Disband your clan");
-            player.sendMessage(" /clan resign — Resign from your clan");
+            player.sendMessage(" /clan disband — Disband your clan"); //done
+            player.sendMessage(" /clan resign — Resign from your clan"); // done
             player.sendMessage(" /clan roster <tag> — Show information about a clan");
-            player.sendMessage(" /clan list — List all clans");
-            player.sendMessage(" /clan help — Display this message");
+            player.sendMessage(" /clan list — List all clans"); // done
+            player.sendMessage(" /clan help — Display this message"); // done
         }
 
         return false;
