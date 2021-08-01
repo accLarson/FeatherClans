@@ -14,6 +14,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HomeCommand implements CommandExecutor {
@@ -37,19 +39,17 @@ public class HomeCommand implements CommandExecutor {
                 Clan clan = plugin.getClanManager().getClanByClanMember(member);
 
                 if(plugin.getClanManager().hasClanHome(clan)) {
-                    player.sendMessage("Teleporting to clan home.");
-
-                    Location clanHomeLocation = plugin.getClanManager().getClanHome(clan);
 
                     int delay = this.plugin.getFeatherConfig().getTeleportDelaySeconds();
+                    player.sendMessage("Teleporting to clan home in " + delay + " seconds.");
+
+                    Location clanHomeLocation = plugin.getClanManager().getClanHome(clan);
 
                     TeleportTimer timer = new TeleportTimer(this.plugin, delay, null, () -> {
                         player.sendMessage("Teleporting now.");
                         player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
                     }, (instance) -> {
-                        if(instance.getStartLocation().getBlock().equals(player.getLocation().getBlock())) {
-                            player.sendMessage(instance.getRemainingSeconds() + "...");
-                        } else {
+                        if(!instance.getStartLocation().getBlock().equals(player.getLocation().getBlock())) {
                             player.sendMessage("Movement detected, cancelling teleport.");
                             instance.cancel();
                         }

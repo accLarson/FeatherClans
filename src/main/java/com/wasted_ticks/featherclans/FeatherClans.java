@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans;
 
 import com.wasted_ticks.featherclans.commands.*;
+import com.wasted_ticks.featherclans.commands.completers.ClanTabCompleter;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.data.ClanMember;
@@ -77,6 +78,7 @@ public final class FeatherClans extends JavaPlugin {
 
         if(command != null) {
             command.setExecutor(handler);
+            command.setTabCompleter(new ClanTabCompleter(plugin));
         }
     }
 }

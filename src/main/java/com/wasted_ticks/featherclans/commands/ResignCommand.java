@@ -21,8 +21,6 @@ public class ResignCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        sender.sendMessage("ResignCommand");
-
         if(sender instanceof Player) {
             Player player = (Player) sender;
             ClanMember member = plugin.getClanManager().getClanMemberByPlayer(player);

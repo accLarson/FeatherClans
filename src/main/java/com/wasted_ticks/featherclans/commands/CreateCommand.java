@@ -20,7 +20,6 @@ public class CreateCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-
         if (sender instanceof Player){
 
             Player player = (Player) sender;
@@ -44,6 +43,8 @@ public class CreateCommand implements CommandExecutor {
                 player.sendMessage("Error: <tag> requested has been deny-listed.");
                 return false;
             }
+
+            //TODO: check if tag exists
 
             ItemStack stack = player.getInventory().getItemInMainHand();
 

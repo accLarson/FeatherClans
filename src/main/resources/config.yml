@@ -12,6 +12,7 @@ settings:
     archive-days: 30
     delete-days: 45
   clan:
+    invite-timeout: 30
     teleport-delay-seconds: 5
     tag-size: 5
     max-members: 20
