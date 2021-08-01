@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.data.ClanMember;
 import org.bukkit.command.Command;
@@ -14,9 +15,11 @@ import java.util.UUID;
 public class ResignCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
+    private final FeatherClansMessages messages;
 
     public ResignCommand(FeatherClans plugin) {
         this.plugin  = plugin;
+        this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
@@ -28,20 +31,20 @@ public class ResignCommand implements CommandExecutor {
 
                 boolean leader = plugin.getClanManager().isLeaderInClan(player);
                 if(leader) {
-                    player.sendMessage("Error: Unable to resign, as the leader you must disband the clan.");
+                    player.sendMessage(messages.get("clan_resign_error_leader"));
                     return false;
                 } else {
                     boolean deleted = plugin.getClanManager().deleteClanMember(member);
                     if(deleted) {
-                        player.sendMessage("You've resigned from your clan.");
+                        player.sendMessage(messages.get("clan_resign_success"));
                         return true;
                     } else {
-                        player.sendMessage("Error: Unable to resign.");
+                        player.sendMessage(messages.get("clan_resign_error_generic"));
                         return false;
                     }
                 }
             } else {
-                player.sendMessage("Error: You are not currently in a clan.");
+                player.sendMessage(messages.get("clan_resign_error_no_clan"));
                 return false;
             }
         } else return false;

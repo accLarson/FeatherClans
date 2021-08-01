@@ -18,6 +18,7 @@ public class FeatherClansConfig {
     private boolean useCleanUp;
     private int archiveDays;
     private int deleteDays;
+    private int inviteTimeout;
     private int teleportDelaySeconds;
     private int tagSize;
     private int maxMembers;
@@ -34,23 +35,24 @@ public class FeatherClansConfig {
 
     private void loadConfig() {
 
-        this.useEconomy = config.getBoolean("settings.use-economy");
-        this.creationPrice = config.getDouble("settings.economy.creation-price");
-        this.invitePrice = config.getDouble("settings.economy.invite-price");
-        this.setHomePrice = config.getDouble("settings.economy.set-home-price");
+        this.useEconomy = config.getBoolean("settings.use_economy");
+        this.creationPrice = config.getDouble("settings.economy.creation_price");
+        this.invitePrice = config.getDouble("settings.economy.invite_price");
+        this.setHomePrice = config.getDouble("settings.economy.set-home_price");
 
-        this.useCleanUp = config.getBoolean("settings.use-clean-up");
-        this.archiveDays = config.getInt("settings.clean-up.archive-days");
-        this.deleteDays = config.getInt("settings.clean-up.delete-days");
+        this.useCleanUp = config.getBoolean("settings.use_clean_up");
+        this.archiveDays = config.getInt("settings.clean_up.archive_days");
+        this.deleteDays = config.getInt("settings.clean_up.delete_days");
 
-        this.teleportDelaySeconds = config.getInt("settings.clan.teleport-delay-seconds");
-        this.tagSize = config.getInt("settings.clan.tag-size");
-        this.maxMembers = config.getInt("settings.clan.max-members");
+        this.inviteTimeout = config.getInt("settings.clan.invite_timeout");
+        this.teleportDelaySeconds = config.getInt("settings.clan.teleport_delay_seconds");
+        this.tagSize = config.getInt("settings.clan.tag_size");
+        this.maxMembers = config.getInt("settings.clan.max_members");
 
-        this.useMySQL = config.getBoolean("settings.use-mysql");
+        this.useMySQL = config.getBoolean("settings.use_mysql");
         /* mysql stuff */
 
-        this.denyTags = config.getStringList("settings.deny-tags");
+        this.denyTags = config.getStringList("settings.deny_tags");
     }
 
     public boolean isUseEconomy() {
@@ -79,6 +81,10 @@ public class FeatherClansConfig {
 
     public int getDeleteDays() {
         return deleteDays;
+    }
+
+    public int getInviteTimeout() {
+        return inviteTimeout;
     }
 
     public int getTeleportDelaySeconds() {

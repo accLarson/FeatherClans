@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.data.ClanMember;
 import org.bukkit.Location;
@@ -13,9 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class SetHomeCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
+    private final FeatherClansMessages messages;
 
     public SetHomeCommand(FeatherClans plugin) {
         this.plugin  = plugin;
+        this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
@@ -36,14 +39,14 @@ public class SetHomeCommand implements CommandExecutor {
                 boolean isHomeSet = plugin.getClanManager().setClanHome(clan, location);
 
                 if(isHomeSet) {
-                    player.sendMessage("You've set your clan home to your current location");
+                    player.sendMessage(messages.get("clan_sethome_success"));
                     return true;
                 } else {
-                    player.sendMessage("Error: Unable to set clan home.");
+                    player.sendMessage(messages.get("clan_sethome_error_generic"));
                     return false;
                 }
             } else {
-                player.sendMessage("Error: You must be the clan leader to use this command.");
+                player.sendMessage(messages.get("clan_error_leader"));
                 return false;
             }
         } else return false;

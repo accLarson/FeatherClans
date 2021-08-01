@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.data.ClanMember;
 import com.wasted_ticks.featherclans.util.Table;
@@ -15,9 +16,11 @@ import java.util.List;
 public class ListCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
+    private final FeatherClansMessages messages;
 
     public ListCommand(FeatherClans plugin) {
         this.plugin  = plugin;
+        this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override

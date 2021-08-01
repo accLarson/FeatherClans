@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans;
 import com.wasted_ticks.featherclans.commands.*;
 import com.wasted_ticks.featherclans.commands.completers.ClanTabCompleter;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
+import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.data.ClanMember;
 import com.wasted_ticks.featherclans.managers.ClanManager;
@@ -21,26 +22,29 @@ public final class FeatherClans extends JavaPlugin {
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
     private FeatherClansConfig config;
+    private FeatherClansMessages messages;
 
     @Override
     public void onEnable() {
 
         plugin = this;
 
-        databaseManager = new DatabaseManager(plugin);
-        clanManager = new ClanManager(plugin);
-        config = new FeatherClansConfig(plugin);
+        this.databaseManager = new DatabaseManager(plugin);
+        this.clanManager = new ClanManager(plugin);
+        this.config = new FeatherClansConfig(plugin);
+        this.messages = new FeatherClansMessages(plugin);
         registerCommands();
 
     }
 
     @Override
     public void onDisable() {
-        databaseManager.close();
+        this.databaseManager.close();
     }
 
     public void reload() {
-        config = new FeatherClansConfig(plugin);
+        this.config = new FeatherClansConfig(plugin);
+        this.messages = new FeatherClansMessages(plugin);
     }
 
     public Logger getLog() {
@@ -51,11 +55,15 @@ public final class FeatherClans extends JavaPlugin {
         return this.clanManager;
     }
 
-    public FeatherClansConfig getFeatherConfig() { return config; }
+    public FeatherClansConfig getFeatherClansConfig() { return this.config; }
+
+    public FeatherClansMessages getFeatherClansMessages() {
+        return this.messages;
+    }
 
     private void registerCommands() {
 
-        Handler handler = new Handler();
+        Handler handler = new Handler(plugin);
 
         handler.register("create", new CreateCommand(plugin));
         handler.register("invite", new InviteCommand(plugin));

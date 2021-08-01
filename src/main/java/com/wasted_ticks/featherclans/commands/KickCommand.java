@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,9 +11,11 @@ import org.jetbrains.annotations.NotNull;
 public class KickCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
+    private final FeatherClansMessages messages;
 
     public KickCommand(FeatherClans plugin) {
         this.plugin  = plugin;
+        this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
@@ -25,7 +28,7 @@ public class KickCommand implements CommandExecutor {
             if(leader) {
 
             } else {
-                player.sendMessage("Error: You must be the clan leader to use this command.");
+                player.sendMessage(messages.get("clan_error_leader"));
                 return false;
             }
         }

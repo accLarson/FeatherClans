@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.data.ClanMember;
 import com.wasted_ticks.featherclans.managers.ClanManager;
@@ -16,10 +17,12 @@ public class DisbandCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
     private final ClanManager manager;
+    private final FeatherClansMessages messages;
 
     public DisbandCommand(FeatherClans plugin) {
         this.plugin  = plugin;
         this.manager = plugin.getClanManager();
+        this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
@@ -37,10 +40,10 @@ public class DisbandCommand implements CommandExecutor {
                     manager.deleteClanMember(member);
                 }
                 manager.deleteClan(clan);
-                player.sendMessage("You've disbanded from your clan.");
+                player.sendMessage(messages.get("clan_disband_success"));
                 return true;
             } else {
-                player.sendMessage("Error: You must be the clan leader to use this command.");
+                player.sendMessage(messages.get("clan_error_leader"));
                 return false;
             }
         }
