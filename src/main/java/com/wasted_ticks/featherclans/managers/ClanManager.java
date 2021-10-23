@@ -28,6 +28,12 @@ public class ClanManager {
         return member.parent(Clan.class);
     }
 
+    public Clan getClanByPlayer(Player player) {
+        UUID uuid = player.getUniqueId();
+        ClanMember member = ClanMember.findFirst("mojang_uuid = ?", uuid.toString());
+        return member.parent(Clan.class);
+    }
+
     public List<ClanMember> getClanMembersByClan(Clan clan) {
         return clan.getAll(ClanMember.class);
     }
@@ -90,5 +96,12 @@ public class ClanManager {
 
     public boolean deleteClan(Clan clan) {
         return clan.delete();
+    }
+
+    public void joinClan(Clan clan, Player player) {
+        ClanMember member = new ClanMember();
+        UUID uuid = player.getUniqueId();
+        member.set("mojang_uuid",uuid.toString());
+        clan.add(member);
     }
 }

@@ -89,5 +89,10 @@
             <artifactId>activejdbc</artifactId>
             <version>2.4-j8</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.1</version>
+        </dependency>
     </dependencies>
 </project>

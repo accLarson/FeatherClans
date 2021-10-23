@@ -12,10 +12,10 @@ settings:
     archive_days: 30
     delete_days: 45
   clan:
-    invite_timeout: 30
+    invite_timeout: 10
     teleport_delay_seconds: 5
     tag_size: 5
-    max_members: 20
+    max_members: 30
   use_mysql: false
   mysql:
     username: ''

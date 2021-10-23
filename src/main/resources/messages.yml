@@ -31,5 +31,6 @@ clan_help_accept: "#ffffff/clan accept — Accept clan invitation request."
 clan_help_decline: "#ffffff/clan decline — Deny clan invitation request."
 clan_help_help: "#ffffff/clan help — Display this message."
 clan_help_list: "#ffffff/clan list — List all clans."
+clan_help_leaderboard: "#ffffff/clan leaderboard — List clans by relevant statistic."
 clan_help_roster: "#ffffff/clan roster <tag> — Show information about a specific clan."
 

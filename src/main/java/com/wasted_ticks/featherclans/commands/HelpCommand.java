@@ -28,15 +28,16 @@ public class HelpCommand implements CommandExecutor {
             player.sendMessage(messages.get("clan_help_home"));         // done
             player.sendMessage(messages.get("clan_help_sethome"));      // missing econ
             player.sendMessage(messages.get("clan_help_create"));       // missing econ
-            player.sendMessage(messages.get("clan_help_invite"));       //
+            player.sendMessage(messages.get("clan_help_invite"));       // missing econ
             player.sendMessage(messages.get("clan_help_kick"));         //
             player.sendMessage(messages.get("clan_help_disband"));      // done
             player.sendMessage(messages.get("clan_help_confer"));       //
             player.sendMessage(messages.get("clan_help_chat"));         //
-            player.sendMessage(messages.get("clan_help_accept"));       //
-            player.sendMessage(messages.get("clan_help_decline"));      //
+            player.sendMessage(messages.get("clan_help_accept"));       // done
+            player.sendMessage(messages.get("clan_help_decline"));      // done
             player.sendMessage(messages.get("clan_help_help"));         // done
             player.sendMessage(messages.get("clan_help_list"));         // done
+            player.sendMessage(messages.get("clan_help_leaderboard"));         //
             player.sendMessage(messages.get("clan_help_roster"));       //
 
         }

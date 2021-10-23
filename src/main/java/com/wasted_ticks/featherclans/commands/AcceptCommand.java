@@ -2,9 +2,12 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.data.Clan;
+import com.wasted_ticks.featherclans.util.Request;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class AcceptCommand implements CommandExecutor {
@@ -19,7 +22,27 @@ public class AcceptCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        sender.sendMessage("AcceptCommand");
-        return false;
+
+        Player player = (Player) sender;
+        boolean inClan = plugin.getClanManager().isPlayerInClan(player);
+        if(inClan) {
+            player.sendMessage("You are currently a member of a clan.");
+            return false;
+        }
+
+        Request request = this.plugin.getInviteManager().getRequest(player);
+
+        if(request == null) {
+            player.sendMessage("You currently don't have an invitation request.");
+            return false;
+        }
+
+        Clan clan = request.getClan();
+        plugin.getClanManager().joinClan(clan, player);
+        player.sendMessage("You've joined '" + clan.getString("tag") + "'");
+
+        plugin.getInviteManager().clearRequest(player);
+
+        return true;
     }
 }
