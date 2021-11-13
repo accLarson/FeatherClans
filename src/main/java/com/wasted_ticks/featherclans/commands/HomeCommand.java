@@ -30,10 +30,9 @@ public class HomeCommand implements CommandExecutor {
 
             Player player = (Player) sender;
 
-            if(plugin.getClanManager().isPlayerInClan(player)) {
+            if(plugin.getClanManager().isOfflinePlayerLeader(player)) {
 
-                ClanMember member = plugin.getClanManager().getClanMemberByPlayer(player);
-                Clan clan = plugin.getClanManager().getClanByClanMember(member);
+                Clan clan = plugin.getClanManager().getClanByOfflinePlayer(player);
 
                 if(plugin.getClanManager().hasClanHome(clan)) {
 

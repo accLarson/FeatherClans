@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Table {
 
-    private static String delimiter = "             ";
+    private static String delimiter = " ";
     private List<Row> table = new LinkedList<>();
     private int columns;
     private boolean hasHeader = false;

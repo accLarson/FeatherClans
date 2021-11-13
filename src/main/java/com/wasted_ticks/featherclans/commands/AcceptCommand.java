@@ -24,7 +24,7 @@ public class AcceptCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         Player player = (Player) sender;
-        boolean inClan = plugin.getClanManager().isPlayerInClan(player);
+        boolean inClan = plugin.getClanManager().isOfflinePlayerLeader(player);
         if(inClan) {
             player.sendMessage("You are currently a member of a clan.");
             return false;
@@ -38,9 +38,10 @@ public class AcceptCommand implements CommandExecutor {
         }
 
         Clan clan = request.getClan();
-        plugin.getClanManager().joinClan(clan, player);
+        plugin.getClanManager().addOfflinePlayerToClan(player, clan);
         player.sendMessage("You've joined '" + clan.getString("tag") + "'");
-
+        Player originator = request.getOriginator();
+        originator.sendMessage("Your request to '" + player.getName() + "' has been accepted.");
         plugin.getInviteManager().clearRequest(player);
 
         return true;

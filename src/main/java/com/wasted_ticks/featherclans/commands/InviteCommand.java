@@ -27,7 +27,7 @@ public class InviteCommand implements CommandExecutor {
         if(sender instanceof Player) {
 
             Player originator = (Player) sender;
-            boolean isLeader = plugin.getClanManager().isLeaderInClan(originator);
+            boolean isLeader = plugin.getClanManager().isOfflinePlayerLeader(originator);
 
             if(isLeader) {
 
@@ -43,13 +43,13 @@ public class InviteCommand implements CommandExecutor {
                     return false;
                 }
 
-                boolean inClan = plugin.getClanManager().isPlayerInClan(invitee);
+                boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(invitee);
                 if(inClan) {
                     originator.sendMessage("Error: Requested player is currently in a clan.");
                     return false;
                 }
 
-                Clan clan = plugin.getClanManager().getClanByPlayer(originator);
+                Clan clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
 
                 InviteManager manager = plugin.getInviteManager();
                 manager.invite(invitee, clan, originator);

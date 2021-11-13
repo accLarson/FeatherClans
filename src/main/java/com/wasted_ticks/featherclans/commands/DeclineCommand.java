@@ -24,7 +24,7 @@ public class DeclineCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         Player player = (Player) sender;
-        boolean inClan = plugin.getClanManager().isPlayerInClan(player);
+        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(player);
         if(inClan) {
             player.sendMessage("You are currently a member of a clan.");
             return false;
@@ -40,6 +40,9 @@ public class DeclineCommand implements CommandExecutor {
         Clan clan = request.getClan();
         player.sendMessage("You've declined invitation request from '" + clan.getString("tag") + "'");
         plugin.getInviteManager().clearRequest(player);
+        Player originator = request.getOriginator();
+        originator.sendMessage("Your request to '" + player.getName() + "' has been declined.");
+
 
         return true;
     }

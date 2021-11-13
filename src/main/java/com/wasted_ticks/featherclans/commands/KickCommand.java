@@ -23,7 +23,7 @@ public class KickCommand implements CommandExecutor {
         if(sender instanceof Player) {
 
             Player player = (Player) sender;
-            boolean leader = plugin.getClanManager().isLeaderInClan(player);
+            boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
 
             if(leader) {
 

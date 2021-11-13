@@ -3,7 +3,6 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
-import com.wasted_ticks.featherclans.data.ClanMember;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,12 +25,12 @@ public class SetHomeCommand implements CommandExecutor {
         if(sender instanceof Player) {
 
             Player player = (Player) sender;
-            boolean leader = plugin.getClanManager().isLeaderInClan(player);
+            boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
 
             if(leader) {
 
-                ClanMember member = plugin.getClanManager().getClanMemberByPlayer(player);
-                Clan clan = plugin.getClanManager().getClanByClanMember(member);
+                Clan clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+
                 Location location  = player.getLocation();
 
                 //check if player has sufficient balance.

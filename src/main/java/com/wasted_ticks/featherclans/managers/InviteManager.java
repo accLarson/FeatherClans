@@ -42,7 +42,6 @@ public class InviteManager {
         Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
             @Override
             public void run() {
-                System.out.println("In runnable for invitation");
                 Request request = requests.remove(invitee.getName());
                 if(request != null) {
                     invitee.sendMessage("Clan invitation request from " + originator.getName() + " has expired.");

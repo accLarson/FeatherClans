@@ -3,8 +3,8 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
-import com.wasted_ticks.featherclans.data.ClanMember;
 import com.wasted_ticks.featherclans.managers.ClanManager;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,14 +30,13 @@ public class DisbandCommand implements CommandExecutor {
         if(sender instanceof Player) {
 
             Player player = (Player) sender;
-            boolean isLeader = manager.isLeaderInClan(player);
-            ClanMember leader = manager.getClanMemberByPlayer(player);
+            boolean isLeader = manager.isOfflinePlayerLeader(player);
 
             if(isLeader) {
-                Clan clan = manager.getClanByClanMember(leader);
-                List<ClanMember> members = manager.getClanMembersByClan(clan);
-                for (ClanMember member: members) {
-                    manager.deleteClanMember(member);
+                Clan clan = manager.getClanByOfflinePlayer(player);
+                List<OfflinePlayer> members = manager.getOfflinePlayersByClan(clan);
+                for (OfflinePlayer member: members) {
+                    manager.resignOfflinePlayer(member);
                 }
                 manager.deleteClan(clan);
                 player.sendMessage(messages.get("clan_disband_success"));
