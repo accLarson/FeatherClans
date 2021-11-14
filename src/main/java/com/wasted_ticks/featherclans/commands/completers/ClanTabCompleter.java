@@ -63,10 +63,22 @@ public class ClanTabCompleter implements TabCompleter {
                         completions = plugin.getClanManager().getOfflinePlayersByClan(clan).stream().map(player -> player.getName()).collect(Collectors.toList());
                     }
                 } else if("leaderboard".equals(args[0])) {
-                    completions.addAll(Arrays.asList("bosskills", "experience", "kdr", "playtime"));
+                    // exp: total of all offline players current exp
+                    // hours: total of all offline players current hours
+                        // kdr: mode, resets monthly
+                    completions.addAll(Arrays.asList("exp", "hours", "kdr"));
                 } else if("list".equals(args[0])) {
+                    //tag
+                    //creation date
+                    //num of players
+                    //last seen
                     completions.addAll(Arrays.asList("alpha", "creation"));
                 } else if("roster".equals(args[0])) {
+                    //name
+                    //exp
+                    //hours
+                    //kdr
+                    //last seen
                     completions = plugin.getClanManager().getClans().stream().map(clan -> clan.getString("tag")).collect(Collectors.toList());
                 }
                 break;

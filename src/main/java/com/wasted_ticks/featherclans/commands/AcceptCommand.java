@@ -3,7 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
-import com.wasted_ticks.featherclans.util.Request;
+import com.wasted_ticks.featherclans.util.RequestUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,7 +30,7 @@ public class AcceptCommand implements CommandExecutor {
             return false;
         }
 
-        Request request = this.plugin.getInviteManager().getRequest(player);
+        RequestUtil request = this.plugin.getInviteManager().getRequest(player);
 
         if(request == null) {
             player.sendMessage("You currently don't have an invitation request.");

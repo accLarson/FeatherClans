@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Table {
+public class TableUtil {
 
     private static String delimiter = " ";
     private List<Row> table = new LinkedList<>();
     private int columns;
     private boolean hasHeader = false;
 
-    public Table(String... headers) {
+    public TableUtil(String... headers) {
         this.columns = headers.length;
         this.addHeader(headers);
     }

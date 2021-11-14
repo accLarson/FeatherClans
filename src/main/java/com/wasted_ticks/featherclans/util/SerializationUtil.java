@@ -10,7 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class FeatherClansUtil {
+public class SerializationUtil {
 
     public static String stackToString(ItemStack stack) {
 

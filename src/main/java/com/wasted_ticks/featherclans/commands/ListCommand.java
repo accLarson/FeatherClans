@@ -3,7 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
-import com.wasted_ticks.featherclans.util.Table;
+import com.wasted_ticks.featherclans.util.TableUtil;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,7 +37,7 @@ public class ListCommand implements CommandExecutor {
                 player.sendMessage("");
                 player.sendMessage("Total clans: " + clans.size());
                 player.sendMessage("");
-                Table table = new Table("Tag", "Members");
+                TableUtil table = new TableUtil("Tag", "Members");
                 for (Clan clan: clans) {
                     List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
                     table.addRow((String) clan.get("tag"),  String.valueOf(members.size()));

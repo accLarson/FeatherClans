@@ -3,7 +3,7 @@ package com.wasted_ticks.featherclans.managers;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.data.Clan;
-import com.wasted_ticks.featherclans.util.Request;
+import com.wasted_ticks.featherclans.util.RequestUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class InviteManager {
 
     private FeatherClans plugin;
-    private HashMap<String, Request> requests = new HashMap<>();
+    private HashMap<String, RequestUtil> requests = new HashMap<>();
     private FeatherClansConfig config;
 
     public InviteManager(FeatherClans plugin) {
@@ -20,7 +20,7 @@ public class InviteManager {
         this.config = plugin.getFeatherClansConfig();
     }
 
-    public Request getRequest(Player player) {
+    public RequestUtil getRequest(Player player) {
         return this.requests.get(player.getName());
     }
 
@@ -33,7 +33,7 @@ public class InviteManager {
             return false;
         }
 
-        requests.put(invitee.getName(), new Request(clan, originator));
+        requests.put(invitee.getName(), new RequestUtil(clan, originator));
 
         invitee.sendMessage(originator.getName() + " has requested you join their clan '" + clan.getString("tag") + "'");
         invitee.sendMessage("Reply with '/accept' or '/decline'.");
@@ -42,7 +42,7 @@ public class InviteManager {
         Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
             @Override
             public void run() {
-                Request request = requests.remove(invitee.getName());
+                RequestUtil request = requests.remove(invitee.getName());
                 if(request != null) {
                     invitee.sendMessage("Clan invitation request from " + originator.getName() + " has expired.");
                 }

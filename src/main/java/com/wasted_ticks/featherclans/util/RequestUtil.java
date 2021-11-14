@@ -3,12 +3,12 @@ package com.wasted_ticks.featherclans.util;
 import com.wasted_ticks.featherclans.data.Clan;
 import org.bukkit.entity.Player;
 
-public class Request {
+public class RequestUtil {
 
     private Clan clan;
     private Player originator;
 
-    public Request(Clan clan, Player originator) {
+    public RequestUtil(Clan clan, Player originator) {
         this.clan = clan;
         this.originator = originator;
     }

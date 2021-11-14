@@ -2,11 +2,14 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class HelpCommand implements CommandExecutor {
 
@@ -29,10 +32,10 @@ public class HelpCommand implements CommandExecutor {
             player.sendMessage(messages.get("clan_help_sethome"));      // done
             player.sendMessage(messages.get("clan_help_create"));       // done
             player.sendMessage(messages.get("clan_help_invite"));       // done
-            player.sendMessage(messages.get("clan_help_kick"));         //
+            player.sendMessage(messages.get("clan_help_kick"));         // done
             player.sendMessage(messages.get("clan_help_disband"));      // done
-            player.sendMessage(messages.get("clan_help_confer"));       //
-            player.sendMessage(messages.get("clan_help_chat"));         //
+            player.sendMessage(messages.get("clan_help_confer"));       // done
+            player.sendMessage(messages.get("clan_help_chat"));         // done
             player.sendMessage(messages.get("clan_help_accept"));       // done
             player.sendMessage(messages.get("clan_help_decline"));      // done
             player.sendMessage(messages.get("clan_help_help"));         // done
