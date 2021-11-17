@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
+import com.wasted_ticks.featherclans.util.ChatUtil;
 import com.wasted_ticks.featherclans.util.TableUtil;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -31,13 +32,13 @@ public class ListCommand implements CommandExecutor {
             List<Clan> clans = plugin.getClanManager().getClans();
 
             if(clans.isEmpty()) {
-                player.sendMessage("There are currently no clans to list.");
+                player.sendMessage(messages.get("clan_list_no_clans"));
             } else {
-                player.sendMessage("feather64 clan list -------------------------");
+                player.sendMessage(messages.get("clan_pre_line"));
                 player.sendMessage("");
-                player.sendMessage("Total clans: " + clans.size());
+                player.sendMessage(messages.get("clan_list_total") + clans.size());
                 player.sendMessage("");
-                TableUtil table = new TableUtil("Tag", "Members");
+                TableUtil table = new TableUtil( "Tag", "Members");
                 for (Clan clan: clans) {
                     List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
                     table.addRow((String) clan.get("tag"),  String.valueOf(members.size()));
@@ -46,7 +47,7 @@ public class ListCommand implements CommandExecutor {
                 for (String line: table.generate()) {
                     player.sendMessage(line);
                 }
-                player.sendMessage("---------------------------------------------");
+                player.sendMessage(messages.get("clan_line"));
 
             }
 

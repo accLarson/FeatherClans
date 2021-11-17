@@ -3,6 +3,7 @@ version: ${project.version}
 main: com.wasted_ticks.featherclans.FeatherClans
 api-version: 1.17
 authors: [Wasted_Ticks]
+depend: [PlaceholderAPI, Vault]
 commands:
   clan:
     description: gives access to clan related commands

@@ -193,4 +193,5 @@ public class ClanManager {
         clan.setString("leader_uuid", player.getUniqueId());
         return clan.save();
     }
+
 }
