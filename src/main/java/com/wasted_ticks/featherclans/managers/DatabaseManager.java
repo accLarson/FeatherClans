@@ -21,6 +21,18 @@ public class DatabaseManager {
         this.initTables();
     }
 
+    public boolean isAttached() {
+        return Base.hasConnection();
+    }
+
+    public void attachBase() {
+        Base.attach(connection);
+    }
+
+    public void closeBase() {
+        Base.close();
+    }
+
     public Connection getConnection() {
         try {
             if(connection.isClosed()) {

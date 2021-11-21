@@ -60,6 +60,10 @@ public final class FeatherClans extends JavaPlugin {
 
     public InviteManager getInviteManager() { return this.inviteManager; }
 
+    public DatabaseManager getDatabaseManager() {
+        return this.databaseManager;
+    }
+
     public FeatherClansConfig getFeatherClansConfig() { return this.config; }
 
     public FeatherClansMessages getFeatherClansMessages() {

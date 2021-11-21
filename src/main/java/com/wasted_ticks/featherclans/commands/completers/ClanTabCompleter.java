@@ -2,7 +2,7 @@ package com.wasted_ticks.featherclans.commands.completers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.data.Clan;
-import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -79,6 +79,7 @@ public class ClanTabCompleter implements TabCompleter {
                     //hours
                     //kdr
                     //last seen
+                    plugin.getServer().shutdown();
                     completions = plugin.getClanManager().getClans().stream().map(clan -> clan.getString("tag")).collect(Collectors.toList());
                 }
                 break;

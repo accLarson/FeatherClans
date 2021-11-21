@@ -2,6 +2,12 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.data.Clan;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.transformation.TransformationType;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,33 +39,52 @@ public class CreateCommand implements CommandExecutor {
             }
 
             String tag = args[1];
+            if(tag.length() > 255) {
+                player.sendMessage(messages.get("clan_create_error_markup_tag"));
+                return false;
+            }
 
-            int maxTagLength = this.plugin.getFeatherClansConfig().getTagSize();
+            TextComponent component =  (TextComponent) MiniMessage.builder()
+                    .removeDefaultTransformations()
+                    .transformation(TransformationType.COLOR)
+                    .transformation(TransformationType.RESET)
+                    .build()
+                    .parse(tag);
 
-            if(!tag.chars().allMatch(Character::isLetter) || tag.length() > maxTagLength) {
+            String plain = PlainTextComponentSerializer.plainText().serialize(component);
+            if(!plain.chars().allMatch(Character::isLetter)) {
+                player.sendMessage(messages.get("clan_create_error_invalid_tag"));
+                return false;
+            }
+
+            String coloured = LegacyComponentSerializer.legacySection().serialize(component);
+            if(coloured.length() > this.plugin.getFeatherClansConfig().getTagSize()) {
                 player.sendMessage(messages.get("clan_create_error_invalid_tag"));
                 return false;
             }
 
             List<String> bannedTags = this.plugin.getFeatherClansConfig().getDenyTags();
-            if(bannedTags.contains(tag)) {
+            if(bannedTags.contains(plain)) {
                 player.sendMessage(messages.get("clan_create_error_denied_tag"));
                 return false;
             }
 
-            //TODO: check if tag exists
+            List<Clan> clans = plugin.getClanManager().getClans();
+            if(clans.stream().filter(clan -> clan.getString("tag").equals(plain)).findFirst().isPresent()) {
+                player.sendMessage(messages.get("clan_create_error_similar_tag"));
+                return false;
+            }
 
             ItemStack stack = player.getInventory().getItemInMainHand();
-
             if (!stack.getType().name().contains("BANNER")) {
                 player.sendMessage(messages.get("clan_create_error_banner"));
                 return false;
             }
 
             boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(player);
-
             if(inClan) {
                 player.sendMessage(messages.get("clan_create_error_in_clan"));
+                return false;
             }
 
             //check if has balance available to create.

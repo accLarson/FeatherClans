@@ -10,7 +10,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -19,8 +21,25 @@ public class ClanManager {
 
     private final FeatherClans plugin;
 
+    private static HashMap<UUID, String> players = new HashMap<>();
+
     public ClanManager(FeatherClans plugin) {
         this.plugin = plugin;
+        this.load();
+    }
+
+    public void load() {
+        List<ClanMember> members = ClanMember.findAll();
+
+        members.stream().forEach(member -> {
+            UUID uuid = UUID.fromString(member.getString("mojang_uuid"));
+            String tag = member.parent(Clan.class).getString("tag");
+            players.put(uuid, tag);
+        });
+    }
+
+    public String getCachedClan(OfflinePlayer player) {
+        return players.get(player.getUniqueId());
     }
 
     /**
@@ -135,6 +154,7 @@ public class ClanManager {
             ClanMember member = new ClanMember();
             member.set("mojang_uuid",uuid.toString());
             clan.add(member);
+            players.put(uuid, tag);
             return clan;
         } else return null;
     }
@@ -159,6 +179,7 @@ public class ClanManager {
     public boolean resignOfflinePlayer(OfflinePlayer player) {
         ClanMember member = ClanMember.findFirst("mojang_uuid = ?", player.getUniqueId().toString());
         if(member != null) {
+            players.remove(player.getUniqueId());
             return member.delete();
         } return false;
     }
@@ -186,6 +207,7 @@ public class ClanManager {
         ClanMember member = new ClanMember();
         UUID uuid = player.getUniqueId();
         member.set("mojang_uuid",uuid.toString());
+        players.put(player.getUniqueId(), clan.getString("tag"));
         clan.add(member);
     }
 
