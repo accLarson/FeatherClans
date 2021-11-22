@@ -79,7 +79,6 @@ public class ClanTabCompleter implements TabCompleter {
                     //hours
                     //kdr
                     //last seen
-                    plugin.getServer().shutdown();
                     completions = plugin.getClanManager().getClans().stream().map(clan -> clan.getString("tag")).collect(Collectors.toList());
                 }
                 break;

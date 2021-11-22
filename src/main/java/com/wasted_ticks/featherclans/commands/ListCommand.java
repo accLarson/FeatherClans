@@ -4,7 +4,10 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.util.ChatUtil;
-import com.wasted_ticks.featherclans.util.TableUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.transformation.TransformationType;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -34,23 +37,30 @@ public class ListCommand implements CommandExecutor {
             if(clans.isEmpty()) {
                 player.sendMessage(messages.get("clan_list_no_clans"));
             } else {
+
+                ChatUtil chatUtil = new ChatUtil(this.plugin);
+                MiniMessage parser = MiniMessage.builder()
+                        .removeDefaultTransformations()
+                        .transformation(TransformationType.COLOR)
+                        .transformation(TransformationType.RESET)
+                        .build();
+
                 player.sendMessage(messages.get("clan_pre_line"));
                 player.sendMessage("");
-                player.sendMessage(messages.get("clan_list_total") + clans.size());
+                TextComponent total = Component.text("").append(messages.get("clan_list_total")).append(Component.text(clans.size()));
+                player.sendMessage(total);
                 player.sendMessage("");
-                TableUtil table = new TableUtil( "Tag", "Members");
+
                 for (Clan clan: clans) {
-                    List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
-                    table.addRow((String) clan.get("tag"),  String.valueOf(members.size()));
+                    TextComponent tag = chatUtil.addSpacing((TextComponent)parser.parse(clan.getString("tag")), 50);
+                    TextComponent size = chatUtil.addSpacing(Component.text(plugin.getClanManager().getOfflinePlayersByClan(clan).size()), 20, true);
+
+                    player.sendMessage(Component.join(Component.text("|"), tag, size));
                 }
 
-                for (String line: table.generate()) {
-                    player.sendMessage(line);
-                }
                 player.sendMessage(messages.get("clan_line"));
 
             }
-
         }
         return false;
     }

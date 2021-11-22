@@ -1,7 +1,10 @@
 package com.wasted_ticks.featherclans.config;
 
 import com.wasted_ticks.featherclans.FeatherClans;
-import com.wasted_ticks.featherclans.util.ChatUtil;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.transformation.TransformationType;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -16,7 +19,7 @@ import java.util.Set;
 public class FeatherClansMessages {
 
     private final FeatherClans plugin;
-    private final Map<String, String> messages;
+    private final Map<String, TextComponent> messages;
     private FileConfiguration config;
 
     public FeatherClansMessages(FeatherClans plugin) {
@@ -29,8 +32,13 @@ public class FeatherClansMessages {
     private void load() {
         Set<String> keys = config.getKeys(false);
         for (String key: keys) {
-            String value = config.getString(key);
-            messages.put(key, ChatUtil.translateHexColorCodes(value));
+            TextComponent value =  (TextComponent) MiniMessage.builder()
+                    .removeDefaultTransformations()
+                    .transformation(TransformationType.COLOR)
+                    .transformation(TransformationType.RESET)
+                    .build()
+                    .parse(config.getString(key));
+            messages.put(key, value);
         }
     }
 
@@ -52,7 +60,15 @@ public class FeatherClansMessages {
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public String get(String key){
+    public TextComponent get(String key){
         return messages.get(key);
     }
+
+    public String getAsString(String key) {
+        if(messages.containsKey(key)) {
+            return LegacyComponentSerializer.legacySection().serialize(messages.get(key));
+        }
+        else return null;
+    }
+
 }

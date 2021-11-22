@@ -1,23 +1,83 @@
 package com.wasted_ticks.featherclans.util;
 
-import net.md_5.bungee.api.ChatColor;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.wasted_ticks.featherclans.FeatherClans;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatUtil {
 
-    public static final Pattern HEXPattern = Pattern.compile("(&#[a-fA-F0-9]{6})");
+    private final FeatherClans plugin;
+    private final Map<String, Integer> dictionary = new HashMap<String, Integer>();
 
-    public static String translateHexColorCodes(String message) {
-
-        Matcher matcher = HEXPattern.matcher(message);
-        while(matcher.find()) {
-            String color = message.substring(matcher.start(), matcher.end());
-            message = message.replace(color, ChatColor.of(color.substring(1)) + "");
-            matcher = HEXPattern.matcher(message);
-        }
-
-        return ChatColor.translateAlternateColorCodes( '&', message);
+    public ChatUtil(FeatherClans plugin) {
+        this.plugin = plugin;
+        this.init();
     }
+
+    public void init(){
+        File file = new File(Bukkit.getPluginManager().getPlugin("FeatherClans").getDataFolder(), "characters.yml");
+        if (!file.exists()) {Bukkit.getPluginManager().getPlugin("FeatherClans").saveResource("characters.yml",false);}
+        YamlConfiguration characters = YamlConfiguration.loadConfiguration(file);
+        characters.getKeys(false).forEach(key -> dictionary.put((String) characters.get(key + ".character"), characters.getInt(key + ".width")));
+    }
+
+
+    public int getWidth(TextComponent textComponent){
+        String string = PlainTextComponentSerializer.plainText().serialize(textComponent);
+        int stringWidth = 0;
+        for (char c : string.toCharArray()) stringWidth += dictionary.get(String.valueOf(c));
+        return stringWidth;
+    }
+
+    public TextComponent addSpacing(TextComponent textComponent, int pixels) {
+        return this.addSpacing(textComponent, pixels, false);
+    }
+
+    public TextComponent addSpacing(TextComponent textComponent, int pixels, boolean isRightAligned){
+        double difference = pixels - getWidth(textComponent);
+        int addonSpaces;
+        int addonBoldSpaces = 0;
+
+        // Calculate how many regular and bold spaces to append to the given string to meet the requested length
+        if (difference % 4 == 1 && difference >= 4){
+            addonSpaces = (int) (Math.floor(difference/4) - 1);
+            addonBoldSpaces = 1;
+        }
+        else if (difference % 4 == 2 && difference >= 8){
+            addonSpaces = (int) (Math.floor(difference/4) - 2);
+            addonBoldSpaces = 2;
+        }
+        else if (difference % 4 == 3 && difference >= 12){
+            addonSpaces = (int) (Math.floor(difference/4) - 3);
+            addonBoldSpaces = 3;
+        }
+        else{
+            addonSpaces = (int) (difference/4);
+        }
+        // Append spaces and bold spaces to the end of the given string
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < addonSpaces; i++) {
+            stringBuilder.append(' ');
+        }
+        stringBuilder.append(org.bukkit.ChatColor.BOLD);
+        for (int i = 0; i < addonBoldSpaces; i++) {
+            stringBuilder.append(' ');
+        }
+        stringBuilder.append(org.bukkit.ChatColor.RESET);
+        TextComponent spaces = Component.text(String.valueOf(stringBuilder));
+
+        if (isRightAligned) return Component.text("").append(spaces).append(textComponent);
+        else return Component.text("").append(textComponent).append(spaces);
+    }
+
+
 }

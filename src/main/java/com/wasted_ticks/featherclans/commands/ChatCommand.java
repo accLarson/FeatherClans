@@ -4,6 +4,11 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.util.ChatUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.transformation.TransformationType;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -40,19 +45,22 @@ public class ChatCommand implements CommandExecutor {
             return false;
         }
 
-        String message = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
+        String input = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
         Clan clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
-        String tag = clan.getString("tag");
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(ChatUtil.translateHexColorCodes(messages.get("clan_color") + "[" + tag + "]: "));
-        builder.append(ChatColor.RESET);
-        builder.append(message);
+        TextComponent tag =  (TextComponent) MiniMessage.builder()
+                .removeDefaultTransformations()
+                .transformation(TransformationType.COLOR)
+                .transformation(TransformationType.RESET)
+                .build()
+                .parse(clan.getString("tag"));
+        TextComponent component = Component.text("[").append(tag).append(Component.text("]"));
+        TextComponent message = Component.join(Component.text(": "), component, Component.text(input));
 
         List<OfflinePlayer> players = plugin.getClanManager().getOfflinePlayersByClan(clan);
         for (OfflinePlayer player: players) {
             if(player.isOnline()) {
-                player.getPlayer().sendMessage(builder.toString());
+                player.getPlayer().sendMessage(message);
             }
         }
 
