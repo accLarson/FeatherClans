@@ -28,42 +28,6 @@ public class SudoCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         sender.sendMessage("SudoCommand");
-
-        //everything below is currently just used for testing.
-
-        Player player = (Player) sender;
-
-        if (args.length != 2) {
-            player.sendMessage(messages.get("clan_create_error_invalid_arg_length"));
-            return false;
-        }
-
-        // tag = <blue>TE<bold>ST
-        String tag = args[1];
-
-        TextComponent component =  (TextComponent) MiniMessage.builder()
-                .removeDefaultTransformations()
-                .transformation(TransformationType.COLOR)
-                .transformation(TransformationType.RESET)
-                .build()
-                .parse(tag);
-
-        // coloured = &9TE<bold>ST
-        String coloured = LegacyComponentSerializer.legacySection().serialize(component);
-
-        String idk = GsonComponentSerializer.gson().serialize(component);
-
-
-        // plain = TE<bold>ST
-        String plain = PlainTextComponentSerializer.plainText().serialize(component);
-
-        player.sendMessage("component serialized (json):" + idk);
-        player.sendMessage("component serialized (legacy):" + coloured);
-        player.sendMessage("component serialized (plain): " + plain);
-
-        // false due to presence of <bold>.
-        player.sendMessage("all-match character isLetter (stripped): " + plain.chars().allMatch(Character::isLetter));
-
         return false;
     }
 }

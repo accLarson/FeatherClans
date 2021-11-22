@@ -21,6 +21,8 @@ public class FeatherClansMessages {
     private final FeatherClans plugin;
     private final Map<String, TextComponent> messages;
     private FileConfiguration config;
+    private String themePrimary;
+    private String themeSecondary;
 
     public FeatherClansMessages(FeatherClans plugin) {
         messages = new HashMap<>();
@@ -32,6 +34,13 @@ public class FeatherClansMessages {
     private void load() {
         Set<String> keys = config.getKeys(false);
         for (String key: keys) {
+            if(key.equals("clan_theme_primary")) {
+                this.themePrimary = config.getString(key);
+                continue;
+            } else if(key.equals("clan_theme_secondary")) {
+                this.themeSecondary = config.getString(key);
+                continue;
+            }
             TextComponent value =  (TextComponent) MiniMessage.builder()
                     .removeDefaultTransformations()
                     .transformation(TransformationType.COLOR)
@@ -69,6 +78,14 @@ public class FeatherClansMessages {
             return LegacyComponentSerializer.legacySection().serialize(messages.get(key));
         }
         else return null;
+    }
+
+    public String getThemePrimary() {
+        return this.themePrimary;
+    }
+
+    public String getThemeSecondary() {
+        return this.themeSecondary;
     }
 
 }

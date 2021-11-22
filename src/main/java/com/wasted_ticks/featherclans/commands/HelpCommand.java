@@ -28,6 +28,7 @@ public class HelpCommand implements CommandExecutor {
 
             Player player = (Player) sender;
 
+            player.sendMessage(messages.get("clan_pre_line"));
             player.sendMessage(messages.get("clan_help_home"));         // done
             player.sendMessage(messages.get("clan_help_sethome"));      // done
             player.sendMessage(messages.get("clan_help_create"));       // done
@@ -42,7 +43,7 @@ public class HelpCommand implements CommandExecutor {
             player.sendMessage(messages.get("clan_help_list"));         // done
             player.sendMessage(messages.get("clan_help_leaderboard"));  //
             player.sendMessage(messages.get("clan_help_roster"));       //
-
+            player.sendMessage(messages.get("clan_line"));
         }
         return true;
     }

@@ -35,33 +35,30 @@ public class HomeCommand implements CommandExecutor {
 
                 if(plugin.getClanManager().hasClanHome(clan)) {
 
-                    int delay = this.plugin.getFeatherClansConfig().getTeleportDelaySeconds();
-                    player.sendMessage("Teleporting to clan home.");
+                    player.sendMessage(messages.get("clan_home_teleport_initiate"));
 
                     Location clanHomeLocation = plugin.getClanManager().getClanHome(clan);
-
+                    int delay = this.plugin.getFeatherClansConfig().getTeleportDelaySeconds();
                     TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
-                        player.sendMessage("Teleporting now.");
+                        player.sendMessage(messages.get("clan_home_teleport_success"));
                         player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
                     }, (instance) -> {
                         if(!instance.getStartLocation().getBlock().equals(player.getLocation().getBlock())) {
-                            player.sendMessage("Movement detected, cancelling teleport.");
+                            player.sendMessage(messages.get("clan_home_teleport_failure"));
                             instance.cancel();
                         }
                     }, player.getLocation());
-
                     timer.start();
 
                     return true;
                 } else {
-                    player.sendMessage("Error: Your clan currently doesn't have a set home location.");
+                    player.sendMessage(messages.get("clan_home_teleport_error_no_home"));
                     return false;
                 }
             } else {
-                player.sendMessage("Error: You are not currently a member of a clan.");
+                player.sendMessage(messages.get("clan_home_teleport_error_no_clan"));
                 return false;
             }
-
         } else return false;
     }
 }

@@ -6,9 +6,9 @@ import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.transformation.TransformationType;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,19 +47,20 @@ public class ListCommand implements CommandExecutor {
 
                 player.sendMessage(messages.get("clan_pre_line"));
                 player.sendMessage("");
-                TextComponent total = Component.text("").append(messages.get("clan_list_total")).append(Component.text(clans.size()));
+                TextComponent total = Component.text("").append(messages.get("clan_list_total")).append(Component.text(clans.size(), TextColor.fromHexString(messages.getThemePrimary())));
                 player.sendMessage(total);
                 player.sendMessage("");
+
+                TextComponent divider = Component.text("|", TextColor.fromHexString(messages.getThemePrimary()));
 
                 for (Clan clan: clans) {
                     TextComponent tag = chatUtil.addSpacing((TextComponent)parser.parse(clan.getString("tag")), 50);
                     TextComponent size = chatUtil.addSpacing(Component.text(plugin.getClanManager().getOfflinePlayersByClan(clan).size()), 20, true);
 
-                    player.sendMessage(Component.join(Component.text("|"), tag, size));
+                    player.sendMessage(Component.join(divider, tag, size.color(TextColor.fromHexString(messages.getThemePrimary()))));
                 }
 
                 player.sendMessage(messages.get("clan_line"));
-
             }
         }
         return false;

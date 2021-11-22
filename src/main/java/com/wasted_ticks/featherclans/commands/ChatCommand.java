@@ -6,6 +6,7 @@ import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.transformation.TransformationType;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -36,12 +37,12 @@ public class ChatCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Player originator = (Player) sender;
         if(args.length < 2) {
-            originator.sendMessage("This command requires a message argument.");
+            originator.sendMessage(messages.get("clan_chat_no_message"));
             return false;
         }
 
         if(!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
-            originator.sendMessage("You must be a member of a clan to use this command.");
+            originator.sendMessage(messages.get("clan_chat_no_clan"));
             return false;
         }
 
@@ -54,8 +55,8 @@ public class ChatCommand implements CommandExecutor {
                 .transformation(TransformationType.RESET)
                 .build()
                 .parse(clan.getString("tag"));
-        TextComponent component = Component.text("[").append(tag).append(Component.text("]"));
-        TextComponent message = Component.join(Component.text(": "), component, Component.text(input));
+        TextComponent component = Component.text("[", TextColor.fromHexString(messages.getThemePrimary())).append(tag).append(Component.text("]", TextColor.fromHexString(messages.getThemePrimary())));
+        TextComponent message = Component.join(Component.text(": ", TextColor.fromHexString(messages.getThemePrimary())), component, Component.text(input));
 
         List<OfflinePlayer> players = plugin.getClanManager().getOfflinePlayersByClan(clan);
         for (OfflinePlayer player: players) {
