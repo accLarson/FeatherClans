@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans.config;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.transformation.TransformationType;
@@ -70,14 +71,14 @@ public class FeatherClansMessages {
     }
 
     public TextComponent get(String key){
-        return messages.get(key);
+        return messages.containsKey(key) ? messages.get(key) : Component.text("");
     }
 
     public String getAsString(String key) {
         if(messages.containsKey(key)) {
             return LegacyComponentSerializer.legacySection().serialize(messages.get(key));
         }
-        else return null;
+        else return "";
     }
 
     public String getThemePrimary() {

@@ -26,22 +26,26 @@ public class AcceptCommand implements CommandExecutor {
         Player player = (Player) sender;
         boolean inClan = plugin.getClanManager().isOfflinePlayerLeader(player);
         if(inClan) {
-            player.sendMessage("You are currently a member of a clan.");
+            player.sendMessage(messages.get("clan_accept_in_clan"));
             return false;
         }
 
         RequestUtil request = this.plugin.getInviteManager().getRequest(player);
-
         if(request == null) {
-            player.sendMessage("You currently don't have an invitation request.");
+            player.sendMessage(messages.get("clan_accept_no_request"));
             return false;
         }
 
         Clan clan = request.getClan();
         plugin.getClanManager().addOfflinePlayerToClan(player, clan);
-        player.sendMessage("You've joined '" + clan.getString("tag") + "'");
+
+        //TODO: minimessage placeholder for <clan>
+        player.sendMessage(messages.get("clan_accept_success_player"));
+
         Player originator = request.getOriginator();
-        originator.sendMessage("Your request to '" + player.getName() + "' has been accepted.");
+        //TODO: minimessage placeholder for <player>
+        player.sendMessage(messages.get("clan_accept_success_originator"));
+
         plugin.getInviteManager().clearRequest(player);
 
         return true;

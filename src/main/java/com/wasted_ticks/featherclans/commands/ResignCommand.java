@@ -20,28 +20,31 @@ public class ResignCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player) {
-            Player player = (Player) sender;
 
-            if(plugin.getClanManager().isOfflinePlayerInClan(player)) {
-                boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
-                if(leader) {
-                    player.sendMessage(messages.get("clan_resign_error_leader"));
-                    return false;
-                } else {
-                    boolean deleted = plugin.getClanManager().resignOfflinePlayer(player);
-                    if(deleted) {
-                        player.sendMessage(messages.get("clan_resign_success"));
-                        return true;
-                    } else {
-                        player.sendMessage(messages.get("clan_resign_error_generic"));
-                        return false;
-                    }
-                }
-            } else {
-                player.sendMessage(messages.get("clan_resign_error_no_clan"));
-                return false;
-            }
-        } else return false;
+        if(!(sender instanceof Player)){
+            return false;
+        }
+
+        Player player = (Player) sender;
+        if(!plugin.getClanManager().isOfflinePlayerInClan(player)) {
+            player.sendMessage(messages.get("clan_resign_error_no_clan"));
+            return false;
+        }
+
+        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
+        if(leader) {
+            player.sendMessage(messages.get("clan_resign_error_leader"));
+            return false;
+        }
+
+        boolean deleted = plugin.getClanManager().resignOfflinePlayer(player);
+        if(!deleted) {
+            player.sendMessage(messages.get("clan_resign_error_generic"));
+            return false;
+        }
+
+        player.sendMessage(messages.get("clan_resign_success"));
+        return true;
+
     }
 }

@@ -31,18 +31,19 @@ public class DeclineCommand implements CommandExecutor {
         }
 
         RequestUtil request = this.plugin.getInviteManager().getRequest(player);
-
         if(request == null) {
             player.sendMessage("You currently don't have an invitation request.");
             return false;
         }
 
         Clan clan = request.getClan();
+
         player.sendMessage("You've declined invitation request from '" + clan.getString("tag") + "'");
-        plugin.getInviteManager().clearRequest(player);
+
         Player originator = request.getOriginator();
         originator.sendMessage("Your request to '" + player.getName() + "' has been declined.");
 
+        plugin.getInviteManager().clearRequest(player);
 
         return true;
     }
