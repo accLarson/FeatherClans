@@ -22,6 +22,7 @@ public class ResignCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if(!(sender instanceof Player)){
+            sender.sendMessage(messages.get("clan_error_player"));
             return false;
         }
 

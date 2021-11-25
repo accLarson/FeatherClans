@@ -22,44 +22,50 @@ public class KickCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player) {
 
-            Player originator = (Player) sender;
-            boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
-
-            if(leader) {
-
-                if (args.length != 2) {
-                    originator.sendMessage("Error: No player specified to confer clan to.");
-                    return false;
-                }
-
-                Player player = Bukkit.getPlayer(args[1]);
-
-                if(player == null) {
-                    originator.sendMessage("Error: Unable to resolve player name.");
-                    return false;
-                }
-
-                Clan clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
-                if(this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, clan)) {
-                    boolean successful = this.plugin.getClanManager().resignOfflinePlayer(player);
-                    if(successful) {
-                        originator.sendMessage("You've kicked " + player.getName() + " from your clan.");
-                        player.sendMessage("You've been kicked from " + clan.getString("tag"));
-                        return true;
-                    }
-                } else {
-                    originator.sendMessage("Error: Player must be in your clan.");
-                    return false;
-                }
-
-
-            } else {
-                originator.sendMessage(messages.get("clan_error_leader"));
-                return false;
-            }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(messages.get("clan_error_player"));
+            return false;
         }
-        return false;
+
+        Player originator = (Player) sender;
+        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
+        if (!leader) {
+            originator.sendMessage(messages.get("clan_error_leader"));
+            return false;
+        }
+
+        if (args.length != 2) {
+            //TODO msg
+            originator.sendMessage("Error: No player specified to kick.");
+            return false;
+        }
+
+        Player player = Bukkit.getPlayer(args[1]);
+        if (player == null) {
+            //TODO msg
+            originator.sendMessage("Error: Unable to resolve player name.");
+            return false;
+        }
+
+        Clan clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, clan)) {
+            //TODO msg
+            originator.sendMessage("Error: Player must be in your clan.");
+            return false;
+        }
+
+        boolean successful = this.plugin.getClanManager().resignOfflinePlayer(player);
+        if (!successful) {
+            //TODO msg
+            originator.sendMessage("error kicking player.");
+            return false;
+        }
+
+        //TODO msg
+        originator.sendMessage("You've kicked " + player.getName() + " from your clan.");
+        player.sendMessage("You've been kicked from " + clan.getString("tag"));
+        return true;
+
     }
 }

@@ -22,32 +22,29 @@ public class SetHomeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player) {
 
-            Player player = (Player) sender;
-            boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
+        if(!(sender instanceof Player)){
+            sender.sendMessage(messages.get("clan_error_player"));
+            return false;
+        }
 
-            if(leader) {
+        Player player = (Player) sender;
+        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
+        if(!leader) {
+            player.sendMessage(messages.get("clan_error_leader"));
+            return false;
+        }
 
-                Clan clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+        Clan clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+        Location location  = player.getLocation();
+        boolean success = plugin.getClanManager().setClanHome(clan, location);
+        if(!success) {
+            player.sendMessage(messages.get("clan_sethome_error_generic"));
+            return false;
+        }
 
-                Location location  = player.getLocation();
+        player.sendMessage(messages.get("clan_sethome_success"));
+        return true;
 
-                //check if player has sufficient balance.
-
-                boolean isHomeSet = plugin.getClanManager().setClanHome(clan, location);
-
-                if(isHomeSet) {
-                    player.sendMessage(messages.get("clan_sethome_success"));
-                    return true;
-                } else {
-                    player.sendMessage(messages.get("clan_sethome_error_generic"));
-                    return false;
-                }
-            } else {
-                player.sendMessage(messages.get("clan_error_leader"));
-                return false;
-            }
-        } else return false;
     }
 }
