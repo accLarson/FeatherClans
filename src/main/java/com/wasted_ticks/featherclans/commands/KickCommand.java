@@ -48,8 +48,8 @@ public class KickCommand implements CommandExecutor {
             return false;
         }
 
-        Clan clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
-        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, clan)) {
+        String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, tag)) {
             //TODO msg
             originator.sendMessage("Error: Player must be in your clan.");
             return false;
@@ -64,7 +64,7 @@ public class KickCommand implements CommandExecutor {
 
         //TODO msg
         originator.sendMessage("You've kicked " + player.getName() + " from your clan.");
-        player.sendMessage("You've been kicked from " + clan.getString("tag"));
+        player.sendMessage("You've been kicked from " + tag);
         return true;
 
     }

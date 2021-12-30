@@ -54,13 +54,13 @@ public class ClanTabCompleter implements TabCompleter {
                     }
                 } else if("kick".equals(args[0])) {
                     if(this.plugin.getClanManager().isOfflinePlayerLeader((Player) sender)) {
-                        Clan clan = this.plugin.getClanManager().getClanByOfflinePlayer((Player) sender);
-                        completions = plugin.getClanManager().getOfflinePlayersByClan(clan).stream().map(player -> player.getName()).collect(Collectors.toList());
+                        String tag = this.plugin.getClanManager().getClanByOfflinePlayer((Player) sender);
+                        completions = plugin.getClanManager().getOfflinePlayersByClan(tag).stream().map(player -> player.getName()).collect(Collectors.toList());
                     }
                 } else if("confer".equals(args[0])) {
                     if(this.plugin.getClanManager().isOfflinePlayerLeader((Player) sender)) {
-                        Clan clan = this.plugin.getClanManager().getClanByOfflinePlayer((Player) sender);
-                        completions = plugin.getClanManager().getOfflinePlayersByClan(clan).stream().map(player -> player.getName()).collect(Collectors.toList());
+                        String tag = this.plugin.getClanManager().getClanByOfflinePlayer((Player) sender);
+                        completions = plugin.getClanManager().getOfflinePlayersByClan(tag).stream().map(player -> player.getName()).collect(Collectors.toList());
                     }
                 } else if("leaderboard".equals(args[0])) {
                     // exp: total of all offline players current exp
@@ -79,7 +79,7 @@ public class ClanTabCompleter implements TabCompleter {
                     //hours
                     //kdr
                     //last seen
-                    completions = plugin.getClanManager().getClans().stream().map(clan -> clan.getString("tag")).collect(Collectors.toList());
+                    completions = plugin.getClanManager().getClans();
                 }
                 break;
             default: break;

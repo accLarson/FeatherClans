@@ -36,9 +36,9 @@ public class DeclineCommand implements CommandExecutor {
             return false;
         }
 
-        Clan clan = request.getClan();
+        String tag = request.getClan();
 
-        player.sendMessage("You've declined invitation request from '" + clan.getString("tag") + "'");
+        player.sendMessage("You've declined invitation request from '" + tag + "'");
 
         Player originator = request.getOriginator();
         originator.sendMessage("Your request to '" + player.getName() + "' has been declined.");

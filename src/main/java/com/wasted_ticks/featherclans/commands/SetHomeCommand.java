@@ -35,9 +35,9 @@ public class SetHomeCommand implements CommandExecutor {
             return false;
         }
 
-        Clan clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+        String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
         Location location  = player.getLocation();
-        boolean success = plugin.getClanManager().setClanHome(clan, location);
+        boolean success = plugin.getClanManager().setClanHome(tag, location);
         if(!success) {
             player.sendMessage(messages.get("clan_sethome_error_generic"));
             return false;

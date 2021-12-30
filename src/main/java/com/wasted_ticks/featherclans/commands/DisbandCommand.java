@@ -33,12 +33,12 @@ public class DisbandCommand implements CommandExecutor {
             boolean isLeader = manager.isOfflinePlayerLeader(player);
 
             if(isLeader) {
-                Clan clan = manager.getClanByOfflinePlayer(player);
-                List<OfflinePlayer> members = manager.getOfflinePlayersByClan(clan);
+                String tag = manager.getClanByOfflinePlayer(player);
+                List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
                 for (OfflinePlayer member: members) {
                     manager.resignOfflinePlayer(member);
                 }
-                manager.deleteClan(clan);
+                manager.deleteClan(tag);
                 player.sendMessage(messages.get("clan_disband_success"));
                 return true;
             } else {

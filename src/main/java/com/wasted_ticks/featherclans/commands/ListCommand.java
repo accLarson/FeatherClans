@@ -36,7 +36,7 @@ public class ListCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        List<Clan> clans = plugin.getClanManager().getClans();
+        List<String> clans = plugin.getClanManager().getClans();
         if(clans.isEmpty()) {
             player.sendMessage(messages.get("clan_list_no_clans"));
             return false;
@@ -55,8 +55,8 @@ public class ListCommand implements CommandExecutor {
         player.sendMessage(total);
         player.sendMessage("");
         TextComponent divider = Component.text("|", TextColor.fromHexString(messages.getThemePrimary()));
-        for (Clan clan: clans) {
-            TextComponent tag = chatUtil.addSpacing((TextComponent)parser.parse(clan.getString("tag")), 50);
+        for (String clan: clans) {
+            TextComponent tag = chatUtil.addSpacing((TextComponent)parser.parse(clan), 50);
             TextComponent size = chatUtil.addSpacing(Component.text(plugin.getClanManager().getOfflinePlayersByClan(clan).size()), 20, true);
 
             player.sendMessage(Component.join(divider, tag, size.color(TextColor.fromHexString(messages.getThemePrimary()))));

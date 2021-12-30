@@ -49,10 +49,10 @@ public class InviteCommand implements CommandExecutor {
                     return false;
                 }
 
-                Clan clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
+                String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
 
                 InviteManager manager = plugin.getInviteManager();
-                manager.invite(invitee, clan, originator);
+                manager.invite(invitee, tag, originator);
 
             } else {
                 originator.sendMessage(messages.get("clan_error_leader"));

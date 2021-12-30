@@ -44,33 +44,19 @@ public class CreateCommand implements CommandExecutor {
                 return false;
             }
 
-            TextComponent component =  (TextComponent) MiniMessage.builder()
-                    .removeDefaultTransformations()
-                    .transformation(TransformationType.COLOR)
-                    .transformation(TransformationType.RESET)
-                    .build()
-                    .parse(tag);
-
-            String plain = PlainTextComponentSerializer.plainText().serialize(component);
-            if(!plain.chars().allMatch(Character::isLetter)) {
-                player.sendMessage(messages.get("clan_create_error_invalid_tag"));
-                return false;
-            }
-
-            String coloured = LegacyComponentSerializer.legacySection().serialize(component);
-            if(coloured.length() > this.plugin.getFeatherClansConfig().getTagSize()) {
+            if(!tag.chars().allMatch(Character::isLetter)) {
                 player.sendMessage(messages.get("clan_create_error_invalid_tag"));
                 return false;
             }
 
             List<String> bannedTags = this.plugin.getFeatherClansConfig().getDenyTags();
-            if(bannedTags.contains(plain)) {
+            if(bannedTags.contains(tag)) {
                 player.sendMessage(messages.get("clan_create_error_denied_tag"));
                 return false;
             }
 
-            List<Clan> clans = plugin.getClanManager().getClans();
-            if(clans.stream().filter(clan -> clan.getString("tag").equals(plain)).findFirst().isPresent()) {
+            List<String> clans = plugin.getClanManager().getClans();
+            if(clans.contains(tag)) {
                 player.sendMessage(messages.get("clan_create_error_similar_tag"));
                 return false;
             }

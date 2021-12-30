@@ -47,14 +47,14 @@ public class ChatCommand implements CommandExecutor {
         }
 
         String input = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
-        Clan clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
+        String clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
 
         TextComponent tag =  (TextComponent) MiniMessage.builder()
                 .removeDefaultTransformations()
                 .transformation(TransformationType.COLOR)
                 .transformation(TransformationType.RESET)
                 .build()
-                .parse(clan.getString("tag"));
+                .parse(clan);
         TextComponent component = Component.text("[", TextColor.fromHexString(messages.getThemePrimary())).append(tag).append(Component.text("]", TextColor.fromHexString(messages.getThemePrimary())));
         TextComponent message = Component.join(Component.text(": ", TextColor.fromHexString(messages.getThemePrimary())), component, Component.text(input));
 

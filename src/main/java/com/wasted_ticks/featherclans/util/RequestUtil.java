@@ -5,16 +5,16 @@ import org.bukkit.entity.Player;
 
 public class RequestUtil {
 
-    private Clan clan;
+    private String tag;
     private Player originator;
 
-    public RequestUtil(Clan clan, Player originator) {
-        this.clan = clan;
+    public RequestUtil(String tag, Player originator) {
+        this.tag = tag;
         this.originator = originator;
     }
 
-    public Clan getClan() {
-        return clan;
+    public String getClan() {
+        return tag;
     }
 
     public Player getOriginator() {

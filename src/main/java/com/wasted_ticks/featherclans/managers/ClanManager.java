@@ -7,21 +7,19 @@ import com.wasted_ticks.featherclans.util.SerializationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ClanManager {
 
 
     private final FeatherClans plugin;
-
+    // map player UUID -> clan tag.
     private static HashMap<UUID, String> players = new HashMap<>();
+    // map clan tag -> clan leader.
+    private static HashMap<String, UUID> clans = new HashMap<>();
 
     public ClanManager(FeatherClans plugin) {
         this.plugin = plugin;
@@ -29,12 +27,19 @@ public class ClanManager {
     }
 
     public void load() {
-        List<ClanMember> members = ClanMember.findAll();
 
-        members.stream().forEach(member -> {
-            UUID uuid = UUID.fromString(member.getString("mojang_uuid"));
-            String tag = member.parent(Clan.class).getString("tag");
-            players.put(uuid, tag);
+        List<ClanMember> players = ClanMember.findAll();
+        players.stream().forEach(player -> {
+            UUID uuid = UUID.fromString(player.getString("mojang_uuid"));
+            String tag = player.parent(Clan.class).getString("tag");
+            this.players.put(uuid, tag);
+        });
+
+        List<Clan> clans = Clan.findAll();
+        clans.stream().forEach(clan -> {
+            String tag = clan.getString("tag");
+            UUID leader = UUID.fromString(clan.getString("leader_uuid"));
+            this.clans.put(tag, leader);
         });
     }
 
@@ -47,8 +52,8 @@ public class ClanManager {
      *
      * @return list of clans
      */
-    public List<Clan> getClans() {
-        return Clan.findAll();
+    public List<String> getClans() {
+        return List.copyOf(clans.keySet());
     }
 
     /**
@@ -57,12 +62,9 @@ public class ClanManager {
      * @param player
      * @return clan, will return null if offline player is not a member of a clan.
      */
-    public Clan getClanByOfflinePlayer(OfflinePlayer player) {
+    public String getClanByOfflinePlayer(OfflinePlayer player) {
         UUID uuid = player.getUniqueId();
-        ClanMember member = ClanMember.findFirst("mojang_uuid = ?", uuid.toString());
-        if(member != null) {
-            return member.parent(Clan.class);
-        } else return null;
+        return players.get(uuid);
     }
 
     /**
@@ -71,21 +73,21 @@ public class ClanManager {
      * @param clan
      * @return a list of offline players.
      */
-    public List<OfflinePlayer> getOfflinePlayersByClan(Clan clan) {
-        List<OfflinePlayer> players = clan.getAll(ClanMember.class).stream().map(member -> {
-            UUID uuid = UUID.fromString(member.getString("mojang_uuid"));
-            return Bukkit.getOfflinePlayer(uuid);
-        }).collect(Collectors.toList());
-        return players;
+    public List<OfflinePlayer> getOfflinePlayersByClan(String clan) {
+        return players.entrySet().stream()
+                .filter(entry -> Objects.equals(entry.getValue(), clan))
+                .map(entry -> Bukkit.getOfflinePlayer(entry.getKey()))
+                .collect(Collectors.toList());
     }
 
     /**
      * Gets the clan home location for a given clan.
      *
-     * @param clan
+     * @param tag
      * @return location
      */
-    public Location getClanHome(Clan clan) {
+    public Location getClanHome(String tag) {
+        Clan clan = Clan.findFirst("tag = ?", tag);
         String data = clan.getString("home");
         return SerializationUtil.stringToLocation(data);
     }
@@ -101,9 +103,12 @@ public class ClanManager {
         return ClanMember.findFirst("mojang_uuid = ?", uuid) != null;
     }
 
-    public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, Clan clan) {
-        List<OfflinePlayer> players = this.getOfflinePlayersByClan(clan);
-        return players.stream().map(p -> p.getUniqueId()).collect(Collectors.toList()).contains(player.getUniqueId());
+    public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, String clan) {
+        String tag = players.get(player.getUniqueId());
+        if(tag != null) {
+            return tag.equals(clan);
+        }
+        return false;
     }
 
 
@@ -114,19 +119,19 @@ public class ClanManager {
      * @return boolean
      */
     public boolean isOfflinePlayerLeader(OfflinePlayer player) {
-        UUID uuid = player.getUniqueId();
-        return Clan.findFirst("leader_uuid = ?", uuid) != null;
+        return clans.values().contains(player.getUniqueId());
     }
 
     /**
      * Determines if a given clan has a home.
      *
-     * @param clan
+     * @param tag
      * @return boolean
      */
-    public boolean hasClanHome(Clan clan) {
-        String home = clan.getString("home");
-        return home != null;
+    public boolean hasClanHome(String tag) {
+        Clan clan = Clan.findFirst("tag = ?", tag);
+        String data = clan.getString("home");
+        return data != null;
     }
 
     /**
@@ -162,10 +167,11 @@ public class ClanManager {
     /**
      * Deletes a clan.
      *
-     * @param clan
+     * @param tag
      * @return boolean
      */
-    public boolean deleteClan(Clan clan) {
+    public boolean deleteClan(String tag) {
+        Clan clan = Clan.findFirst("tag = ?", tag);
         return clan.delete();
     }
 
@@ -187,11 +193,12 @@ public class ClanManager {
     /**
      * Sets a clan home for a given clan.
      *
-     * @param clan
+     * @param tag
      * @param location
      * @return boolean
      */
-    public boolean setClanHome(Clan clan, Location location) {
+    public boolean setClanHome(String tag, Location location) {
+        Clan clan = Clan.findFirst("tag = ?", tag);
         String data = SerializationUtil.locationToString(location);
         clan.set("home", data);
         return clan.save();
@@ -201,17 +208,21 @@ public class ClanManager {
      * Adds an offline player to a clan.
      *
      * @param player
-     * @param clan
+     * @param tag
      */
-    public void addOfflinePlayerToClan(OfflinePlayer player, Clan clan) {
+    public void addOfflinePlayerToClan(OfflinePlayer player, String tag) {
         ClanMember member = new ClanMember();
         UUID uuid = player.getUniqueId();
         member.set("mojang_uuid",uuid.toString());
+
+        Clan clan = Clan.findFirst("tag = ?", tag);
         players.put(player.getUniqueId(), clan.getString("tag"));
+
         clan.add(member);
     }
 
-    public boolean setClanLeader(Clan clan, OfflinePlayer player) {
+    public boolean setClanLeader(String tag, OfflinePlayer player) {
+        Clan clan = Clan.findFirst("tag = ?", tag);
         clan.setString("leader_uuid", player.getUniqueId());
         return clan.save();
     }

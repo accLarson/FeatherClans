@@ -28,14 +28,14 @@ public class InviteManager {
         this.requests.remove(player.getName());
     }
 
-    public boolean invite(Player invitee, Clan clan, Player originator) {
+    public boolean invite(Player invitee, String tag, Player originator) {
         if(requests.containsKey(invitee.getName())) {
             return false;
         }
 
-        requests.put(invitee.getName(), new RequestUtil(clan, originator));
+        requests.put(invitee.getName(), new RequestUtil(tag, originator));
 
-        invitee.sendMessage(originator.getName() + " has requested you join their clan '" + clan.getString("tag") + "'");
+        invitee.sendMessage(originator.getName() + " has requested you join their clan '" + tag + "'");
         invitee.sendMessage("Reply with '/accept' or '/decline'.");
         originator.sendMessage("Invite sent.");
 

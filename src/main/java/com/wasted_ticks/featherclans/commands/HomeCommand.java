@@ -31,13 +31,13 @@ public class HomeCommand implements CommandExecutor {
 
             if(plugin.getClanManager().isOfflinePlayerLeader(player)) {
 
-                Clan clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+                String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
 
-                if(plugin.getClanManager().hasClanHome(clan)) {
+                if(plugin.getClanManager().hasClanHome(tag)) {
 
                     player.sendMessage(messages.get("clan_home_teleport_initiate"));
 
-                    Location clanHomeLocation = plugin.getClanManager().getClanHome(clan);
+                    Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
                     int delay = this.plugin.getFeatherClansConfig().getTeleportDelaySeconds();
                     TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
                         player.sendMessage(messages.get("clan_home_teleport_success"));

@@ -36,8 +36,8 @@ public class AcceptCommand implements CommandExecutor {
             return false;
         }
 
-        Clan clan = request.getClan();
-        plugin.getClanManager().addOfflinePlayerToClan(player, clan);
+        String tag = request.getClan();
+        plugin.getClanManager().addOfflinePlayerToClan(player, tag);
 
         //TODO: minimessage placeholder for <clan>
         player.sendMessage(messages.get("clan_accept_success_player"));
