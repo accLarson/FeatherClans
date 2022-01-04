@@ -27,10 +27,11 @@ public final class FeatherClans extends JavaPlugin {
 
         plugin = this;
 
-        this.databaseManager = new DatabaseManager(plugin);
-        this.clanManager = new ClanManager(plugin);
         this.config = new FeatherClansConfig(plugin);
         this.messages = new FeatherClansMessages(plugin);
+
+        this.databaseManager = new DatabaseManager(plugin);
+        this.clanManager = new ClanManager(plugin);
         this.inviteManager = new InviteManager(plugin);
 
         registerCommands();
