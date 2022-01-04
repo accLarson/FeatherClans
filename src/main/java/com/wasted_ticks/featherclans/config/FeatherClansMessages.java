@@ -21,7 +21,6 @@ public class FeatherClansMessages {
     private final Map<String, String> messages;
     private FileConfiguration config;
     private String themePrimary;
-    private String themeSecondary;
 
     public FeatherClansMessages(FeatherClans plugin) {
         messages = new HashMap<>();
@@ -35,9 +34,6 @@ public class FeatherClansMessages {
         for (String key: keys) {
             if(key.equals("clan_theme_primary")) {
                 this.themePrimary = config.getString(key);
-                continue;
-            } else if(key.equals("clan_theme_secondary")) {
-                this.themeSecondary = config.getString(key);
                 continue;
             }
             messages.put(key, config.getString(key));
@@ -75,8 +71,5 @@ public class FeatherClansMessages {
         return this.themePrimary;
     }
 
-    public String getThemeSecondary() {
-        return this.themeSecondary;
-    }
 
 }

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 public class DisbandCommand implements CommandExecutor {
 
@@ -39,7 +40,9 @@ public class DisbandCommand implements CommandExecutor {
                     manager.resignOfflinePlayer(member);
                 }
                 manager.deleteClan(tag);
-                player.sendMessage(messages.get("clan_disband_success", null));
+                player.sendMessage(messages.get("clan_disband_success", Map.of(
+                        "clan", tag
+                )));
                 return true;
             } else {
                 player.sendMessage(messages.get("clan_error_leader", null));

@@ -4,15 +4,11 @@ import com.wasted_ticks.featherclans.commands.*;
 import com.wasted_ticks.featherclans.commands.completers.ClanTabCompleter;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
-import com.wasted_ticks.featherclans.data.ClanMember;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.managers.DatabaseManager;
 import com.wasted_ticks.featherclans.managers.InviteManager;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Logger;
 
@@ -36,6 +32,7 @@ public final class FeatherClans extends JavaPlugin {
         this.config = new FeatherClansConfig(plugin);
         this.messages = new FeatherClansMessages(plugin);
         this.inviteManager = new InviteManager(plugin);
+
         registerCommands();
 
     }
@@ -89,7 +86,6 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("list",new ListCommand(plugin));
         handler.register("leaderboard",new LeaderboardCommand(plugin));
         handler.register("help", new HelpCommand(plugin));
-        handler.register("sudo", new SudoCommand(plugin));
         handler.register("reload", new ReloadCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");

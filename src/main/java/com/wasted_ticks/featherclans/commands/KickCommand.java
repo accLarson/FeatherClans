@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class KickCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
@@ -56,8 +58,14 @@ public class KickCommand implements CommandExecutor {
             originator.sendMessage(messages.get("clan_kick_error",null));
             return false;
         }
-        originator.sendMessage(messages.get("clan_kick_success",null));
-        player.sendMessage(messages.get("clan_kick_success_target",null));
+
+        originator.sendMessage(messages.get("clan_kick_success", Map.of(
+                "player", player.getName()
+        )));
+
+        player.sendMessage(messages.get("clan_kick_success_target",Map.of(
+                "clan", tag
+        )));
 
         return true;
     }

@@ -10,6 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class DeclineCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
@@ -32,10 +34,14 @@ public class DeclineCommand implements CommandExecutor {
         }
 
         String tag = request.getClan();
-        player.sendMessage(messages.get("clan_decline_success", null));
+        player.sendMessage(messages.get("clan_decline_success", Map.of(
+                "clan", tag
+        )));
 
         Player originator = request.getOriginator();
-        player.sendMessage(messages.get("clan_decline_originator", null));
+        originator.sendMessage(messages.get("clan_decline_originator", Map.of(
+                "player", player.getName()
+        )));
 
         plugin.getInviteManager().clearRequest(player);
 

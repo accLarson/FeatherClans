@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 public class ListCommand implements CommandExecutor {
 
@@ -51,8 +52,9 @@ public class ListCommand implements CommandExecutor {
 
         player.sendMessage(messages.get("clan_pre_line", null));
         player.sendMessage("");
-        TextComponent total = Component.text("").append(messages.get("clan_list_total", null)).append(Component.text(clans.size(), TextColor.fromHexString(messages.getThemePrimary())));
-        player.sendMessage(total);
+        player.sendMessage(messages.get("clan_list_total", Map.of(
+                "total", clans.size() + ""
+        )));
         player.sendMessage("");
         TextComponent divider = Component.text("|", TextColor.fromHexString(messages.getThemePrimary()));
         for (String clan: clans) {

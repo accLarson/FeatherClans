@@ -10,6 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class ConferCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
@@ -54,10 +56,13 @@ public class ConferCommand implements CommandExecutor {
 
         boolean successful = this.plugin.getClanManager().setClanLeader(clan, player);
         if(successful) {
-            //TODO: minimessage placeholder for <player>
-            originator.sendMessage(messages.get("clan_confer_success_originator", null));
-            //TODO: minimessage placeholder for <player> <clan>
-            player.sendMessage(messages.get("clan_confer_success_player", null));
+            originator.sendMessage(messages.get("clan_confer_success_originator", Map.of(
+                    "player", player.getName()
+            )));
+            player.sendMessage(messages.get("clan_confer_success_player", Map.of(
+                    "player", originator.getName(),
+                    "clan", clan
+            )));
             return true;
         } else {
             originator.sendMessage(messages.get("clan_confer_error_generic", null));
