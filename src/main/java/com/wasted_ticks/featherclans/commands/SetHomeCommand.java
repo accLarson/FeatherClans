@@ -24,14 +24,14 @@ public class SetHomeCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if(!(sender instanceof Player)){
-            sender.sendMessage(messages.get("clan_error_player"));
+            sender.sendMessage(messages.get("clan_error_player", null));
             return false;
         }
 
         Player player = (Player) sender;
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
         if(!leader) {
-            player.sendMessage(messages.get("clan_error_leader"));
+            player.sendMessage(messages.get("clan_error_leader", null));
             return false;
         }
 
@@ -39,11 +39,11 @@ public class SetHomeCommand implements CommandExecutor {
         Location location  = player.getLocation();
         boolean success = plugin.getClanManager().setClanHome(tag, location);
         if(!success) {
-            player.sendMessage(messages.get("clan_sethome_error_generic"));
+            player.sendMessage(messages.get("clan_sethome_error_generic", null));
             return false;
         }
 
-        player.sendMessage(messages.get("clan_sethome_success"));
+        player.sendMessage(messages.get("clan_sethome_success", null));
         return true;
 
     }

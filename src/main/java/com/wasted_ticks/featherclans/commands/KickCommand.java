@@ -2,7 +2,6 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,48 +23,42 @@ public class KickCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(messages.get("clan_error_player"));
+            sender.sendMessage(messages.get("clan_error_player", null));
             return false;
         }
 
         Player originator = (Player) sender;
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
         if (!leader) {
-            originator.sendMessage(messages.get("clan_error_leader"));
+            originator.sendMessage(messages.get("clan_error_leader",null));
             return false;
         }
 
         if (args.length != 2) {
-            //TODO msg
-            originator.sendMessage("Error: No player specified to kick.");
+            originator.sendMessage(messages.get("clan_kick_error_no_player_specified",null));
             return false;
         }
 
         Player player = Bukkit.getPlayer(args[1]);
         if (player == null) {
-            //TODO msg
-            originator.sendMessage("Error: Unable to resolve player name.");
+            originator.sendMessage(messages.get("clan_kick_error_unresolved_player",null));
             return false;
         }
 
         String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
         if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, tag)) {
-            //TODO msg
-            originator.sendMessage("Error: Player must be in your clan.");
+            originator.sendMessage(messages.get("clan_kick_error_not_in_clan",null));
             return false;
         }
 
         boolean successful = this.plugin.getClanManager().resignOfflinePlayer(player);
         if (!successful) {
-            //TODO msg
-            originator.sendMessage("error kicking player.");
+            originator.sendMessage(messages.get("clan_kick_error",null));
             return false;
         }
+        originator.sendMessage(messages.get("clan_kick_success",null));
+        player.sendMessage(messages.get("clan_kick_success_target",null));
 
-        //TODO msg
-        originator.sendMessage("You've kicked " + player.getName() + " from your clan.");
-        player.sendMessage("You've been kicked from " + tag);
         return true;
-
     }
 }

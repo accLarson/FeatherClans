@@ -28,22 +28,22 @@ public class HelpCommand implements CommandExecutor {
 
             Player player = (Player) sender;
 
-            player.sendMessage(messages.get("clan_pre_line"));
-            player.sendMessage(messages.get("clan_help_home"));         // done
-            player.sendMessage(messages.get("clan_help_sethome"));      // done
-            player.sendMessage(messages.get("clan_help_create"));       // done
-            player.sendMessage(messages.get("clan_help_invite"));       // done
-            player.sendMessage(messages.get("clan_help_kick"));         // done
-            player.sendMessage(messages.get("clan_help_disband"));      // done
-            player.sendMessage(messages.get("clan_help_confer"));       // done
-            player.sendMessage(messages.get("clan_help_chat"));         // done
-            player.sendMessage(messages.get("clan_help_accept"));       // done
-            player.sendMessage(messages.get("clan_help_decline"));      // done
-            player.sendMessage(messages.get("clan_help_help"));         // done
-            player.sendMessage(messages.get("clan_help_list"));         // done
-            player.sendMessage(messages.get("clan_help_leaderboard"));  //
-            player.sendMessage(messages.get("clan_help_roster"));       //
-            player.sendMessage(messages.get("clan_line"));
+            player.sendMessage(messages.get("clan_pre_line", null));
+            player.sendMessage(messages.get("clan_help_home", null));         // done
+            player.sendMessage(messages.get("clan_help_sethome", null));      // done
+            player.sendMessage(messages.get("clan_help_create", null));       // done
+            player.sendMessage(messages.get("clan_help_invite", null));       // done
+            player.sendMessage(messages.get("clan_help_kick", null));         // done
+            player.sendMessage(messages.get("clan_help_disband", null));      // done
+            player.sendMessage(messages.get("clan_help_confer", null));       // done
+            player.sendMessage(messages.get("clan_help_chat", null));         // done
+            player.sendMessage(messages.get("clan_help_accept", null));       // done
+            player.sendMessage(messages.get("clan_help_decline", null));      // done
+            player.sendMessage(messages.get("clan_help_help", null));         // done
+            player.sendMessage(messages.get("clan_help_list", null));         // done
+            player.sendMessage(messages.get("clan_help_leaderboard", null));  //
+            player.sendMessage(messages.get("clan_help_roster", null));       //
+            player.sendMessage(messages.get("clan_line", null));
         }
         return true;
     }

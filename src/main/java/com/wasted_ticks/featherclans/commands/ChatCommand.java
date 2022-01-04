@@ -37,12 +37,12 @@ public class ChatCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Player originator = (Player) sender;
         if(args.length < 2) {
-            originator.sendMessage(messages.get("clan_chat_no_message"));
+            originator.sendMessage(messages.get("clan_chat_no_message", null));
             return false;
         }
 
         if(!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
-            originator.sendMessage(messages.get("clan_chat_no_clan"));
+            originator.sendMessage(messages.get("clan_chat_no_clan", null));
             return false;
         }
 

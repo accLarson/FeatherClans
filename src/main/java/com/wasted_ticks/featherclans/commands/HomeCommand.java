@@ -35,16 +35,16 @@ public class HomeCommand implements CommandExecutor {
 
                 if(plugin.getClanManager().hasClanHome(tag)) {
 
-                    player.sendMessage(messages.get("clan_home_teleport_initiate"));
+                    player.sendMessage(messages.get("clan_home_teleport_initiate", null));
 
                     Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
-                    int delay = this.plugin.getFeatherClansConfig().getTeleportDelaySeconds();
+                    int delay = this.plugin.getFeatherClansConfig().getClanTeleportDelaySeconds();
                     TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
-                        player.sendMessage(messages.get("clan_home_teleport_success"));
+                        player.sendMessage(messages.get("clan_home_teleport_success", null));
                         player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
                     }, (instance) -> {
                         if(!instance.getStartLocation().getBlock().equals(player.getLocation().getBlock())) {
-                            player.sendMessage(messages.get("clan_home_teleport_failure"));
+                            player.sendMessage(messages.get("clan_home_teleport_failure", null));
                             instance.cancel();
                         }
                     }, player.getLocation());
@@ -52,11 +52,11 @@ public class HomeCommand implements CommandExecutor {
 
                     return true;
                 } else {
-                    player.sendMessage(messages.get("clan_home_teleport_error_no_home"));
+                    player.sendMessage(messages.get("clan_home_teleport_error_no_home", null));
                     return false;
                 }
             } else {
-                player.sendMessage(messages.get("clan_home_teleport_error_no_clan"));
+                player.sendMessage(messages.get("clan_home_teleport_error_no_clan", null));
                 return false;
             }
         } else return false;

@@ -26,13 +26,13 @@ public class AcceptCommand implements CommandExecutor {
         Player player = (Player) sender;
         boolean inClan = plugin.getClanManager().isOfflinePlayerLeader(player);
         if(inClan) {
-            player.sendMessage(messages.get("clan_accept_in_clan"));
+            player.sendMessage(messages.get("clan_accept_in_clan", null));
             return false;
         }
 
         RequestUtil request = this.plugin.getInviteManager().getRequest(player);
         if(request == null) {
-            player.sendMessage(messages.get("clan_accept_no_request"));
+            player.sendMessage(messages.get("clan_accept_no_request", null));
             return false;
         }
 
@@ -40,11 +40,11 @@ public class AcceptCommand implements CommandExecutor {
         plugin.getClanManager().addOfflinePlayerToClan(player, tag);
 
         //TODO: minimessage placeholder for <clan>
-        player.sendMessage(messages.get("clan_accept_success_player"));
+        player.sendMessage(messages.get("clan_accept_success_player", null));
 
         Player originator = request.getOriginator();
         //TODO: minimessage placeholder for <player>
-        player.sendMessage(messages.get("clan_accept_success_originator"));
+        player.sendMessage(messages.get("clan_accept_success_originator", null));
 
         plugin.getInviteManager().clearRequest(player);
 

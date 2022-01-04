@@ -47,7 +47,7 @@ public class InviteManager {
                     invitee.sendMessage("Clan invitation request from " + originator.getName() + " has expired.");
                 }
             }
-        }, config.getInviteTimeout() * 20);
+        }, config.getClanInviteTimeout() * 20);
 
         return true;
     }

@@ -34,49 +34,49 @@ public class CreateCommand implements CommandExecutor {
             Player player = (Player) sender;
 
             if (args.length != 2) {
-                player.sendMessage(messages.get("clan_create_error_invalid_arg_length"));
+                player.sendMessage(messages.get("clan_create_error_invalid_arg_length", null));
                 return false;
             }
 
             String tag = args[1];
             if(tag.length() > 255) {
-                player.sendMessage(messages.get("clan_create_error_markup_tag"));
+                player.sendMessage(messages.get("clan_create_error_markup_tag", null));
                 return false;
             }
 
             if(!tag.chars().allMatch(Character::isLetter)) {
-                player.sendMessage(messages.get("clan_create_error_invalid_tag"));
+                player.sendMessage(messages.get("clan_create_error_invalid_tag", null));
                 return false;
             }
 
             List<String> bannedTags = this.plugin.getFeatherClansConfig().getDenyTags();
             if(bannedTags.contains(tag)) {
-                player.sendMessage(messages.get("clan_create_error_denied_tag"));
+                player.sendMessage(messages.get("clan_create_error_denied_tag", null));
                 return false;
             }
 
             List<String> clans = plugin.getClanManager().getClans();
             if(clans.contains(tag)) {
-                player.sendMessage(messages.get("clan_create_error_similar_tag"));
+                player.sendMessage(messages.get("clan_create_error_similar_tag", null));
                 return false;
             }
 
             ItemStack stack = player.getInventory().getItemInMainHand();
             if (!stack.getType().name().contains("BANNER")) {
-                player.sendMessage(messages.get("clan_create_error_banner"));
+                player.sendMessage(messages.get("clan_create_error_banner", null));
                 return false;
             }
 
             boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(player);
             if(inClan) {
-                player.sendMessage(messages.get("clan_create_error_in_clan"));
+                player.sendMessage(messages.get("clan_create_error_in_clan", null));
                 return false;
             }
 
             //check if has balance available to create.
 
             plugin.getClanManager().createClan(player, stack, tag);
-            player.sendMessage(messages.get("clan_create_success"));
+            player.sendMessage(messages.get("clan_create_success", null));
         }
 
         return true;

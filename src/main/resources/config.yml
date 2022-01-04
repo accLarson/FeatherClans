@@ -2,8 +2,8 @@
 # FeatherClans
 #
 settings:
-  use_economy: false
   economy:
+    enabled: false
     creation_price: 100.0
     invite_price: 100.0
     set_home_price: 100.0
@@ -18,10 +18,10 @@ settings:
     max_members: 30
   use_mysql: false
   mysql:
+    enabled: true
     username: ''
     host: localhost
     port: 3306
-    enable: false
     password: ''
     database: ''
   deny_tags:

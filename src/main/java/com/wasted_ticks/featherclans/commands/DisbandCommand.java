@@ -39,10 +39,10 @@ public class DisbandCommand implements CommandExecutor {
                     manager.resignOfflinePlayer(member);
                 }
                 manager.deleteClan(tag);
-                player.sendMessage(messages.get("clan_disband_success"));
+                player.sendMessage(messages.get("clan_disband_success", null));
                 return true;
             } else {
-                player.sendMessage(messages.get("clan_error_leader"));
+                player.sendMessage(messages.get("clan_error_leader", null));
                 return false;
             }
         }

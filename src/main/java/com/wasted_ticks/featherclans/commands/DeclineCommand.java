@@ -24,24 +24,18 @@ public class DeclineCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         Player player = (Player) sender;
-        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(player);
-        if(inClan) {
-            player.sendMessage("You are currently a member of a clan.");
-            return false;
-        }
 
         RequestUtil request = this.plugin.getInviteManager().getRequest(player);
         if(request == null) {
-            player.sendMessage("You currently don't have an invitation request.");
+            player.sendMessage(messages.get("clan_decline_no_invitation", null));
             return false;
         }
 
         String tag = request.getClan();
-
-        player.sendMessage("You've declined invitation request from '" + tag + "'");
+        player.sendMessage(messages.get("clan_decline_success", null));
 
         Player originator = request.getOriginator();
-        originator.sendMessage("Your request to '" + player.getName() + "' has been declined.");
+        player.sendMessage(messages.get("clan_decline_originator", null));
 
         plugin.getInviteManager().clearRequest(player);
 

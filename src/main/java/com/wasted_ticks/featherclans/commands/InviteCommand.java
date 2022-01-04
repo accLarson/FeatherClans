@@ -32,20 +32,21 @@ public class InviteCommand implements CommandExecutor {
             if(isLeader) {
 
                 if (args.length != 2) {
-                    originator.sendMessage("Error: No player specified for invitation to clan.");
+                    originator.sendMessage(messages.get("clan_invite_error_no_player_specified", null));
                     return false;
                 }
 
                 Player invitee = Bukkit.getPlayer(args[1]);
 
                 if(invitee == null) {
-                    originator.sendMessage("Error: Unable to resolve player name.");
+                    originator.sendMessage(messages.get("clan_invite_error_unresolved_player", null));
+
                     return false;
                 }
 
                 boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(invitee);
                 if(inClan) {
-                    originator.sendMessage("Error: Requested player is currently in a clan.");
+                    originator.sendMessage(messages.get("clan_invite_error_already_in_clan", null));
                     return false;
                 }
 
@@ -55,7 +56,7 @@ public class InviteCommand implements CommandExecutor {
                 manager.invite(invitee, tag, originator);
 
             } else {
-                originator.sendMessage(messages.get("clan_error_leader"));
+                originator.sendMessage(messages.get("clan_error_leader", null));
                 return false;
             }
         }

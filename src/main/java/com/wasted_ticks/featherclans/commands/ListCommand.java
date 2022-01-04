@@ -31,14 +31,14 @@ public class ListCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if(!(sender instanceof Player)){
-            sender.sendMessage(messages.get("clan_error_player"));
+            sender.sendMessage(messages.get("clan_error_player", null));
             return false;
         }
 
         Player player = (Player) sender;
         List<String> clans = plugin.getClanManager().getClans();
         if(clans.isEmpty()) {
-            player.sendMessage(messages.get("clan_list_no_clans"));
+            player.sendMessage(messages.get("clan_list_no_clans", null));
             return false;
         }
 
@@ -49,9 +49,9 @@ public class ListCommand implements CommandExecutor {
                 .transformation(TransformationType.RESET)
                 .build();
 
-        player.sendMessage(messages.get("clan_pre_line"));
+        player.sendMessage(messages.get("clan_pre_line", null));
         player.sendMessage("");
-        TextComponent total = Component.text("").append(messages.get("clan_list_total")).append(Component.text(clans.size(), TextColor.fromHexString(messages.getThemePrimary())));
+        TextComponent total = Component.text("").append(messages.get("clan_list_total", null)).append(Component.text(clans.size(), TextColor.fromHexString(messages.getThemePrimary())));
         player.sendMessage(total);
         player.sendMessage("");
         TextComponent divider = Component.text("|", TextColor.fromHexString(messages.getThemePrimary()));
@@ -61,7 +61,7 @@ public class ListCommand implements CommandExecutor {
 
             player.sendMessage(Component.join(divider, tag, size.color(TextColor.fromHexString(messages.getThemePrimary()))));
         }
-        player.sendMessage(messages.get("clan_line"));
+        player.sendMessage(messages.get("clan_line", null));
 
         return true;
     }

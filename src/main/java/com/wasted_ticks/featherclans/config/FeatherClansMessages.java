@@ -4,8 +4,6 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.transformation.TransformationType;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -20,7 +18,7 @@ import java.util.Set;
 public class FeatherClansMessages {
 
     private final FeatherClans plugin;
-    private final Map<String, TextComponent> messages;
+    private final Map<String, String> messages;
     private FileConfiguration config;
     private String themePrimary;
     private String themeSecondary;
@@ -42,13 +40,7 @@ public class FeatherClansMessages {
                 this.themeSecondary = config.getString(key);
                 continue;
             }
-            TextComponent value =  (TextComponent) MiniMessage.builder()
-                    .removeDefaultTransformations()
-                    .transformation(TransformationType.COLOR)
-                    .transformation(TransformationType.RESET)
-                    .build()
-                    .parse(config.getString(key));
-            messages.put(key, value);
+            messages.put(key, config.getString(key));
         }
     }
 
@@ -70,15 +62,13 @@ public class FeatherClansMessages {
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public TextComponent get(String key){
-        return messages.containsKey(key) ? messages.get(key) : Component.text("");
-    }
-
-    public String getAsString(String key) {
+    public TextComponent get(String key, Map<String, String> placeholders){
         if(messages.containsKey(key)) {
-            return LegacyComponentSerializer.legacySection().serialize(messages.get(key));
-        }
-        else return "";
+            MiniMessage serializer = MiniMessage.builder()
+                    .build();
+            if(placeholders == null) return (TextComponent) serializer.parse(messages.get(key));
+            else return (TextComponent) serializer.parse(messages.get(key), placeholders);
+        } else return Component.text("");
     }
 
     public String getThemePrimary() {

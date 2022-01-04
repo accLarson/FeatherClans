@@ -33,7 +33,7 @@ public class Handler implements CommandExecutor {
             if(commands.containsKey(args[0].toLowerCase())) {
                 commands.get(args[0].toLowerCase()).onCommand(sender, command, label, args);
             } else {
-                sender.sendMessage(messages.get("clan_command_error"));
+                sender.sendMessage(messages.get("clan_command_error", null));
             }
         }
         return true;
