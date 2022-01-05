@@ -29,7 +29,7 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.kick")) {
+        if (!sender.hasPermission("feather.clans.kick")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

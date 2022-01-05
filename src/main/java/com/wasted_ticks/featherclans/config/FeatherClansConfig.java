@@ -26,7 +26,6 @@ public class FeatherClansConfig {
     private int clanMaxTagSize;
     private int clanMaxMembers;
 
-    private boolean useMySQL;
     private boolean mysqlEnabled;
     private String mysqlUsername;
     private String mysqlHost;
@@ -50,7 +49,7 @@ public class FeatherClansConfig {
         this.economyInvitePrice = config.getDouble("settings.economy.invite_price");
         this.economySetHomePrice = config.getDouble("settings.economy.set-home_price");
 
-        this.cleanupEnabled = config.getBoolean("settings.use_clean_up");
+        this.cleanupEnabled = config.getBoolean("settings.clean_up.enabled");
         this.cleanupArchiveDays = config.getInt("settings.clean_up.archive_days");
         this.cleanupDeleteDays = config.getInt("settings.clean_up.delete_days");
 
@@ -61,7 +60,6 @@ public class FeatherClansConfig {
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
 
         this.mysqlEnabled = config.getBoolean("settings.mysql.enabled");
-        /* mysql stuff */
         this.mysqlUsername = config.getString("settings.mysql.username");
         this.mysqlHost = config.getString("settings.mysql.host");
         this.mysqlPort = config.getInt("settings.mysql.port");
@@ -73,6 +71,10 @@ public class FeatherClansConfig {
 
     public boolean isEconomyEnabled() {
         return economyEnabled;
+    }
+
+    public void setEconomyEnabled(boolean economyEnabled) {
+        this.economyEnabled = economyEnabled;
     }
 
     public double getEconomyCreationPrice() {
@@ -119,10 +121,6 @@ public class FeatherClansConfig {
         return clanMaxMembers;
     }
 
-    public boolean isUseMySQL() {
-        return useMySQL;
-    }
-
     public boolean isMysqlEnabled() {
         return mysqlEnabled;
     }
@@ -149,9 +147,5 @@ public class FeatherClansConfig {
 
     public List<String> getDenyTags() {
         return denyTags;
-    }
-
-    public void setEconomyEnabled(boolean economyEnabled) {
-        this.economyEnabled = economyEnabled;
     }
 }

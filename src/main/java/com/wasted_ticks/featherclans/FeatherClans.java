@@ -38,8 +38,8 @@ public final class FeatherClans extends JavaPlugin {
         this.clanManager = new ClanManager(plugin);
         this.inviteManager = new InviteManager(plugin);
 
-        if(this.config.isEconomyEnabled()) {
-            if(!setupEconomy()) {
+        if (this.config.isEconomyEnabled()) {
+            if (!setupEconomy()) {
                 plugin.getLog().severe("[FeatherClans] Unable to hook into vault, economy functions will be disabled.");
                 this.config.setEconomyEnabled(false);
             }

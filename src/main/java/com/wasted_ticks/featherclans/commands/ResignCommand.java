@@ -26,7 +26,7 @@ public class ResignCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.resign")) {
+        if (!sender.hasPermission("feather.clans.resign")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

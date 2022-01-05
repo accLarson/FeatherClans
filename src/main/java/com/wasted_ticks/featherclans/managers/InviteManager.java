@@ -38,16 +38,15 @@ public class InviteManager {
             return false;
         }
 
-        if(config.isEconomyEnabled()) {
+        if (config.isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
-            double amount = config.getEconomyCreationPrice();
-            if(economy.has(originator, amount)) {
+            double amount = config.getEconomyInvitePrice();
+            if (economy.has(originator, amount)) {
                 economy.withdrawPlayer(originator, amount);
                 requests.put(invitee.getName(), new RequestUtil(tag, originator));
             } else {
-                originator.sendMessage(messages.get("clan_create_error_economy", Map.of(
-                        "amount", amount + "",
-                        "currency_name", economy.currencyNamePlural()
+                originator.sendMessage(messages.get("clan_invite_error_economy", Map.of(
+                        "amount", String.valueOf((int) amount)
                 )));
                 return true;
             }
@@ -75,7 +74,6 @@ public class InviteManager {
                 }
             }
         }, config.getClanInviteTimeout() * 20);
-
         return true;
     }
 

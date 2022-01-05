@@ -35,7 +35,7 @@ public class ListCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.list")) {
+        if (!sender.hasPermission("feather.clans.list")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

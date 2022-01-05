@@ -32,14 +32,14 @@ public class ClanManager {
         players.stream().forEach(player -> {
             UUID uuid = UUID.fromString(player.getString("mojang_uuid"));
             String tag = player.parent(Clan.class).getString("tag");
-            this.players.put(uuid, tag);
+            this.players.put(uuid, tag.toLowerCase());
         });
 
         List<Clan> clans = Clan.findAll();
         clans.stream().forEach(clan -> {
             String tag = clan.getString("tag");
             UUID leader = UUID.fromString(clan.getString("leader_uuid"));
-            this.clans.put(tag, leader);
+            this.clans.put(tag.toLowerCase(), leader);
         });
     }
 
@@ -75,7 +75,7 @@ public class ClanManager {
      */
     public List<OfflinePlayer> getOfflinePlayersByClan(String clan) {
         return players.entrySet().stream()
-                .filter(entry -> Objects.equals(entry.getValue(), clan))
+                .filter(entry -> Objects.equals(entry.getValue(), clan.toLowerCase()))
                 .map(entry -> Bukkit.getOfflinePlayer(entry.getKey()))
                 .collect(Collectors.toList());
     }
@@ -159,8 +159,8 @@ public class ClanManager {
             ClanMember member = new ClanMember();
             member.set("mojang_uuid", uuid.toString());
             clan.add(member);
-            players.put(uuid, tag);
-            clans.put(tag, uuid);
+            players.put(uuid, tag.toLowerCase());
+            clans.put(tag.toLowerCase(), uuid);
             return clan;
         } else return null;
     }
@@ -174,8 +174,8 @@ public class ClanManager {
     public boolean deleteClan(String tag) {
         Clan clan = Clan.findFirst("tag = ?", tag);
         boolean successful = clan.delete();
-        if(successful) {
-            clans.remove(tag);
+        if (successful) {
+            clans.remove(tag.toLowerCase());
         }
         return successful;
     }
@@ -222,13 +222,14 @@ public class ClanManager {
         member.set("mojang_uuid", uuid.toString());
 
         Clan clan = Clan.findFirst("tag = ?", tag);
-        players.put(player.getUniqueId(), clan.getString("tag"));
+        players.put(player.getUniqueId(), clan.getString("tag").toLowerCase());
 
         clan.add(member);
     }
 
     /**
      * Sets the clan leader to the provided player.
+     *
      * @param tag
      * @param player
      * @return boolean
@@ -237,10 +238,13 @@ public class ClanManager {
         Clan clan = Clan.findFirst("tag = ?", tag);
         clan.setString("leader_uuid", player.getUniqueId());
         boolean successful = clan.save();
-        if(successful) {
-            clans.put(tag, player.getUniqueId());
+        if (successful) {
+            clans.put(tag.toLowerCase(), player.getUniqueId());
         }
         return successful;
     }
 
+    public UUID getLeader(String tag) {
+        return clans.get(tag.toLowerCase());
+    }
 }

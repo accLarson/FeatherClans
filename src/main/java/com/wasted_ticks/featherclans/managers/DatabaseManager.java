@@ -18,7 +18,7 @@ public class DatabaseManager {
 
     public DatabaseManager(FeatherClans plugin) {
         this.plugin = plugin;
-        this.isUseMySQL = this.plugin.getFeatherClansConfig().isUseMySQL();
+        this.isUseMySQL = this.plugin.getFeatherClansConfig().isMysqlEnabled();
         this.initConnection();
         this.initTables();
     }

@@ -27,43 +27,44 @@ public class HelpCommand implements CommandExecutor {
         }
 
         sender.sendMessage(messages.get("clan_pre_line", null));
-        if(!sender.hasPermission("feather.clans.roster")) {
+
+        if (sender.hasPermission("feather.clans.home")) {
             sender.sendMessage(messages.get("clan_help_home", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.sethome")) {
             sender.sendMessage(messages.get("clan_help_sethome", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.create")) {
             sender.sendMessage(messages.get("clan_help_create", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.invite")) {
             sender.sendMessage(messages.get("clan_help_invite", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.disband")) {
             sender.sendMessage(messages.get("clan_help_disband", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.confer")) {
             sender.sendMessage(messages.get("clan_help_confer", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.chat")) {
             sender.sendMessage(messages.get("clan_help_chat", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.accept")) {
             sender.sendMessage(messages.get("clan_help_accept", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.decline")) {
             sender.sendMessage(messages.get("clan_help_decline", null));
         }
 
         sender.sendMessage(messages.get("clan_help_help", null));
 
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.list")) {
             sender.sendMessage(messages.get("clan_help_list", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.leaderboard")) {
             sender.sendMessage(messages.get("clan_help_leaderboard", null));
         }
-        if(!sender.hasPermission("feather.clans.roster")) {
+        if (sender.hasPermission("feather.clans.roster")) {
             sender.sendMessage(messages.get("clan_help_roster", null));
         }
         sender.sendMessage(messages.get("clan_line", null));

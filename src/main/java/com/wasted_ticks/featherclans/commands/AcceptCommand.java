@@ -29,7 +29,7 @@ public class AcceptCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.accept")) {
+        if (!sender.hasPermission("feather.clans.accept")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
@@ -51,7 +51,7 @@ public class AcceptCommand implements CommandExecutor {
         plugin.getClanManager().addOfflinePlayerToClan(player, tag);
 
         player.sendMessage(messages.get("clan_accept_success_player", Map.of(
-                "clan", "tag"
+                "clan", tag
         )));
 
         Player originator = request.getOriginator();

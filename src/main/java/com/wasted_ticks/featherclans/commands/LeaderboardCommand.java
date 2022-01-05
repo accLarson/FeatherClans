@@ -26,7 +26,7 @@ public class LeaderboardCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.leaderboard")) {
+        if (!sender.hasPermission("feather.clans.leaderboard")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

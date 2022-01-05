@@ -4,11 +4,15 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.InviteManager;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Map;
 
 public class InviteCommand implements CommandExecutor {
 
@@ -28,7 +32,7 @@ public class InviteCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.create")) {
+        if (!sender.hasPermission("feather.clans.create")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
@@ -36,6 +40,7 @@ public class InviteCommand implements CommandExecutor {
         Player originator = (Player) sender;
         if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
             originator.sendMessage(messages.get("clan_error_leader", null));
+            return true;
         }
 
         if (args.length != 2) {
@@ -56,6 +61,14 @@ public class InviteCommand implements CommandExecutor {
         }
 
         String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
+        int max = this.plugin.getFeatherClansConfig().getClanMaxMembers();
+        List<OfflinePlayer> players = plugin.getClanManager().getOfflinePlayersByClan(tag);
+        if(players.size() >= max) {
+            originator.sendMessage(messages.get("clan_invite_error_max", Map.of(
+                    "max", String.valueOf(max)
+            )));
+            return true;
+        }
 
         InviteManager manager = plugin.getInviteManager();
         manager.invite(invitee, tag, originator);

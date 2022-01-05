@@ -29,7 +29,7 @@ public class DeclineCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.decline")) {
+        if (!sender.hasPermission("feather.clans.decline")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

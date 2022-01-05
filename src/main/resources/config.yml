@@ -1,23 +1,39 @@
 #
 # FeatherClans
 #
+#
+# Permission nodes:
+#
+# feather.clans.accept
+# feather.clans.chat
+# feather.clans.confer
+# feather.clans.create
+# feather.clans.decline
+# feather.clans.disband
+# feather.clans.home
+# feather.clans.invite
+# feather.clans.kick
+# feather.clans.list
+# feather.clans.resign
+# feather.clans.roster
+# feather.clans.sethome
+
 settings:
   economy:
     enabled: false
     creation_price: 100.0
     invite_price: 100.0
     set_home_price: 100.0
-  use_clean_up: false
   clean_up:
+    enabled: false
     archive_days: 30
     delete_days: 45
   clan:
-    invite_timeout: 10
+    invite_timeout: 15
     teleport_delay_seconds: 5
     min_tag_size: 3
-    max_tag_size: 8
+    max_tag_size: 5
     max_members: 30
-  use_mysql: false
   mysql:
     enabled: false
     username: ''

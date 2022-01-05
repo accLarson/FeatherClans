@@ -33,7 +33,7 @@ public class DisbandCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.disband")) {
+        if (!sender.hasPermission("feather.clans.disband")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

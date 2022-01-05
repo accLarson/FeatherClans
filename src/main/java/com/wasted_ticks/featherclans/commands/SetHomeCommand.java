@@ -30,7 +30,7 @@ public class SetHomeCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.sethome")) {
+        if (!sender.hasPermission("feather.clans.sethome")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
@@ -46,16 +46,15 @@ public class SetHomeCommand implements CommandExecutor {
         Location location = player.getLocation();
 
         boolean success = false;
-        if(this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
+        if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
             double amount = this.plugin.getFeatherClansConfig().getEconomySetHomePrice();
-            if(economy.has(player, amount)) {
+            if (economy.has(player, amount)) {
                 economy.withdrawPlayer(player, amount);
                 success = plugin.getClanManager().setClanHome(tag, location);
             } else {
                 player.sendMessage(messages.get("clan_sethome_error_economy", Map.of(
-                        "amount", amount + "",
-                        "currency_name", economy.currencyNamePlural()
+                        "amount", String.valueOf((int) amount)
                 )));
                 return true;
             }

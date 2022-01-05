@@ -29,15 +29,14 @@ public class ConferCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.confer")) {
+        if (!sender.hasPermission("feather.clans.confer")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
 
         Player originator = (Player) sender;
-        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
-        if (!leader) {
+        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }

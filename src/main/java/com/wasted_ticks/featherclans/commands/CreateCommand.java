@@ -34,7 +34,7 @@ public class CreateCommand implements CommandExecutor {
             return true;
         }
 
-        if(!sender.hasPermission("feather.clans.create")) {
+        if (!sender.hasPermission("feather.clans.create")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
@@ -91,16 +91,15 @@ public class CreateCommand implements CommandExecutor {
             return true;
         }
 
-        if(config.isEconomyEnabled()) {
+        if (config.isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
             double amount = config.getEconomyCreationPrice();
-            if(economy.has(player, amount)) {
+            if (economy.has(player, amount)) {
                 economy.withdrawPlayer(player, amount);
                 plugin.getClanManager().createClan(player, stack, tag);
             } else {
                 player.sendMessage(messages.get("clan_create_error_economy", Map.of(
-                        "amount", amount + "",
-                        "currency_name", economy.currencyNamePlural()
+                        "amount", String.valueOf((int) amount)
                 )));
                 return true;
             }
