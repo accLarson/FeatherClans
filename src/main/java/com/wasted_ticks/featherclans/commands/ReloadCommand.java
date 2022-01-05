@@ -13,7 +13,7 @@ public class ReloadCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public ReloadCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 

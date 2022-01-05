@@ -1,6 +1,5 @@
 package com.wasted_ticks.featherclans.util;
 
-import com.wasted_ticks.featherclans.data.Clan;
 import org.bukkit.entity.Player;
 
 public class RequestUtil {

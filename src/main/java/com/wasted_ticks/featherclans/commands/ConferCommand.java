@@ -2,7 +2,6 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,44 +17,44 @@ public class ConferCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public ConferCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if(!(sender instanceof Player)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
             return false;
         }
 
         Player originator = (Player) sender;
-        if(args.length != 2) {
+        if (args.length != 2) {
             originator.sendMessage(messages.get("clan_confer_no_player", null));
             return false;
         }
 
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
-        if(!leader) {
+        if (!leader) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return false;
         }
 
         Player player = Bukkit.getPlayer(args[1]);
-        if(player == null) {
+        if (player == null) {
             originator.sendMessage(messages.get("clan_confer_unresolved_player", null));
             return false;
         }
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
-        if(!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, clan)) {
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, clan)) {
             originator.sendMessage(messages.get("clan_confer_not_in_clan", null));
             return false;
         }
 
         boolean successful = this.plugin.getClanManager().setClanLeader(clan, player);
-        if(successful) {
+        if (successful) {
             originator.sendMessage(messages.get("clan_confer_success_originator", Map.of(
                     "player", player.getName()
             )));
@@ -68,8 +67,6 @@ public class ConferCommand implements CommandExecutor {
             originator.sendMessage(messages.get("clan_confer_error_generic", null));
             return false;
         }
-
-
 
 
     }

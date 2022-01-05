@@ -1,285 +1,285 @@
-1:  
+1:
   character: " "
   width: 4
-2:  
+2:
   character: "!"
   width: 2
-3:  
+3:
   character: "\""
   width: 4
-4:  
+4:
   character: "#"
   width: 6
-5:  
+5:
   character: "$"
   width: 6
-6:  
+6:
   character: "%"
   width: 6
-7:  
+7:
   character: "&"
   width: 6
-8:  
+8:
   character: "'"
   width: 2
-9:  
+9:
   character: "("
   width: 4
-10:  
+10:
   character: ")"
   width: 4
-11:  
+11:
   character: "*"
   width: 4
-12:  
+12:
   character: "+"
   width: 6
-13:  
+13:
   character: ","
   width: 2
-14:  
+14:
   character: "-"
   width: 6
-15:  
+15:
   character: "."
   width: 2
-16:  
+16:
   character: "/"
   width: 6
-17:  
+17:
   character: "0"
   width: 6
-18:  
+18:
   character: "1"
   width: 6
-19:  
+19:
   character: "2"
   width: 6
-20:  
+20:
   character: "3"
   width: 6
-21:  
+21:
   character: "4"
   width: 6
-22:  
+22:
   character: "5"
   width: 6
-23:  
+23:
   character: "6"
   width: 6
-24:  
+24:
   character: "7"
   width: 6
-25:  
+25:
   character: "8"
   width: 6
-26:  
+26:
   character: "9"
   width: 6
-27:  
+27:
   character: ":"
   width: 2
-28:  
+28:
   character: ";"
   width: 2
-29:  
+29:
   character: "<"
   width: 5
-30:  
+30:
   character: "="
   width: 6
-31:  
+31:
   character: ">"
   width: 5
-32:  
+32:
   character: "?"
   width: 6
-33:  
+33:
   character: "@"
   width: 7
-34:  
+34:
   character: "A"
   width: 6
-35:  
+35:
   character: "B"
   width: 6
-36:  
+36:
   character: "C"
   width: 6
-37:  
+37:
   character: "D"
   width: 6
-38:  
+38:
   character: "E"
   width: 6
-39:  
+39:
   character: "F"
   width: 6
-40:  
+40:
   character: "G"
   width: 6
-41:  
+41:
   character: "H"
   width: 6
-42:  
+42:
   character: "I"
   width: 4
-43:  
+43:
   character: "J"
   width: 6
-44:  
+44:
   character: "K"
   width: 6
-45:  
+45:
   character: "L"
   width: 6
-46:  
+46:
   character: "M"
   width: 6
-47:  
+47:
   character: "N"
   width: 6
-48:  
+48:
   character: "O"
   width: 6
-49:  
+49:
   character: "P"
   width: 6
-50:  
+50:
   character: "Q"
   width: 6
-51:  
+51:
   character: "R"
   width: 6
-52:  
+52:
   character: "S"
   width: 6
-53:  
+53:
   character: "T"
   width: 6
-54:  
+54:
   character: "U"
   width: 6
-55:  
+55:
   character: "V"
   width: 6
-56:  
+56:
   character: "W"
   width: 6
-57:  
+57:
   character: "X"
   width: 6
-58:  
+58:
   character: "Y"
   width: 6
-59:  
+59:
   character: "Z"
   width: 6
-60:  
+60:
   character: "["
   width: 4
-61:  
+61:
   character: "\\"
   width: 6
-62:  
+62:
   character: "]"
   width: 4
-63:  
+63:
   character: "^"
   width: 6
-64:  
+64:
   character: "_"
   width: 6
-65:  
+65:
   character: "`"
   width: 3
-66:  
+66:
   character: "a"
   width: 6
-67:  
+67:
   character: "b"
   width: 6
-68:  
+68:
   character: "c"
   width: 6
-69:  
+69:
   character: "d"
   width: 6
-70:  
+70:
   character: "e"
   width: 6
-71:  
+71:
   character: "f"
   width: 5
-72:  
+72:
   character: "g"
   width: 6
-73:  
+73:
   character: "h"
   width: 6
-74:  
+74:
   character: "i"
   width: 2
-75:  
+75:
   character: "j"
   width: 6
-76:  
+76:
   character: "k"
   width: 5
-77:  
+77:
   character: "l"
   width: 3
-78:  
+78:
   character: "m"
   width: 6
-79:  
+79:
   character: "n"
   width: 6
-80:  
+80:
   character: "o"
   width: 6
-81:  
+81:
   character: "p"
   width: 6
-82:  
+82:
   character: "q"
   width: 6
-83:  
+83:
   character: "r"
   width: 6
-84:  
+84:
   character: "s"
   width: 6
-85:  
+85:
   character: "t"
   width: 4
-86:  
+86:
   character: "u"
   width: 6
-87:  
+87:
   character: "v"
   width: 6
-88:  
+88:
   character: "w"
   width: 6
-89:  
+89:
   character: "x"
   width: 6
-90:  
+90:
   character: "y"
   width: 6
-91:  
+91:
   character: "z"
   width: 6
-92:  
+92:
   character: "{"
   width: 4
-93:  
+93:
   character: "|"
   width: 2
-94:  
+94:
   character: "}"
   width: 4
-95:  
+95:
   character: "~"
   width: 7

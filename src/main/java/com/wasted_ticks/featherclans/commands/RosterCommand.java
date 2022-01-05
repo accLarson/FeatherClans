@@ -13,7 +13,7 @@ public class RosterCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public RosterCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 

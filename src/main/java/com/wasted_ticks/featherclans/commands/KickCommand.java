@@ -17,7 +17,7 @@ public class KickCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public KickCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 
@@ -32,30 +32,30 @@ public class KickCommand implements CommandExecutor {
         Player originator = (Player) sender;
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
         if (!leader) {
-            originator.sendMessage(messages.get("clan_error_leader",null));
+            originator.sendMessage(messages.get("clan_error_leader", null));
             return false;
         }
 
         if (args.length != 2) {
-            originator.sendMessage(messages.get("clan_kick_error_no_player_specified",null));
+            originator.sendMessage(messages.get("clan_kick_error_no_player_specified", null));
             return false;
         }
 
         Player player = Bukkit.getPlayer(args[1]);
         if (player == null) {
-            originator.sendMessage(messages.get("clan_kick_error_unresolved_player",null));
+            originator.sendMessage(messages.get("clan_kick_error_unresolved_player", null));
             return false;
         }
 
         String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
         if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, tag)) {
-            originator.sendMessage(messages.get("clan_kick_error_not_in_clan",null));
+            originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
             return false;
         }
 
         boolean successful = this.plugin.getClanManager().resignOfflinePlayer(player);
         if (!successful) {
-            originator.sendMessage(messages.get("clan_kick_error",null));
+            originator.sendMessage(messages.get("clan_kick_error", null));
             return false;
         }
 
@@ -63,7 +63,7 @@ public class KickCommand implements CommandExecutor {
                 "player", player.getName()
         )));
 
-        player.sendMessage(messages.get("clan_kick_success_target",Map.of(
+        player.sendMessage(messages.get("clan_kick_success_target", Map.of(
                 "clan", tag
         )));
 

@@ -3,7 +3,6 @@ package com.wasted_ticks.featherclans.managers;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.util.RequestUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -34,7 +33,7 @@ public class InviteManager {
 
     public boolean invite(Player invitee, String tag, Player originator) {
 
-        if(requests.containsKey(invitee.getName())) {
+        if (requests.containsKey(invitee.getName())) {
             return false;
         }
 
@@ -53,7 +52,7 @@ public class InviteManager {
             @Override
             public void run() {
                 RequestUtil request = requests.remove(invitee.getName());
-                if(request != null) {
+                if (request != null) {
                     invitee.sendMessage(messages.get("clan_invite_expired", Map.of(
                             "player", originator.getName()
                     )));

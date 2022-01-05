@@ -2,15 +2,11 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
-import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.transformation.TransformationType;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -29,19 +25,19 @@ public class ChatCommand implements CommandExecutor {
 
 
     public ChatCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Player originator = (Player) sender;
-        if(args.length < 2) {
+        if (args.length < 2) {
             originator.sendMessage(messages.get("clan_chat_no_message", null));
             return false;
         }
 
-        if(!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
+        if (!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
             originator.sendMessage(messages.get("clan_chat_no_clan", null));
             return false;
         }
@@ -49,7 +45,7 @@ public class ChatCommand implements CommandExecutor {
         String input = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
         String clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        TextComponent tag =  (TextComponent) MiniMessage.builder()
+        TextComponent tag = (TextComponent) MiniMessage.builder()
                 .removeDefaultTransformations()
                 .transformation(TransformationType.COLOR)
                 .transformation(TransformationType.RESET)
@@ -59,8 +55,8 @@ public class ChatCommand implements CommandExecutor {
         TextComponent message = Component.join(Component.text(": ", TextColor.fromHexString(messages.getThemePrimary())), component, Component.text(input));
 
         List<OfflinePlayer> players = plugin.getClanManager().getOfflinePlayersByClan(clan);
-        for (OfflinePlayer player: players) {
-            if(player.isOnline()) {
+        for (OfflinePlayer player : players) {
+            if (player.isOnline()) {
                 player.getPlayer().sendMessage(message);
             }
         }

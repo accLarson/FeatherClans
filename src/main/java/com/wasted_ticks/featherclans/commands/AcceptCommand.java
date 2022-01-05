@@ -2,7 +2,6 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.util.RequestUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,7 +17,7 @@ public class AcceptCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public AcceptCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 
@@ -27,13 +26,13 @@ public class AcceptCommand implements CommandExecutor {
 
         Player player = (Player) sender;
         boolean inClan = plugin.getClanManager().isOfflinePlayerLeader(player);
-        if(inClan) {
+        if (inClan) {
             player.sendMessage(messages.get("clan_accept_in_clan", null));
             return false;
         }
 
         RequestUtil request = this.plugin.getInviteManager().getRequest(player);
-        if(request == null) {
+        if (request == null) {
             player.sendMessage(messages.get("clan_accept_no_request", null));
             return false;
         }
@@ -42,7 +41,7 @@ public class AcceptCommand implements CommandExecutor {
         plugin.getClanManager().addOfflinePlayerToClan(player, tag);
 
         player.sendMessage(messages.get("clan_accept_success_player", Map.of(
-                "clan","tag"
+                "clan", "tag"
         )));
 
         Player originator = request.getOriginator();

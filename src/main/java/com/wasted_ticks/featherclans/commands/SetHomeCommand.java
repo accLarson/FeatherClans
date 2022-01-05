@@ -2,7 +2,6 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,29 +15,29 @@ public class SetHomeCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public SetHomeCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if(!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
             return false;
         }
 
         Player player = (Player) sender;
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
-        if(!leader) {
+        if (!leader) {
             player.sendMessage(messages.get("clan_error_leader", null));
             return false;
         }
 
         String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
-        Location location  = player.getLocation();
+        Location location = player.getLocation();
         boolean success = plugin.getClanManager().setClanHome(tag, location);
-        if(!success) {
+        if (!success) {
             player.sendMessage(messages.get("clan_sethome_error_generic", null));
             return false;
         }

@@ -13,7 +13,7 @@ public class LeaderboardCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public LeaderboardCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 

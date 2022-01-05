@@ -31,8 +31,8 @@ public class FeatherClansMessages {
 
     private void load() {
         Set<String> keys = config.getKeys(false);
-        for (String key: keys) {
-            if(key.equals("clan_theme_primary")) {
+        for (String key : keys) {
+            if (key.equals("clan_theme_primary")) {
                 this.themePrimary = config.getString(key);
                 continue;
             }
@@ -42,7 +42,7 @@ public class FeatherClansMessages {
 
     private void init() {
         File file = new File(this.plugin.getDataFolder(), "messages.yml");
-        if(!file.exists()) {
+        if (!file.exists()) {
             this.plugin.saveResource("messages.yml", false);
         }
 
@@ -53,16 +53,17 @@ public class FeatherClansMessages {
         config.setDefaults(defaultConfig);
         try {
             config.save(file);
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
 
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public TextComponent get(String key, Map<String, String> placeholders){
-        if(messages.containsKey(key)) {
+    public TextComponent get(String key, Map<String, String> placeholders) {
+        if (messages.containsKey(key)) {
             MiniMessage serializer = MiniMessage.builder()
                     .build();
-            if(placeholders == null) return (TextComponent) serializer.parse(messages.get(key));
+            if (placeholders == null) return (TextComponent) serializer.parse(messages.get(key));
             else return (TextComponent) serializer.parse(messages.get(key), placeholders);
         } else return Component.text("");
     }

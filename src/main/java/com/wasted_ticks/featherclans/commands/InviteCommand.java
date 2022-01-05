@@ -2,8 +2,6 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
-import com.wasted_ticks.featherclans.data.ClanMember;
 import com.wasted_ticks.featherclans.managers.InviteManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -18,18 +16,18 @@ public class InviteCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public InviteCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
 
             Player originator = (Player) sender;
             boolean isLeader = plugin.getClanManager().isOfflinePlayerLeader(originator);
 
-            if(isLeader) {
+            if (isLeader) {
 
                 if (args.length != 2) {
                     originator.sendMessage(messages.get("clan_invite_error_no_player_specified", null));
@@ -38,14 +36,14 @@ public class InviteCommand implements CommandExecutor {
 
                 Player invitee = Bukkit.getPlayer(args[1]);
 
-                if(invitee == null) {
+                if (invitee == null) {
                     originator.sendMessage(messages.get("clan_invite_error_unresolved_player", null));
 
                     return false;
                 }
 
                 boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(invitee);
-                if(inClan) {
+                if (inClan) {
                     originator.sendMessage(messages.get("clan_invite_error_already_in_clan", null));
                     return false;
                 }

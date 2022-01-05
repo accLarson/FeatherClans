@@ -27,10 +27,10 @@ public class Handler implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(args.length == 0) {
+        if (args.length == 0) {
             commands.get("help").onCommand(sender, command, label, args);
         } else {
-            if(commands.containsKey(args[0].toLowerCase())) {
+            if (commands.containsKey(args[0].toLowerCase())) {
                 commands.get(args[0].toLowerCase()).onCommand(sender, command, label, args);
             } else {
                 sender.sendMessage(messages.get("clan_command_error", null));

@@ -20,7 +20,6 @@ public class TeleportTimerUtil implements Runnable {
     private Location location;
 
     /**
-     *
      * @param plugin
      * @param seconds
      * @param before
@@ -39,12 +38,12 @@ public class TeleportTimerUtil implements Runnable {
 
     @Override
     public void run() {
-        if(remaining <= 0) {
-            if(after != null) after.run();
+        if (remaining <= 0) {
+            if (after != null) after.run();
             Bukkit.getScheduler().cancelTask(taskID);
             return;
         }
-        if(seconds == remaining && before != null) before.run();
+        if (seconds == remaining && before != null) before.run();
         during.accept(this);
         remaining--;
     }

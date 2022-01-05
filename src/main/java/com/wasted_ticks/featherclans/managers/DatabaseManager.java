@@ -58,7 +58,7 @@ public class DatabaseManager {
     }
 
     private void initConnection() {
-        if(this.isUseMySQL) {
+        if (this.isUseMySQL) {
             this.initMySQLConnection();
         } else {
             this.initSQLiteConnection();
@@ -67,13 +67,13 @@ public class DatabaseManager {
 
     private void initSQLiteConnection() {
         File folder = this.plugin.getDataFolder();
-        if(!folder.exists()) {
+        if (!folder.exists()) {
             boolean created = folder.mkdir();
-            if(!created) {
+            if (!created) {
                 plugin.getLog().severe("[FeatherClans] Unable to create plugin data folder.");
             }
         }
-        File file = new File(folder.getAbsolutePath() + File.separator +  "FeatherClans.db");
+        File file = new File(folder.getAbsolutePath() + File.separator + "FeatherClans.db");
 
         try {
             DatabaseManager.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
@@ -109,7 +109,7 @@ public class DatabaseManager {
 
     private boolean existsTable(String table) {
         try {
-            if(!connection.isClosed()) {
+            if (!connection.isClosed()) {
                 ResultSet rs = connection.getMetaData().getTables(null, null, table, null);
                 return rs.next();
             } else {
@@ -123,7 +123,7 @@ public class DatabaseManager {
     }
 
     private void initTables() {
-        if(this.isUseMySQL) {
+        if (this.isUseMySQL) {
             this.initMySQLTables();
         } else {
             this.initSQLiteTables();
@@ -131,7 +131,7 @@ public class DatabaseManager {
     }
 
     private void initSQLiteTables() {
-        if(!this.existsTable("clans")) {
+        if (!this.existsTable("clans")) {
             plugin.getLog().info("[FeatherClans] Creating clans table.");
             String query = "CREATE TABLE IF NOT EXISTS `clans` ("
                     + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -142,7 +142,7 @@ public class DatabaseManager {
                     + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
                     + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             try {
-                if(!connection.isClosed()) {
+                if (!connection.isClosed()) {
                     connection.createStatement().execute(query);
                 }
             } catch (SQLException e) {
@@ -151,7 +151,7 @@ public class DatabaseManager {
             }
         }
 
-        if(!this.existsTable("clan_members")) {
+        if (!this.existsTable("clan_members")) {
             plugin.getLog().info("[FeatherClans] Creating clan_members table.");
             String query = "CREATE TABLE IF NOT EXISTS `clan_members` ("
                     + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -160,7 +160,7 @@ public class DatabaseManager {
                     + " `last_seen_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
                     + " `join_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             try {
-                if(!connection.isClosed()) {
+                if (!connection.isClosed()) {
                     connection.createStatement().execute(query);
                 }
             } catch (SQLException e) {
@@ -198,7 +198,7 @@ public class DatabaseManager {
                     + " `last_seen_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
                     + " `join_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             try {
-                if(!connection.isClosed()) {
+                if (!connection.isClosed()) {
                     connection.createStatement().execute(query);
                 }
             } catch (SQLException e) {

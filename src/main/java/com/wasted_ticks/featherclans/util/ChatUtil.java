@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -23,15 +22,17 @@ public class ChatUtil {
         this.init();
     }
 
-    public void init(){
+    public void init() {
         File file = new File(Bukkit.getPluginManager().getPlugin("FeatherClans").getDataFolder(), "characters.yml");
-        if (!file.exists()) {Bukkit.getPluginManager().getPlugin("FeatherClans").saveResource("characters.yml",false);}
+        if (!file.exists()) {
+            Bukkit.getPluginManager().getPlugin("FeatherClans").saveResource("characters.yml", false);
+        }
         YamlConfiguration characters = YamlConfiguration.loadConfiguration(file);
         characters.getKeys(false).forEach(key -> dictionary.put((String) characters.get(key + ".character"), characters.getInt(key + ".width")));
     }
 
 
-    public int getWidth(TextComponent textComponent){
+    public int getWidth(TextComponent textComponent) {
         String string = PlainTextComponentSerializer.plainText().serialize(textComponent);
         int stringWidth = 0;
         for (char c : string.toCharArray()) stringWidth += dictionary.get(String.valueOf(c));
@@ -42,26 +43,23 @@ public class ChatUtil {
         return this.addSpacing(textComponent, pixels, false);
     }
 
-    public TextComponent addSpacing(TextComponent textComponent, int pixels, boolean isRightAligned){
+    public TextComponent addSpacing(TextComponent textComponent, int pixels, boolean isRightAligned) {
         double difference = pixels - getWidth(textComponent);
         int addonSpaces;
         int addonBoldSpaces = 0;
 
         // Calculate how many regular and bold spaces to append to the given string to meet the requested length
-        if (difference % 4 == 1 && difference >= 4){
-            addonSpaces = (int) (Math.floor(difference/4) - 1);
+        if (difference % 4 == 1 && difference >= 4) {
+            addonSpaces = (int) (Math.floor(difference / 4) - 1);
             addonBoldSpaces = 1;
-        }
-        else if (difference % 4 == 2 && difference >= 8){
-            addonSpaces = (int) (Math.floor(difference/4) - 2);
+        } else if (difference % 4 == 2 && difference >= 8) {
+            addonSpaces = (int) (Math.floor(difference / 4) - 2);
             addonBoldSpaces = 2;
-        }
-        else if (difference % 4 == 3 && difference >= 12){
-            addonSpaces = (int) (Math.floor(difference/4) - 3);
+        } else if (difference % 4 == 3 && difference >= 12) {
+            addonSpaces = (int) (Math.floor(difference / 4) - 3);
             addonBoldSpaces = 3;
-        }
-        else{
-            addonSpaces = (int) (difference/4);
+        } else {
+            addonSpaces = (int) (difference / 4);
         }
         // Append spaces and bold spaces to the end of the given string
         StringBuilder stringBuilder = new StringBuilder();

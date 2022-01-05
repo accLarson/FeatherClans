@@ -56,13 +56,17 @@ public final class FeatherClans extends JavaPlugin {
         return this.clanManager;
     }
 
-    public InviteManager getInviteManager() { return this.inviteManager; }
+    public InviteManager getInviteManager() {
+        return this.inviteManager;
+    }
 
     public DatabaseManager getDatabaseManager() {
         return this.databaseManager;
     }
 
-    public FeatherClansConfig getFeatherClansConfig() { return this.config; }
+    public FeatherClansConfig getFeatherClansConfig() {
+        return this.config;
+    }
 
     public FeatherClansMessages getFeatherClansMessages() {
         return this.messages;
@@ -84,14 +88,14 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("resign", new ResignCommand(plugin));
         handler.register("roster", new RosterCommand(plugin));
         handler.register("chat", new ChatCommand(plugin));
-        handler.register("list",new ListCommand(plugin));
-        handler.register("leaderboard",new LeaderboardCommand(plugin));
+        handler.register("list", new ListCommand(plugin));
+        handler.register("leaderboard", new LeaderboardCommand(plugin));
         handler.register("help", new HelpCommand(plugin));
         handler.register("reload", new ReloadCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 
-        if(command != null) {
+        if (command != null) {
             command.setExecutor(handler);
             command.setTabCompleter(new ClanTabCompleter(plugin));
         }

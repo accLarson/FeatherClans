@@ -2,7 +2,6 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -24,21 +23,21 @@ public class ListCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public ListCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if(!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
             return false;
         }
 
         Player player = (Player) sender;
         List<String> clans = plugin.getClanManager().getClans();
-        if(clans.isEmpty()) {
+        if (clans.isEmpty()) {
             player.sendMessage(messages.get("clan_list_no_clans", null));
             return false;
         }
@@ -57,8 +56,8 @@ public class ListCommand implements CommandExecutor {
         )));
         player.sendMessage("");
         TextComponent divider = Component.text("|", TextColor.fromHexString(messages.getThemePrimary()));
-        for (String clan: clans) {
-            TextComponent tag = chatUtil.addSpacing((TextComponent)parser.parse(clan), 50);
+        for (String clan : clans) {
+            TextComponent tag = chatUtil.addSpacing((TextComponent) parser.parse(clan), 50);
             TextComponent size = chatUtil.addSpacing(Component.text(plugin.getClanManager().getOfflinePlayersByClan(clan).size()), 20, true);
 
             player.sendMessage(Component.join(divider, tag, size.color(TextColor.fromHexString(messages.getThemePrimary()))));

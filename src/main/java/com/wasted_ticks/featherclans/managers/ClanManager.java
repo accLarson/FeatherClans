@@ -9,17 +9,20 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ClanManager {
 
 
-    private final FeatherClans plugin;
     // map player UUID -> clan tag.
     private static HashMap<UUID, String> players = new HashMap<>();
     // map clan tag -> clan leader.
     private static HashMap<String, UUID> clans = new HashMap<>();
+    private final FeatherClans plugin;
 
     public ClanManager(FeatherClans plugin) {
         this.plugin = plugin;
@@ -105,7 +108,7 @@ public class ClanManager {
 
     public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, String clan) {
         String tag = players.get(player.getUniqueId());
-        if(tag != null) {
+        if (tag != null) {
             return tag.equals(clan);
         }
         return false;
@@ -138,7 +141,7 @@ public class ClanManager {
      * Creates a new clan.
      *
      * @param player leader
-     * @param stack banner
+     * @param stack  banner
      * @param tag
      * @return returns the newly created clan or null if unsuccessful.
      */
@@ -155,9 +158,9 @@ public class ClanManager {
         clan.set("tag", tag);
         clan.set("leader_uuid", uuid.toString());
 
-        if(clan.save()) {
+        if (clan.save()) {
             ClanMember member = new ClanMember();
-            member.set("mojang_uuid",uuid.toString());
+            member.set("mojang_uuid", uuid.toString());
             clan.add(member);
             players.put(uuid, tag);
             return clan;
@@ -184,10 +187,11 @@ public class ClanManager {
      */
     public boolean resignOfflinePlayer(OfflinePlayer player) {
         ClanMember member = ClanMember.findFirst("mojang_uuid = ?", player.getUniqueId().toString());
-        if(member != null) {
+        if (member != null) {
             players.remove(player.getUniqueId());
             return member.delete();
-        } return false;
+        }
+        return false;
     }
 
     /**
@@ -213,7 +217,7 @@ public class ClanManager {
     public void addOfflinePlayerToClan(OfflinePlayer player, String tag) {
         ClanMember member = new ClanMember();
         UUID uuid = player.getUniqueId();
-        member.set("mojang_uuid",uuid.toString());
+        member.set("mojang_uuid", uuid.toString());
 
         Clan clan = Clan.findFirst("tag = ?", tag);
         players.put(player.getUniqueId(), clan.getString("tag"));

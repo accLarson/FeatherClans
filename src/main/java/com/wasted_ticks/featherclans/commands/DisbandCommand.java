@@ -2,7 +2,6 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.data.Clan;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -21,22 +20,22 @@ public class DisbandCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
     public DisbandCommand(FeatherClans plugin) {
-        this.plugin  = plugin;
+        this.plugin = plugin;
         this.manager = plugin.getClanManager();
         this.messages = plugin.getFeatherClansMessages();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
 
             Player player = (Player) sender;
             boolean isLeader = manager.isOfflinePlayerLeader(player);
 
-            if(isLeader) {
+            if (isLeader) {
                 String tag = manager.getClanByOfflinePlayer(player);
                 List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
-                for (OfflinePlayer member: members) {
+                for (OfflinePlayer member : members) {
                     manager.resignOfflinePlayer(member);
                 }
                 manager.deleteClan(tag);
