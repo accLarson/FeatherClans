@@ -38,11 +38,6 @@ public class InviteManager {
             return false;
         }
 
-
-
-
-
-
         if(config.isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
             double amount = config.getEconomyCreationPrice();
@@ -59,16 +54,6 @@ public class InviteManager {
         } else {
             requests.put(invitee.getName(), new RequestUtil(tag, originator));
         }
-
-
-
-
-
-
-
-
-
-        requests.put(invitee.getName(), new RequestUtil(tag, originator));
 
         invitee.sendMessage(messages.get("clan_invite_text", Map.of(
                 "player", originator.getName(),
