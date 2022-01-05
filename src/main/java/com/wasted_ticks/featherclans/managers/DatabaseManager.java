@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans.managers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import org.javalite.activejdbc.Base;
 
 import java.io.File;
@@ -83,6 +84,26 @@ public class DatabaseManager {
     }
 
     private void initMySQLConnection() {
+        FeatherClansConfig config = this.plugin.getFeatherClansConfig();
+
+        String host = config.getMysqlHost();
+        int port = config.getMysqlPort();
+        String database = config.getMysqlDatabase();
+
+        String url = String.format("jdbc:mysql://%s:%d/%s", host, port, database);
+
+        String username = config.getMysqlUsername();
+        String password = config.getMysqlPassword();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            DatabaseManager.connection = DriverManager.getConnection(url, username, password);
+            Base.attach(DatabaseManager.connection);
+        } catch (SQLException | ClassNotFoundException exception) {
+            plugin.getLog().severe("[FeatherClans] Unable to initialize connection.");
+            plugin.getLog().severe("[FeatherClans] Ensure connection can be made with provided mysql strings.");
+            plugin.getLog().severe("[FeatherClans] Connection URL: " + url);
+        }
 
     }
 
