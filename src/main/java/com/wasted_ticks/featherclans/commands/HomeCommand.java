@@ -24,40 +24,44 @@ public class HomeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if (sender instanceof Player) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(messages.get("clan_error_player", null));
+            return true;
+        }
 
-            Player player = (Player) sender;
+        if(!sender.hasPermission("feather.clans.invite")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
+        }
 
-            if (plugin.getClanManager().isOfflinePlayerLeader(player)) {
+        Player player = (Player) sender;
+        if (plugin.getClanManager().isOfflinePlayerLeader(player)) {
 
-                String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
+            String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
 
-                if (plugin.getClanManager().hasClanHome(tag)) {
+            if (plugin.getClanManager().hasClanHome(tag)) {
 
-                    player.sendMessage(messages.get("clan_home_teleport_initiate", null));
+                player.sendMessage(messages.get("clan_home_teleport_initiate", null));
 
-                    Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
-                    int delay = this.plugin.getFeatherClansConfig().getClanTeleportDelaySeconds();
-                    TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
-                        player.sendMessage(messages.get("clan_home_teleport_success", null));
-                        player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    }, (instance) -> {
-                        if (!instance.getStartLocation().getBlock().equals(player.getLocation().getBlock())) {
-                            player.sendMessage(messages.get("clan_home_teleport_failure", null));
-                            instance.cancel();
-                        }
-                    }, player.getLocation());
-                    timer.start();
+                Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
+                int delay = this.plugin.getFeatherClansConfig().getClanTeleportDelaySeconds();
+                TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
+                    player.sendMessage(messages.get("clan_home_teleport_success", null));
+                    player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                }, (instance) -> {
+                    if (!instance.getStartLocation().getBlock().equals(player.getLocation().getBlock())) {
+                        player.sendMessage(messages.get("clan_home_teleport_failure", null));
+                        instance.cancel();
+                    }
+                }, player.getLocation());
+                timer.start();
 
-                    return true;
-                } else {
-                    player.sendMessage(messages.get("clan_home_teleport_error_no_home", null));
-                    return false;
-                }
             } else {
-                player.sendMessage(messages.get("clan_home_teleport_error_no_clan", null));
-                return false;
+                player.sendMessage(messages.get("clan_home_teleport_error_no_home", null));
             }
-        } else return false;
+        } else {
+            player.sendMessage(messages.get("clan_home_teleport_error_no_clan", null));
+        }
+        return true;
     }
 }

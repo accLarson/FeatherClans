@@ -27,27 +27,32 @@ public class DisbandCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender instanceof Player) {
 
-            Player player = (Player) sender;
-            boolean isLeader = manager.isOfflinePlayerLeader(player);
-
-            if (isLeader) {
-                String tag = manager.getClanByOfflinePlayer(player);
-                List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
-                for (OfflinePlayer member : members) {
-                    manager.resignOfflinePlayer(member);
-                }
-                manager.deleteClan(tag);
-                player.sendMessage(messages.get("clan_disband_success", Map.of(
-                        "clan", tag
-                )));
-                return true;
-            } else {
-                player.sendMessage(messages.get("clan_error_leader", null));
-                return false;
-            }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(messages.get("clan_error_player", null));
+            return true;
         }
-        return false;
+
+        if(!sender.hasPermission("feather.clans.disband")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
+        }
+
+        Player player = (Player) sender;
+        boolean isLeader = manager.isOfflinePlayerLeader(player);
+        if (isLeader) {
+            String tag = manager.getClanByOfflinePlayer(player);
+            List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
+            for (OfflinePlayer member : members) {
+                manager.resignOfflinePlayer(member);
+            }
+            manager.deleteClan(tag);
+            player.sendMessage(messages.get("clan_disband_success", Map.of(
+                    "clan", tag
+            )));
+        } else {
+            player.sendMessage(messages.get("clan_error_leader", null));
+        }
+        return true;
     }
 }

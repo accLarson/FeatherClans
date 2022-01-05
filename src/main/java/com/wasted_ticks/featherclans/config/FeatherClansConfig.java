@@ -22,7 +22,8 @@ public class FeatherClansConfig {
 
     private int clanInviteTimeout;
     private int clanTeleportDelaySeconds;
-    private int clanTagSize;
+    private int clanMinTagSize;
+    private int clanMaxTagSize;
     private int clanMaxMembers;
 
     private boolean useMySQL;
@@ -55,7 +56,8 @@ public class FeatherClansConfig {
 
         this.clanInviteTimeout = config.getInt("settings.clan.invite_timeout");
         this.clanTeleportDelaySeconds = config.getInt("settings.clan.teleport_delay_seconds");
-        this.clanTagSize = config.getInt("settings.clan.tag_size");
+        this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
+        this.clanMaxTagSize = config.getInt("settings.clan.max_tag_size");
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
 
         this.mysqlEnabled = config.getBoolean("settings.mysql.enabled");
@@ -105,8 +107,12 @@ public class FeatherClansConfig {
         return clanTeleportDelaySeconds;
     }
 
-    public int getClanTagSize() {
-        return clanTagSize;
+    public int getClanMinTagSize() {
+        return clanMinTagSize;
+    }
+
+    public int getClanMaxTagSize() {
+        return clanMaxTagSize;
     }
 
     public int getClanMaxMembers() {
@@ -143,5 +149,9 @@ public class FeatherClansConfig {
 
     public List<String> getDenyTags() {
         return denyTags;
+    }
+
+    public void setEconomyEnabled(boolean economyEnabled) {
+        this.economyEnabled = economyEnabled;
     }
 }

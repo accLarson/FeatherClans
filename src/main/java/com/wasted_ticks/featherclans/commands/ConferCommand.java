@@ -26,31 +26,37 @@ public class ConferCommand implements CommandExecutor {
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
-            return false;
+            return true;
         }
+
+        if(!sender.hasPermission("feather.clans.confer")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
+        }
+
 
         Player originator = (Player) sender;
-        if (args.length != 2) {
-            originator.sendMessage(messages.get("clan_confer_no_player", null));
-            return false;
-        }
-
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
         if (!leader) {
             originator.sendMessage(messages.get("clan_error_leader", null));
-            return false;
+            return true;
+        }
+
+        if (args.length != 2) {
+            originator.sendMessage(messages.get("clan_confer_no_player", null));
+            return true;
         }
 
         Player player = Bukkit.getPlayer(args[1]);
         if (player == null) {
             originator.sendMessage(messages.get("clan_confer_unresolved_player", null));
-            return false;
+            return true;
         }
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
         if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, clan)) {
             originator.sendMessage(messages.get("clan_confer_not_in_clan", null));
-            return false;
+            return true;
         }
 
         boolean successful = this.plugin.getClanManager().setClanLeader(clan, player);
@@ -62,12 +68,10 @@ public class ConferCommand implements CommandExecutor {
                     "player", originator.getName(),
                     "clan", clan
             )));
-            return true;
         } else {
             originator.sendMessage(messages.get("clan_confer_error_generic", null));
-            return false;
         }
-
+        return true;
 
     }
 }

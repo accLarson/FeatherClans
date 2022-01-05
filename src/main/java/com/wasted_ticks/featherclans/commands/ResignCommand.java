@@ -23,25 +23,30 @@ public class ResignCommand implements CommandExecutor {
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
-            return false;
+            return true;
+        }
+
+        if(!sender.hasPermission("feather.clans.resign")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
         }
 
         Player player = (Player) sender;
         if (!plugin.getClanManager().isOfflinePlayerInClan(player)) {
             player.sendMessage(messages.get("clan_resign_error_no_clan", null));
-            return false;
+            return true;
         }
 
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
         if (leader) {
             player.sendMessage(messages.get("clan_resign_error_leader", null));
-            return false;
+            return true;
         }
 
         boolean deleted = plugin.getClanManager().resignOfflinePlayer(player);
         if (!deleted) {
             player.sendMessage(messages.get("clan_resign_error_generic", null));
-            return false;
+            return true;
         }
 
         player.sendMessage(messages.get("clan_resign_success", null));

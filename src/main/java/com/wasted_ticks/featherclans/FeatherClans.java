@@ -7,7 +7,9 @@ import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.managers.DatabaseManager;
 import com.wasted_ticks.featherclans.managers.InviteManager;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -22,6 +24,8 @@ public final class FeatherClans extends JavaPlugin {
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
 
+    private Economy economy;
+
     @Override
     public void onEnable() {
 
@@ -34,8 +38,27 @@ public final class FeatherClans extends JavaPlugin {
         this.clanManager = new ClanManager(plugin);
         this.inviteManager = new InviteManager(plugin);
 
-        registerCommands();
+        if(this.config.isEconomyEnabled()) {
+            if(!setupEconomy()) {
+                plugin.getLog().severe("[FeatherClans] Unable to hook into vault, economy functions will be disabled.");
+                this.config.setEconomyEnabled(false);
+            }
+        }
 
+        this.registerCommands();
+
+    }
+
+    private boolean setupEconomy() {
+        if (this.getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> service = getServer().getServicesManager().getRegistration(Economy.class);
+        if (service == null) {
+            return false;
+        }
+        economy = service.getProvider();
+        return economy != null;
     }
 
     @Override
@@ -99,5 +122,9 @@ public final class FeatherClans extends JavaPlugin {
             command.setExecutor(handler);
             command.setTabCompleter(new ClanTabCompleter(plugin));
         }
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 }

@@ -31,14 +31,25 @@ public class ChatCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(messages.get("clan_error_player", null));
+            return true;
+        }
+
+        if(!sender.hasPermission("feather.clans.chat")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
+        }
+
         Player originator = (Player) sender;
-        if (args.length < 2) {
-            originator.sendMessage(messages.get("clan_chat_no_message", null));
+        if (!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
+            originator.sendMessage(messages.get("clan_chat_no_clan", null));
             return false;
         }
 
-        if (!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
-            originator.sendMessage(messages.get("clan_chat_no_clan", null));
+        if (args.length < 2) {
+            originator.sendMessage(messages.get("clan_chat_no_message", null));
             return false;
         }
 

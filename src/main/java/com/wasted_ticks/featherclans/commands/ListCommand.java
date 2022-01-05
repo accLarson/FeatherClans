@@ -32,14 +32,19 @@ public class ListCommand implements CommandExecutor {
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
-            return false;
+            return true;
+        }
+
+        if(!sender.hasPermission("feather.clans.list")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
         }
 
         Player player = (Player) sender;
         List<String> clans = plugin.getClanManager().getClans();
         if (clans.isEmpty()) {
             player.sendMessage(messages.get("clan_list_no_clans", null));
-            return false;
+            return true;
         }
 
         ChatUtil chatUtil = new ChatUtil(this.plugin);

@@ -4,6 +4,7 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.util.RequestUtil;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -36,6 +37,36 @@ public class InviteManager {
         if (requests.containsKey(invitee.getName())) {
             return false;
         }
+
+
+
+
+
+
+        if(config.isEconomyEnabled()) {
+            Economy economy = plugin.getEconomy();
+            double amount = config.getEconomyCreationPrice();
+            if(economy.has(originator, amount)) {
+                economy.withdrawPlayer(originator, amount);
+                requests.put(invitee.getName(), new RequestUtil(tag, originator));
+            } else {
+                originator.sendMessage(messages.get("clan_create_error_economy", Map.of(
+                        "amount", amount + "",
+                        "currency_name", economy.currencyNamePlural()
+                )));
+                return true;
+            }
+        } else {
+            requests.put(invitee.getName(), new RequestUtil(tag, originator));
+        }
+
+
+
+
+
+
+
+
 
         requests.put(invitee.getName(), new RequestUtil(tag, originator));
 

@@ -14,11 +14,12 @@ settings:
   clan:
     invite_timeout: 10
     teleport_delay_seconds: 5
-    tag_size: 5
+    min_tag_size: 3
+    max_tag_size: 8
     max_members: 30
   use_mysql: false
   mysql:
-    enabled: true
+    enabled: false
     username: ''
     host: localhost
     port: 3306

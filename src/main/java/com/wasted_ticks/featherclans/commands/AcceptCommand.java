@@ -24,6 +24,16 @@ public class AcceptCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(messages.get("clan_error_player", null));
+            return true;
+        }
+
+        if(!sender.hasPermission("feather.clans.accept")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
+        }
+
         Player player = (Player) sender;
         boolean inClan = plugin.getClanManager().isOfflinePlayerLeader(player);
         if (inClan) {

@@ -17,10 +17,7 @@ import java.util.stream.Collectors;
 
 public class ClanManager {
 
-
-    // map player UUID -> clan tag.
     private static HashMap<UUID, String> players = new HashMap<>();
-    // map clan tag -> clan leader.
     private static HashMap<String, UUID> clans = new HashMap<>();
     private final FeatherClans plugin;
 
@@ -163,6 +160,7 @@ public class ClanManager {
             member.set("mojang_uuid", uuid.toString());
             clan.add(member);
             players.put(uuid, tag);
+            clans.put(tag, uuid);
             return clan;
         } else return null;
     }
@@ -175,7 +173,11 @@ public class ClanManager {
      */
     public boolean deleteClan(String tag) {
         Clan clan = Clan.findFirst("tag = ?", tag);
-        return clan.delete();
+        boolean successful = clan.delete();
+        if(successful) {
+            clans.remove(tag);
+        }
+        return successful;
     }
 
 
@@ -225,10 +227,20 @@ public class ClanManager {
         clan.add(member);
     }
 
+    /**
+     * Sets the clan leader to the provided player.
+     * @param tag
+     * @param player
+     * @return boolean
+     */
     public boolean setClanLeader(String tag, OfflinePlayer player) {
         Clan clan = Clan.findFirst("tag = ?", tag);
         clan.setString("leader_uuid", player.getUniqueId());
-        return clan.save();
+        boolean successful = clan.save();
+        if(successful) {
+            clans.put(tag, player.getUniqueId());
+        }
+        return successful;
     }
 
 }

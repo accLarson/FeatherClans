@@ -24,12 +24,21 @@ public class DeclineCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        Player player = (Player) sender;
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(messages.get("clan_error_player", null));
+            return true;
+        }
 
+        if(!sender.hasPermission("feather.clans.decline")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
+        }
+
+        Player player = (Player) sender;
         RequestUtil request = this.plugin.getInviteManager().getRequest(player);
         if (request == null) {
             player.sendMessage(messages.get("clan_decline_no_invitation", null));
-            return false;
+            return true;
         }
 
         String tag = request.getClan();

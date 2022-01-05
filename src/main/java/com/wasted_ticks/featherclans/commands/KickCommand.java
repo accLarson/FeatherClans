@@ -26,37 +26,42 @@ public class KickCommand implements CommandExecutor {
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
-            return false;
+            return true;
+        }
+
+        if(!sender.hasPermission("feather.clans.kick")) {
+            sender.sendMessage(messages.get("clan_error_permission", null));
+            return true;
         }
 
         Player originator = (Player) sender;
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
         if (!leader) {
             originator.sendMessage(messages.get("clan_error_leader", null));
-            return false;
+            return true;
         }
 
         if (args.length != 2) {
             originator.sendMessage(messages.get("clan_kick_error_no_player_specified", null));
-            return false;
+            return true;
         }
 
         Player player = Bukkit.getPlayer(args[1]);
         if (player == null) {
             originator.sendMessage(messages.get("clan_kick_error_unresolved_player", null));
-            return false;
+            return true;
         }
 
         String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
         if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, tag)) {
             originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
-            return false;
+            return true;
         }
 
         boolean successful = this.plugin.getClanManager().resignOfflinePlayer(player);
         if (!successful) {
             originator.sendMessage(messages.get("clan_kick_error", null));
-            return false;
+            return true;
         }
 
         originator.sendMessage(messages.get("clan_kick_success", Map.of(
