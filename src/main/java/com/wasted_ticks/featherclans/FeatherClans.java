@@ -7,7 +7,9 @@ import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.managers.DatabaseManager;
 import com.wasted_ticks.featherclans.managers.InviteManager;
+import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,6 +45,11 @@ public final class FeatherClans extends JavaPlugin {
                 plugin.getLog().severe("[FeatherClans] Unable to hook into vault, economy functions will be disabled.");
                 this.config.setEconomyEnabled(false);
             }
+        }
+
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            plugin.getLog().info("[FeatherClans] Hooking into Placeholder API.");
+            new FeatherClansPlaceholderExpansion(this).register();
         }
 
         this.registerCommands();
