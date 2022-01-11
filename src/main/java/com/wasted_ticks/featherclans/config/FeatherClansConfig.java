@@ -47,7 +47,7 @@ public class FeatherClansConfig {
         this.economyEnabled = config.getBoolean("settings.economy.enabled");
         this.economyCreationPrice = config.getDouble("settings.economy.creation_price");
         this.economyInvitePrice = config.getDouble("settings.economy.invite_price");
-        this.economySetHomePrice = config.getDouble("settings.economy.set-home_price");
+        this.economySetHomePrice = config.getDouble("settings.economy.set_home_price");
 
         this.cleanupEnabled = config.getBoolean("settings.clean_up.enabled");
         this.cleanupArchiveDays = config.getInt("settings.clean_up.archive_days");

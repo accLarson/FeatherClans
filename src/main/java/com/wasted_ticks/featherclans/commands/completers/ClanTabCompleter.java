@@ -28,7 +28,7 @@ public class ClanTabCompleter implements TabCompleter {
             "accept",
             "decline",
             "help",
-            "leaderboard",
+//            "leaderboard",
             "list",
             "roster"
     );
@@ -66,20 +66,20 @@ public class ClanTabCompleter implements TabCompleter {
                     // exp: total of all offline players current exp
                     // hours: total of all offline players current hours
                     // kdr: mode, resets monthly
-                    completions.addAll(Arrays.asList("exp", "hours", "kdr"));
+//                    completions.addAll(Arrays.asList("exp", "hours", "kdr"));
                 } else if ("list".equals(args[0])) {
                     //tag
                     //creation date
                     //num of players
                     //last seen
-                    completions.addAll(Arrays.asList("alpha", "creation"));
+//                    completions.addAll(Arrays.asList("alpha", "creation"));
                 } else if ("roster".equals(args[0])) {
                     //name
                     //exp
                     //hours
                     //kdr
                     //last seen
-                    completions = plugin.getClanManager().getClans();
+//                    completions = plugin.getClanManager().getClans();
                 }
                 break;
             default:

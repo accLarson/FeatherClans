@@ -42,7 +42,7 @@ public class FeatherClansPlaceholderExpansion extends PlaceholderExpansion {
 
         if(params.equalsIgnoreCase("clan")) {
             String clan = plugin.getClanManager().getCachedClan(player);
-            return (clan != null) ? clan + " " : "";
+            return (clan != null) ? clan : "";
         }
 
         return null;

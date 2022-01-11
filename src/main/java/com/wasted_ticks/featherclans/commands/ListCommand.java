@@ -60,12 +60,12 @@ public class ListCommand implements CommandExecutor {
                 "total", clans.size() + ""
         )));
         player.sendMessage("");
-        TextComponent divider = Component.text("|", TextColor.fromHexString(messages.getThemePrimary()));
+        TextComponent divider = Component.text("|");
         for (String clan : clans) {
             TextComponent tag = chatUtil.addSpacing((TextComponent) parser.parse(clan), 50);
             TextComponent size = chatUtil.addSpacing(Component.text(plugin.getClanManager().getOfflinePlayersByClan(clan).size()), 20, true);
 
-            player.sendMessage(Component.join(divider, tag, size.color(TextColor.fromHexString(messages.getThemePrimary()))));
+            player.sendMessage(Component.join(divider, tag));
         }
         player.sendMessage(messages.get("clan_line", null));
 

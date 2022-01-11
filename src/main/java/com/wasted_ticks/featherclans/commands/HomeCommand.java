@@ -44,6 +44,7 @@ public class HomeCommand implements CommandExecutor {
                 player.sendMessage(messages.get("clan_home_teleport_initiate", null));
 
                 Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
+
                 int delay = this.plugin.getFeatherClansConfig().getClanTeleportDelaySeconds();
                 TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
                     player.sendMessage(messages.get("clan_home_teleport_success", null));

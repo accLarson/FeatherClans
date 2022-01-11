@@ -134,4 +134,8 @@ public final class FeatherClans extends JavaPlugin {
     public Economy getEconomy() {
         return economy;
     }
+
+    public void disable() {
+        this.getPluginLoader().disablePlugin(this);
+    }
 }

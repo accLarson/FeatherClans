@@ -35,7 +35,7 @@ clan_help_invite: "<#949bd1>/clan invite [player]<#6C719D> — Invite a player t
 clan_help_kick: "<#949bd1>/clan kick [player]<#6C719D> — Kick a player from your clan."
 clan_help_disband: "<#949bd1>/clan disband<#6C719D> — Disband your clan."
 clan_help_confer: "<#949bd1>/clan confer [player]<#6C719D> — Relinquish ownership to a player."
-clan_help_chat: "<#949bd1>/clan chat (/.)<#6C719D> — Used to send private messages to your clan."
+clan_help_chat: "<#949bd1>/clan chat (/cc)<#6C719D> — Used to send private messages to your clan."
 clan_help_accept: "<#949bd1>/clan accept<#6C719D> — Accept clan invitation request."
 clan_help_decline: "<#949bd1>/clan decline<#6C719D> — Deny clan invitation request."
 clan_help_help: "<#949bd1>/clan help<#6C719D> — Display this message."
