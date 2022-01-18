@@ -38,27 +38,37 @@ public class InviteManager {
             return false;
         }
 
-        if (config.isEconomyEnabled()) {
-            Economy economy = plugin.getEconomy();
-            double amount = config.getEconomyInvitePrice();
-            if (economy.has(originator, amount)) {
-                economy.withdrawPlayer(originator, amount);
-                requests.put(invitee.getName(), new RequestUtil(tag, originator));
-            } else {
-                originator.sendMessage(messages.get("clan_invite_error_economy", Map.of(
-                        "amount", String.valueOf((int) amount)
-                )));
-                return true;
-            }
-        } else {
-            requests.put(invitee.getName(), new RequestUtil(tag, originator));
-        }
+//        if (config.isEconomyEnabled()) {
+//            Economy economy = plugin.getEconomy();
+//            double amount = config.getEconomyInvitePrice();
+//            if (economy.has(originator, amount)) {
+//                economy.withdrawPlayer(originator, amount);
+//                requests.put(invitee.getName(), new RequestUtil(tag, originator));
+//            } else {
+//                originator.sendMessage(messages.get("clan_invite_error_economy", Map.of(
+//                        "amount", String.valueOf((int) amount)
+//                )));
+//                return true;
+//            }
+//        } else {
+        requests.put(invitee.getName(), new RequestUtil(tag, originator));
+//        }
 
         invitee.sendMessage(messages.get("clan_invite_text", Map.of(
                 "player", originator.getName(),
                 "clan", tag
         )));
         invitee.sendMessage(messages.get("clan_invite_text_response", null));
+
+
+        if (config.isEconomyEnabled()) {
+            double amount = config.getEconomyInvitePrice();
+            invitee.sendMessage(messages.get("clan_invite_text_economy", Map.of(
+                    "amount", String.valueOf((int) amount)
+            )));
+        }
+
+
         originator.sendMessage(messages.get("clan_invite_text_sent", Map.of(
                 "player", invitee.getName()
         )));

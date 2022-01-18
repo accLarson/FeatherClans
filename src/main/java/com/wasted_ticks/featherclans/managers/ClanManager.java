@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class ClanManager {
 
-    private static HashMap<UUID, String> players = new HashMap<>();
-    private static HashMap<String, UUID> clans = new HashMap<>();
+    private static final HashMap<UUID, String> players = new HashMap<>();
+    private static final HashMap<String, UUID> clans = new HashMap<>();
     private final FeatherClans plugin;
     private final DatabaseManager database;
 
@@ -36,16 +36,18 @@ public class ClanManager {
     }
 
     private void loadPlayers() {
-        String string = "SELECT mojang_uuid, c.tag  FROM clan_members AS cm left JOIN clans AS c ON c.id = cm.id;";
+        String string = "SELECT mojang_uuid, c.tag  FROM clan_members AS cm left JOIN clans AS c ON c.id = cm.clan_id;";
         try(Connection connection = database.getConnection();
             PreparedStatement statement = connection.prepareStatement(string);
             ResultSet results = statement.executeQuery())
         {
             if(results != null) {
                 while (results.next()) {
-                    UUID uuid = UUID.fromString(results.getString("mojang_uuid"));
                     String tag = results.getString("tag");
-                    players.put(uuid, tag.toLowerCase());
+                    String uuid = results.getString("mojang_uuid");
+                    if(tag != null && uuid != null) {
+                        players.put(UUID.fromString(uuid), tag.toLowerCase());
+                    }
                 }
             }
             plugin.getLog().info("[FeatherClans] Loaded players: " + players.keySet());
@@ -65,8 +67,10 @@ public class ClanManager {
             if(results != null) {
                 while (results.next()) {
                     String tag = results.getString("tag");
-                    UUID uuid = UUID.fromString(results.getString("leader_uuid"));
-                    clans.put(tag.toLowerCase(), uuid);
+                    String uuid = results.getString("leader_uuid");
+                    if(tag != null && uuid != null) {
+                        clans.put(tag.toLowerCase(), UUID.fromString(uuid));
+                    }
                 }
             }
             plugin.getLog().info("[FeatherClans] Loaded clans: " + clans.keySet());
@@ -77,9 +81,6 @@ public class ClanManager {
         }
     }
 
-    public String getCachedClan(OfflinePlayer player) {
-        return players.get(player.getUniqueId());
-    }
 
     /**
      * Gets a list of all clans.
@@ -87,7 +88,6 @@ public class ClanManager {
      * @return list of clans
      */
     public List<String> getClans() {
-        plugin.getLog().severe("Clans: " + clans.keySet());
         return List.copyOf(clans.keySet());
     }
 
@@ -110,7 +110,8 @@ public class ClanManager {
      */
     public List<OfflinePlayer> getOfflinePlayersByClan(String clan) {
         return players.entrySet().stream()
-                .filter(entry -> entry.getValue().equalsIgnoreCase(clan))
+                .filter(entry -> entry.getValue().equals(clan))
+//                .filter(entry -> entry.getValue().equalsIgnoreCase(clan))
                 .map(entry -> Bukkit.getOfflinePlayer(entry.getKey()))
                 .collect(Collectors.toList());
     }
@@ -130,10 +131,12 @@ public class ClanManager {
             ResultSet results = select.executeQuery();
             if(results != null && results.next()) {
                 String home = results.getString("home");
-                return SerializationUtil.stringToLocation(home);
+                if(home != null) {
+                    return SerializationUtil.stringToLocation(home);
+                }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed check clan home for: " + tag);
+            plugin.getLog().severe("[FeatherClans] Failed check clan home for: " + tag.toLowerCase());
         }
         return null;
     }
@@ -145,11 +148,11 @@ public class ClanManager {
      * @return boolean
      */
     public boolean isOfflinePlayerInClan(OfflinePlayer player) {
-        return players.keySet().contains(player.getUniqueId());
+        return players.containsKey(player.getUniqueId());
     }
 
     public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, String clan) {
-        return (players.get(player.getUniqueId()) != null) ? players.get(player.getUniqueId()).equalsIgnoreCase(clan) : false;
+        return players.get(player.getUniqueId()) == null || !players.get(player.getUniqueId()).equalsIgnoreCase(clan);
     }
 
 
@@ -160,7 +163,7 @@ public class ClanManager {
      * @return boolean
      */
     public boolean isOfflinePlayerLeader(OfflinePlayer player) {
-        return clans.values().contains(player.getUniqueId());
+        return clans.containsValue(player.getUniqueId());
     }
 
     /**
@@ -177,10 +180,13 @@ public class ClanManager {
             select.setString(1, tag.toLowerCase());
             ResultSet results = select.executeQuery();
             if(results != null && results.next()) {
-                return true;
+                String home = results.getString("home");
+                if(home != null) {
+                    return true;
+                }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed check clan home for: " + tag);
+            plugin.getLog().severe("[FeatherClans] Failed check clan home for: " + tag);
         }
         return false;
     }
@@ -209,10 +215,10 @@ public class ClanManager {
             insert.setString(3, uuid.toString());
             if(insert.executeUpdate() != 0) {
                 clans.put(tag.toLowerCase(), uuid);
-                return this.addOfflinePlayerToClan(player, tag);
+                return this.addOfflinePlayerToClan(player, tag.toLowerCase());
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed to create clan: " + tag);
+            plugin.getLog().severe("[FeatherClans] Failed to create clan: " + tag);
         }
         return false;
     }
@@ -230,10 +236,12 @@ public class ClanManager {
         {
             delete.setString(1, tag.toLowerCase(Locale.ROOT));
             if(delete.executeUpdate() != 0) {
+                players.entrySet().removeIf(entry -> entry.getValue().equals(tag));
+                clans.remove(tag.toLowerCase());
                 return true;
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed to delete clan: " + tag);
+            plugin.getLog().severe("[FeatherClans] Failed to delete clan: " + tag);
         }
         return false;
     }
@@ -251,11 +259,13 @@ public class ClanManager {
             PreparedStatement delete = connection.prepareStatement(string))
         {
             delete.setString(1, player.getUniqueId().toString());
-            if(delete.executeUpdate() != 0) {
+            int rows = delete.executeUpdate();
+            if(rows != 0) {
+                players.remove(player.getUniqueId());
                 return true;
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed to resign player: " + player.getName());
+            plugin.getLog().severe("[FeatherClans] Failed to resign player: " + player.getName());
         }
         return false;
     }
@@ -279,7 +289,7 @@ public class ClanManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            plugin.getLog().severe("[FeatherEconomy] Failed to set clan home for clan: " + tag);
+            plugin.getLog().severe("[FeatherClans] Failed to set clan home for clan: " + tag);
         }
         return false;
     }
@@ -301,23 +311,29 @@ public class ClanManager {
             if(results != null && results.next()) {
 
                 int id = results.getInt("id");
-                String string = "INSERT INTO clan_members (`mojang_uuid`, `clan_id`) VALUES (?,?);";
 
-                try(
-                    PreparedStatement insert = connection.prepareStatement(string))
-                {
-                    insert.setString(1, player.getUniqueId().toString());
-                    insert.setInt(2, id);
-                    if(insert.executeUpdate() != 0) {
-                        players.put(player.getUniqueId(), tag.toLowerCase());
-                        return true;
+                if(id != 0) {
+
+                    String string = "INSERT INTO clan_members (`mojang_uuid`, `clan_id`) VALUES (?,?);";
+
+                    try(
+                            PreparedStatement insert = connection.prepareStatement(string))
+                    {
+                        insert.setString(1, player.getUniqueId().toString());
+                        insert.setInt(2, id);
+                        if(insert.executeUpdate() != 0) {
+                            players.put(player.getUniqueId(), tag.toLowerCase());
+                            return true;
+                        }
+                    } catch (SQLException e) {
+                        plugin.getLog().severe("[FeatherClans] Failed to add offline player to clan: " + player.getName() + ", clan: " + tag);
                     }
-                } catch (SQLException e) {
-                    plugin.getLog().severe("[FeatherEconomy] Failed to add offline player to clan: " + player.getName() + ", clan: " + tag);
+                } else {
+                    plugin.getLog().severe("[FeatherClans] Clan ID result is 0.");
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed to retrieve clan ID in add offline player.");
+            plugin.getLog().severe("[FeatherClans] Failed to retrieve clan ID in add offline player.");
         }
         return false;
     }
@@ -341,12 +357,32 @@ public class ClanManager {
                 return true;
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed to set clan leader for clan: " + tag + ", to:" + player.getName());
+            plugin.getLog().severe("[FeatherClans] Failed to set clan leader for clan: " + tag + ", to:" + player.getName());
         }
         return false;
     }
 
     public UUID getLeader(String tag) {
         return clans.get(tag.toLowerCase());
+    }
+
+    public ItemStack getBanner(String tag) {
+        String query = "SELECT `banner` FROM clans WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setString(1, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+
+            if(results != null && results.next()) {
+                String banner = results.getString("banner");
+                if(banner != null) {
+                    return SerializationUtil.stringToStack(banner);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLog().severe("[FeatherClans] Failed check clan home for: " + tag);
+        }
+        return null;
     }
 }

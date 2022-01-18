@@ -52,6 +52,11 @@ public class SetHomeCommand implements CommandExecutor {
             if (economy.has(player, amount)) {
                 economy.withdrawPlayer(player, amount);
                 success = plugin.getClanManager().setClanHome(tag, location);
+                if(success) {
+                    player.sendMessage(messages.get("clan_sethome_success_economy", Map.of(
+                            "amount", String.valueOf((int) amount)
+                    )));
+                }
             } else {
                 player.sendMessage(messages.get("clan_sethome_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)

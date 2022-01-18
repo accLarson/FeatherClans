@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -51,26 +52,23 @@ public class RosterCommand implements CommandExecutor {
             return true;
         }
 
-        UUID uuid = manager.getLeader(input);
-        OfflinePlayer leader = Bukkit.getOfflinePlayer(uuid);
-        String leaderName = leader.getName() != null ? leader.getName() : "";
-
         sender.sendMessage(messages.get("clan_pre_line", null));
-        sender.sendMessage("");
-        sender.sendMessage(messages.get("clan_roster_leader", Map.of(
-                "clan", input.toLowerCase(),
-                "leader", leaderName
-        )));
-        sender.sendMessage("");
-        List<OfflinePlayer> players = manager.getOfflinePlayersByClan(input);
+        List<OfflinePlayer> players = manager.getOfflinePlayersByClan(input.toLowerCase());
         sender.sendMessage(messages.get("clan_roster_members", Map.of(
+                "clan", input.toLowerCase(),
                 "count", String.valueOf(players.size())
         )));
         for (OfflinePlayer player : players) {
             String name = player.getName() != null ? player.getName() : "";
-            sender.sendMessage(messages.get("clan_roster_player", Map.of(
-                    "player", name
-            )));
+            if(manager.isOfflinePlayerLeader(player)) {
+                sender.sendMessage(messages.get("clan_roster_player_leader", Map.of(
+                        "player", name
+                )));
+            } else {
+                sender.sendMessage(messages.get("clan_roster_player", Map.of(
+                        "player", name
+                )));
+            }
         }
         sender.sendMessage(messages.get("clan_line", null));
 

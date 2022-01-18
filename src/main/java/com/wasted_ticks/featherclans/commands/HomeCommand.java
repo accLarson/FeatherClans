@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class HomeCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
@@ -35,17 +37,20 @@ public class HomeCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        if (plugin.getClanManager().isOfflinePlayerLeader(player)) {
+        if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
 
             String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
 
             if (plugin.getClanManager().hasClanHome(tag)) {
 
-                player.sendMessage(messages.get("clan_home_teleport_initiate", null));
+                int delay = this.plugin.getFeatherClansConfig().getClanTeleportDelaySeconds();
+
+                player.sendMessage(messages.get("clan_home_teleport_initiate", Map.of(
+                        "delay", String.valueOf(delay)
+                )));
 
                 Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
 
-                int delay = this.plugin.getFeatherClansConfig().getClanTeleportDelaySeconds();
                 TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
                     player.sendMessage(messages.get("clan_home_teleport_success", null));
                     player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);

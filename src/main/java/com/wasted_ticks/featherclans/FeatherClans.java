@@ -4,10 +4,13 @@ import com.wasted_ticks.featherclans.commands.*;
 import com.wasted_ticks.featherclans.commands.completers.ClanTabCompleter;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.listeners.EntityDamageByEntityEventListener;
+import com.wasted_ticks.featherclans.listeners.ProjectileHitEventListener;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.managers.DatabaseManager;
 import com.wasted_ticks.featherclans.managers.InviteManager;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
+import it.unimi.dsi.fastutil.Function;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -53,7 +56,8 @@ public final class FeatherClans extends JavaPlugin {
         }
 
         this.registerCommands();
-
+        this.getServer().getPluginManager().registerEvents(new EntityDamageByEntityEventListener(plugin), this);
+        this.getServer().getPluginManager().registerEvents(new ProjectileHitEventListener(plugin), this);
     }
 
     private boolean setupEconomy() {
@@ -122,6 +126,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("leaderboard", new LeaderboardCommand(plugin));
         handler.register("help", new HelpCommand(plugin));
         handler.register("reload", new ReloadCommand(plugin));
+        handler.register("banner", new BannerCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 

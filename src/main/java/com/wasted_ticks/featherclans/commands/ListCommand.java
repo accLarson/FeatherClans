@@ -55,7 +55,6 @@ public class ListCommand implements CommandExecutor {
                 .build();
 
         player.sendMessage(messages.get("clan_pre_line", null));
-        player.sendMessage("");
         player.sendMessage(messages.get("clan_list_total", Map.of(
                 "total", clans.size() + ""
         )));

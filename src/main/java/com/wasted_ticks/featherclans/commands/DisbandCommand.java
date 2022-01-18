@@ -40,19 +40,31 @@ public class DisbandCommand implements CommandExecutor {
 
         Player player = (Player) sender;
         boolean isLeader = manager.isOfflinePlayerLeader(player);
+        boolean successful = false;
         if (isLeader) {
             String tag = manager.getClanByOfflinePlayer(player);
             List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
             for (OfflinePlayer member : members) {
                 manager.resignOfflinePlayer(member);
             }
-            manager.deleteClan(tag);
+            successful = manager.deleteClan(tag);
             player.sendMessage(messages.get("clan_disband_success", Map.of(
                     "clan", tag
             )));
+            plugin.getServer()
+                    .getOnlinePlayers()
+                    .stream()
+                    .forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of(
+                            "clan", tag.toLowerCase()
+                    ))));
         } else {
             player.sendMessage(messages.get("clan_error_leader", null));
         }
+
+        if(!successful) {
+            player.sendMessage(messages.get("clan_disband_error_generic", null));
+        }
+
         return true;
     }
 }

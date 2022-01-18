@@ -17,20 +17,21 @@ import java.util.stream.Collectors;
 public class ClanTabCompleter implements TabCompleter {
 
     private static final List<String> COMMANDS = Arrays.asList(
-            "home",
-            "sethome",
+            "accept",
+            "chat",
+            "confer",
             "create",
+            "decline",
+            "disband",
+            "help",
+            "home",
             "invite",
             "kick",
-            "disband",
-            "confer",
-            "chat",
-            "accept",
-            "decline",
-            "help",
 //            "leaderboard",
             "list",
-            "roster"
+            "resign",
+            "roster",
+            "sethome"
     );
     private final FeatherClans plugin;
 
@@ -46,6 +47,9 @@ public class ClanTabCompleter implements TabCompleter {
         switch (args.length) {
             case 1:
                 StringUtil.copyPartialMatches(args[0], COMMANDS, completions);
+                if(sender.isOp()) {
+                    StringUtil.copyPartialMatches(args[0], Arrays.asList("banner"), completions);
+                }
                 break;
             case 2:
                 if ("invite".equals(args[0])) {
@@ -67,6 +71,10 @@ public class ClanTabCompleter implements TabCompleter {
                     // hours: total of all offline players current hours
                     // kdr: mode, resets monthly
 //                    completions.addAll(Arrays.asList("exp", "hours", "kdr"));
+                } else if ("banner".equals(args[0])) {
+                    if (sender.hasPermission("feather.clans.banner")) {
+                        StringUtil.copyPartialMatches(args[1], plugin.getClanManager().getClans(), completions);
+                    }
                 } else if ("list".equals(args[0])) {
                     //tag
                     //creation date
@@ -74,6 +82,7 @@ public class ClanTabCompleter implements TabCompleter {
                     //last seen
 //                    completions.addAll(Arrays.asList("alpha", "creation"));
                 } else if ("roster".equals(args[0])) {
+                    StringUtil.copyPartialMatches(args[1], plugin.getClanManager().getClans(), completions);
                     //name
                     //exp
                     //hours

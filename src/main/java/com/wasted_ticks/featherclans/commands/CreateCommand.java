@@ -11,8 +11,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CreateCommand implements CommandExecutor {
 
@@ -73,7 +75,7 @@ public class CreateCommand implements CommandExecutor {
         }
 
         List<String> clans = plugin.getClanManager().getClans();
-        if (clans.contains(tag)) {
+        if (clans.contains(tag.toLowerCase())) {
             sender.sendMessage(messages.get("clan_create_error_similar_tag", null));
             return true;
         }
@@ -91,12 +93,19 @@ public class CreateCommand implements CommandExecutor {
             return true;
         }
 
+        boolean created;
         if (config.isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
             double amount = config.getEconomyCreationPrice();
             if (economy.has(player, amount)) {
                 economy.withdrawPlayer(player, amount);
-                plugin.getClanManager().createClan(player, stack, tag);
+                created = plugin.getClanManager().createClan(player, stack, tag.toLowerCase());
+                if(created) {
+                    player.sendMessage(messages.get("clan_create_success_economy", Map.of(
+                            "amount", String.valueOf((int) amount)
+                    )));
+                }
+
             } else {
                 player.sendMessage(messages.get("clan_create_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)
@@ -104,13 +113,24 @@ public class CreateCommand implements CommandExecutor {
                 return true;
             }
         } else {
-            plugin.getClanManager().createClan(player, stack, tag);
+            created = plugin.getClanManager().createClan(player, stack, tag.toLowerCase());
         }
 
-        player.sendMessage(messages.get("clan_create_success", Map.of(
-                "clan", tag
-        )));
+        if(!created) {
+            player.sendMessage(messages.get("clan_create_error_generic", null));
+        } else {
+            plugin.getServer()
+                .getOnlinePlayers()
+                .stream()
+//                .filter(p -> !p.equals(player))
+                .forEach(p -> p.sendMessage(messages.get("clan_create_success", Map.of(
+                        "clan", tag.toLowerCase()
+                ))));
+//            player.sendMessage(messages.get("clan_create_success", Map.of(
+//                    "clan", tag.toLowerCase()
+//            )));
 
+        }
         return true;
     }
 

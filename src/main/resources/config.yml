@@ -17,32 +17,38 @@
 # feather.clans.resign
 # feather.clans.roster
 # feather.clans.sethome
+# feather.clans.banner
 
 settings:
   economy:
-    enabled: false
-    creation_price: 100.0
+    enabled: true
+    creation_price: 25000.0
     invite_price: 100.0
-    set_home_price: 100.0
+    set_home_price: 1000.0
   clean_up:
     enabled: false
     archive_days: 30
     delete_days: 45
   clan:
-    invite_timeout: 15
-    teleport_delay_seconds: 5
+    invite_timeout: 30
+    teleport_delay_seconds: 4
     min_tag_size: 3
     max_tag_size: 5
     max_members: 30
   mysql:
-    enabled: false
-    username: ''
-    host: localhost
+    enabled: true
+    username: 'feather_clans'
+    # set for pterodactyl usage
+    host: '172.17.0.1'
     port: 3306
     password: ''
-    database: ''
+    database: 'clans'
   deny_tags:
     - "admin"
+    - "zerek"
+    - "mwcks"
+    - "mawks"
+    - "mawck"
     - "mods"
     - "mod"
     - "donor"
