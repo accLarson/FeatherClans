@@ -50,7 +50,6 @@ public class ClanManager {
                     }
                 }
             }
-            plugin.getLog().info("[FeatherClans] Loaded players: " + players.keySet());
         } catch (SQLException e) {
             plugin.getLog().info("[FeatherClans] Failed to load players.");
         } catch(IllegalArgumentException e) {
@@ -73,7 +72,6 @@ public class ClanManager {
                     }
                 }
             }
-            plugin.getLog().info("[FeatherClans] Loaded clans: " + clans.keySet());
         } catch (SQLException e) {
             plugin.getLog().info("[FeatherClans] Failed to load clans.");
         } catch(IllegalArgumentException e) {

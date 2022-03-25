@@ -3,9 +3,7 @@ package com.wasted_ticks.featherclans.managers;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import java.io.File;
-import java.lang.reflect.Method;
 import java.sql.*;
 
 public class DatabaseManager {
