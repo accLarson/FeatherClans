@@ -4,6 +4,7 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -66,7 +67,7 @@ public class ListCommand implements CommandExecutor {
             TextComponent tag = chatUtil.addSpacing((TextComponent) parser.deserialize(clan), 50);
             TextComponent size = chatUtil.addSpacing(Component.text(plugin.getClanManager().getOfflinePlayersByClan(clan).size()), 20, true);
 
-            player.sendMessage(Component.join(divider, tag));
+            player.sendMessage(Component.join(JoinConfiguration.separator(Component.text("|")), tag));
         }
         player.sendMessage(messages.get("clan_line", null));
 
