@@ -4,6 +4,9 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -12,8 +15,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FeatherClansMessages {
 
@@ -60,11 +65,23 @@ public class FeatherClansMessages {
     }
 
     public TextComponent get(String key, Map<String, String> placeholders) {
-        if (messages.containsKey(key)) {
-            MiniMessage serializer = MiniMessage.builder()
-                    .build();
-            if (placeholders == null) return (TextComponent) serializer.parse(messages.get(key));
-            else return (TextComponent) serializer.parse(messages.get(key), placeholders);
+        if(messages.containsKey(key)) {
+
+            MiniMessage parser = MiniMessage.builder().tags(
+                    TagResolver.builder()
+                            .resolver(StandardTags.color())
+                            .resolver(StandardTags.reset())
+                            .build()
+            ).build();
+
+            List<TagResolver> rs = placeholders
+                    .entrySet()
+                    .stream()
+                    .map(entry -> (TagResolver) Placeholder.parsed(entry.getKey(), entry.getValue()))
+                    .collect(Collectors.toList());
+
+            return (TextComponent) parser.deserialize(messages.get(key), TagResolver.resolver(rs));
+
         } else return Component.text("");
     }
 
