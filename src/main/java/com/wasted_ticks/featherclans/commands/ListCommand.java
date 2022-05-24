@@ -61,7 +61,7 @@ public class ListCommand implements CommandExecutor {
             TextComponent tag = chatUtil.addSpacing((TextComponent) parser.deserialize(clan), 50);
             TextComponent size = chatUtil.addSpacing(Component.text(plugin.getClanManager().getOfflinePlayersByClan(clan).size()), 20, true);
 
-            player.sendMessage(Component.join(JoinConfiguration.separator(Component.text("|")), tag, size.color(TextColor.fromHexString(messages.getThemePrimary()))));
+            player.sendMessage(Component.join(JoinConfiguration.separator(Component.text("|")), tag));
         }
         player.sendMessage(messages.get("clan_line", null));
 
