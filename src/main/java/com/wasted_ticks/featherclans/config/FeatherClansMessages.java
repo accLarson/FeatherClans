@@ -74,13 +74,17 @@ public class FeatherClansMessages {
                             .build()
             ).build();
 
-            List<TagResolver> rs = placeholders
-                    .entrySet()
-                    .stream()
-                    .map(entry -> (TagResolver) Placeholder.parsed(entry.getKey(), entry.getValue()))
-                    .collect(Collectors.toList());
+            if(placeholders == null) {
+                return (TextComponent) parser.deserialize(messages.get(key));
+            } else {
+                List<TagResolver> rs = placeholders
+                        .entrySet()
+                        .stream()
+                        .map(entry -> (TagResolver) Placeholder.parsed(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList());
 
-            return (TextComponent) parser.deserialize(messages.get(key), TagResolver.resolver(rs));
+                return (TextComponent) parser.deserialize(messages.get(key), TagResolver.resolver(rs));
+            }
 
         } else return Component.text("");
     }

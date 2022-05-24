@@ -1,3 +1,5 @@
+clan_theme_primary: "#6C719D"
+clan_theme_secondary: "#6C719D"
 clan_pre_line: "<#ffffff>•<#777777>--- <#ffffff>FeatherClans</#ffffff> ------------------------------------</#777777>•"
 clan_line: "<#ffffff>•<#777777>----------------------------------------------------</#777777>•"
 clan_error_leader: "<#949bd1>Error<#6C719D>: You must be a clan leader to use this command."

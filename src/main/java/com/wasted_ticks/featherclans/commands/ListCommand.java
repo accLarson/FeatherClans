@@ -6,6 +6,7 @@ import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
@@ -49,25 +50,18 @@ public class ListCommand implements CommandExecutor {
         }
 
         ChatUtil chatUtil = new ChatUtil(this.plugin);
-        MiniMessage parser = MiniMessage.builder().tags(
-                TagResolver.builder()
-                        .resolver(StandardTags.color())
-                        .resolver(StandardTags.reset())
-                        .build()
-        ).build();
+        MiniMessage parser = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.color()).resolver(StandardTags.reset()).build()).build();
 
 
         player.sendMessage(messages.get("clan_pre_line", null));
-        player.sendMessage(messages.get("clan_list_total", Map.of(
-                "total", clans.size() + ""
-        )));
+        player.sendMessage(messages.get("clan_list_total", Map.of("total", clans.size() + "")));
         player.sendMessage("");
         TextComponent divider = Component.text("|");
         for (String clan : clans) {
             TextComponent tag = chatUtil.addSpacing((TextComponent) parser.deserialize(clan), 50);
             TextComponent size = chatUtil.addSpacing(Component.text(plugin.getClanManager().getOfflinePlayersByClan(clan).size()), 20, true);
 
-            player.sendMessage(Component.join(JoinConfiguration.separator(Component.text("|")), tag));
+            player.sendMessage(Component.join(JoinConfiguration.separator(Component.text("|")), tag, size.color(TextColor.fromHexString(messages.getThemePrimary()))));
         }
         player.sendMessage(messages.get("clan_line", null));
 
