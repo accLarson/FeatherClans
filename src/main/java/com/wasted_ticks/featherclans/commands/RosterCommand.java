@@ -39,23 +39,29 @@ public class RosterCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length != 2) {
+        String clanTag = null;
+        ClanManager manager = plugin.getClanManager();
+
+        if (args.length == 1 && manager.isOfflinePlayerInClan(((Player) sender).getPlayer())) {
+            clanTag = manager.getClanByOfflinePlayer(((Player) sender).getPlayer());
+        }
+
+        else if (args.length != 2) {
             sender.sendMessage(messages.get("clan_roster_error_no_clan_specified", null));
             return true;
         }
 
-        ClanManager manager = plugin.getClanManager();
+        if (clanTag == null) clanTag = args[1];
 
-        String input = args[1];
-        if (!manager.getClans().stream().anyMatch(input::equalsIgnoreCase)) {
+        if (!manager.getClans().stream().anyMatch(clanTag::equalsIgnoreCase)) {
             sender.sendMessage(messages.get("clan_roster_error_unresolved_clan", null));
             return true;
         }
 
         sender.sendMessage(messages.get("clan_pre_line", null));
-        List<OfflinePlayer> players = manager.getOfflinePlayersByClan(input.toLowerCase());
+        List<OfflinePlayer> players = manager.getOfflinePlayersByClan(clanTag.toLowerCase());
         sender.sendMessage(messages.get("clan_roster_members", Map.of(
-                "clan", input.toLowerCase(),
+                "clan", clanTag.toLowerCase(),
                 "count", String.valueOf(players.size())
         )));
         for (OfflinePlayer player : players) {
