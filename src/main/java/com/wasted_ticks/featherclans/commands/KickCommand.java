@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -46,31 +47,33 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
-        Player player = Bukkit.getPlayer(args[1]);
-        if (player == null) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
+        if (!offlinePlayer.hasPlayedBefore()) {
             originator.sendMessage(messages.get("clan_kick_error_unresolved_player", null));
             return true;
         }
 
         String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
-        if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, tag)) {
+        if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(offlinePlayer, tag)) {
             originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
             return true;
         }
 
-        boolean successful = this.plugin.getClanManager().resignOfflinePlayer(player);
+        boolean successful = this.plugin.getClanManager().resignOfflinePlayer(offlinePlayer);
         if (!successful) {
             originator.sendMessage(messages.get("clan_kick_error", null));
             return true;
         }
 
         originator.sendMessage(messages.get("clan_kick_success", Map.of(
-                "player", player.getName()
+                "player", offlinePlayer.getName()
         )));
 
-        player.sendMessage(messages.get("clan_kick_success_target", Map.of(
-                "clan", tag
-        )));
+        if (offlinePlayer.isOnline()){
+            offlinePlayer.getPlayer().sendMessage(messages.get("clan_kick_success_target", Map.of(
+                    "clan", tag
+            )));
+        }
 
         return true;
     }
