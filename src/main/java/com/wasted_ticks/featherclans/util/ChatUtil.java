@@ -32,19 +32,19 @@ public class ChatUtil {
     }
 
 
-    public int getWidth(TextComponent textComponent) {
-        String string = PlainTextComponentSerializer.plainText().serialize(textComponent);
+    public int getWidth(Component component) {
+        String string = PlainTextComponentSerializer.plainText().serialize(component);
         int stringWidth = 0;
         for (char c : string.toCharArray()) stringWidth += dictionary.get(String.valueOf(c));
         return stringWidth;
     }
 
-    public TextComponent addSpacing(TextComponent textComponent, int pixels) {
-        return this.addSpacing(textComponent, pixels, false);
+    public Component addSpacing(Component component, int pixels) {
+        return this.addSpacing(component, pixels, false);
     }
 
-    public TextComponent addSpacing(TextComponent textComponent, int pixels, boolean isRightAligned) {
-        double difference = pixels - getWidth(textComponent);
+    public Component addSpacing(Component component, int pixels, boolean isRightAligned) {
+        double difference = pixels - getWidth(component);
         int addonSpaces;
         int addonBoldSpaces = 0;
 
@@ -73,8 +73,8 @@ public class ChatUtil {
         stringBuilder.append(org.bukkit.ChatColor.RESET);
         TextComponent spaces = Component.text(String.valueOf(stringBuilder));
 
-        if (isRightAligned) return Component.text("").append(spaces).append(textComponent);
-        else return Component.text("").append(textComponent).append(spaces);
+        if (isRightAligned) return Component.text("").append(spaces).append(component);
+        else return Component.text("").append(component).append(spaces);
     }
 
 

@@ -10,7 +10,7 @@ import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.managers.DatabaseManager;
 import com.wasted_ticks.featherclans.managers.InviteManager;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
-import it.unimi.dsi.fastutil.Function;
+import com.wasted_ticks.featherclans.util.PaginateUtil;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -26,6 +26,7 @@ public final class FeatherClans extends JavaPlugin {
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
     private InviteManager inviteManager;
+    private PaginateUtil paginateUtil;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
 
@@ -42,6 +43,7 @@ public final class FeatherClans extends JavaPlugin {
         this.databaseManager = new DatabaseManager(plugin);
         this.clanManager = new ClanManager(plugin);
         this.inviteManager = new InviteManager(plugin);
+        this.paginateUtil = new PaginateUtil(plugin);
 
         if (this.config.isEconomyEnabled()) {
             if (!setupEconomy()) {
@@ -96,6 +98,10 @@ public final class FeatherClans extends JavaPlugin {
 
     public DatabaseManager getDatabaseManager() {
         return this.databaseManager;
+    }
+
+    public PaginateUtil getPaginateUtil() {
+        return this.paginateUtil;
     }
 
     public FeatherClansConfig getFeatherClansConfig() {
