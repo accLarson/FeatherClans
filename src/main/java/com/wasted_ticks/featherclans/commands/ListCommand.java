@@ -49,6 +49,7 @@ public class ListCommand implements CommandExecutor {
 
         Player player = (Player) sender;
         List<String> clans = plugin.getClanManager().getClans();
+
         if (clans.isEmpty()) {
             player.sendMessage(messages.get("clan_list_no_clans", null));
             return true;
@@ -75,16 +76,16 @@ public class ListCommand implements CommandExecutor {
             List<OfflinePlayer> clanMembers = plugin.getClanManager().getOfflinePlayersByClan(clan);
             int lastSeenInt = clanMembers.stream().mapToInt(m -> (int) ((System.currentTimeMillis() - m.getLastLogin()) / 86400000)).min().getAsInt();
 
-            Component tag = chatUtil.addSpacing(parser.deserialize(clan), 45)
-                    .hoverEvent(HoverEvent.showText(Component.text("Click to view " + clan + " clan roster")))
-                    .clickEvent(ClickEvent.runCommand("/clan roster " + clan));
+            Component tag = chatUtil.addSpacing(parser.deserialize(clan), 45);
             Component leader = chatUtil.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()),75);
             Component online = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(OfflinePlayer::isOnline).count() + "/" + clanMembers.size()),50,true);
             Component lastSeen;
             if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),140,true);
             else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),140,true);
 
-            clanLines.add(tag.append(leader).append(online).append(lastSeen));
+            clanLines.add(tag.append(leader).append(online).append(lastSeen)
+                    .hoverEvent(HoverEvent.showText(parser.deserialize("<#6C719D>Click to view <white>" + clan + " <#6C719D>clan roster")))
+                    .clickEvent(ClickEvent.runCommand("/clan roster " + clan)));
         }
 
         plugin.getPaginateUtil().displayPage(args, (Player)sender, clanLines);
