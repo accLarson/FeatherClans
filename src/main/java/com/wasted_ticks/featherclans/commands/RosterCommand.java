@@ -5,12 +5,9 @@ import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.command.Command;
@@ -49,11 +46,16 @@ public class RosterCommand implements CommandExecutor {
         String clanTag = null;
         ClanManager manager = plugin.getClanManager();
 
-        if (args.length == 1 && manager.isOfflinePlayerInClan((OfflinePlayer) sender)) {
-            clanTag = manager.getClanByOfflinePlayer((OfflinePlayer) sender);
-            String[] newArgs = Arrays.copyOf(args,args.length+1);
-            newArgs[args.length] = clanTag;
-            args = newArgs;
+        if (args.length == 1) {
+            if (manager.isOfflinePlayerInClan((OfflinePlayer) sender)) {
+                clanTag = manager.getClanByOfflinePlayer((OfflinePlayer) sender);
+                String[] newArgs = Arrays.copyOf(args,args.length+1);
+                newArgs[args.length] = clanTag;
+                args = newArgs;
+            } else {
+                sender.sendMessage(messages.get("clan_roster_error_unresolved_clan", null));
+                return true;
+            }
         }
 
         if (clanTag == null) clanTag = args[1];
