@@ -19,6 +19,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -32,6 +33,13 @@ public class ListCommand implements CommandExecutor {
     public ListCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
+    }
+
+    private boolean isVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) return true;
+        }
+        return false;
     }
 
     @Override
@@ -66,9 +74,9 @@ public class ListCommand implements CommandExecutor {
         List<Component> clanLines = new ArrayList<>();
 
         Component header = chatUtil.addSpacing(parser.deserialize("<gray>Clan"),45)
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Leader"),75))
+                .append(chatUtil.addSpacing(parser.deserialize("<gray>Leader"),100))
                 .append(chatUtil.addSpacing(parser.deserialize("<gray>Online"), 50, true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Login"),140,true));
+                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Login"),115,true));
 
         clanLines.add(header);
 
@@ -77,11 +85,11 @@ public class ListCommand implements CommandExecutor {
             int lastSeenInt = clanMembers.stream().mapToInt(m -> (int) ((System.currentTimeMillis() - m.getLastLogin()) / 86400000)).min().getAsInt();
 
             Component tag = chatUtil.addSpacing(parser.deserialize(clan), 45);
-            Component leader = chatUtil.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()),75);
-            Component online = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(OfflinePlayer::isOnline).count() + "/" + clanMembers.size()),50,true);
+            Component leader = chatUtil.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()),100);
+            Component online = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count() + "/" + clanMembers.size()),50,true);
             Component lastSeen;
-            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),140,true);
-            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),140,true);
+            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),115,true);
+            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),115,true);
 
             clanLines.add(tag.append(leader).append(online).append(lastSeen)
                     .hoverEvent(HoverEvent.showText(parser.deserialize("<#6C719D>Click to view <white>" + clan + " <#6C719D>clan roster")))

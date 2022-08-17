@@ -1,6 +1,5 @@
 package com.wasted_ticks.featherclans.managers;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

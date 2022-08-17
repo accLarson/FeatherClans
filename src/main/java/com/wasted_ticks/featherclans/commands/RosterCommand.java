@@ -14,6 +14,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
@@ -28,6 +29,13 @@ public class RosterCommand implements CommandExecutor {
     public RosterCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
+    }
+
+    private boolean isVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) return true;
+        }
+        return false;
     }
 
     @Override
@@ -76,10 +84,10 @@ public class RosterCommand implements CommandExecutor {
 
         List<Component> clanMemberLines = new ArrayList<>();
 
-        Component header = chatUtil.addSpacing(parser.deserialize("<gray>Member"),75)
+        Component header = chatUtil.addSpacing(parser.deserialize("<gray>Member"),100)
                 .append(chatUtil.addSpacing(parser.deserialize("<gray>KDR"),55,true))
                 .append(chatUtil.addSpacing(parser.deserialize("<gray>Hours"),55,true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Seen"),125,true));
+                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Seen"),100,true));
 
         clanMemberLines.add(header);
 
@@ -90,20 +98,20 @@ public class RosterCommand implements CommandExecutor {
             if (clanMember.getName() != null) name = clanMember.getName();
 
             Component member;
-            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(parser.deserialize(name + " <dark_gray>(L)"), 75);
-            else member = chatUtil.addSpacing(parser.deserialize(name), 75);
+            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(parser.deserialize(name + " <dark_gray>L"), 100);
+            else member = chatUtil.addSpacing(parser.deserialize(name), 100);
 
             Component KDR;
-            if (clanMember.isOnline()) KDR = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + df.format(kdr)),55,true);
+            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) KDR = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + df.format(kdr)),55,true);
             else KDR = chatUtil.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
 
             Component hours;
-            if (clanMember.isOnline()) hours = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMember.getStatistic(Statistic.PLAY_ONE_MINUTE)/20/60/60),55,true);
+            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) hours = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMember.getStatistic(Statistic.PLAY_ONE_MINUTE)/20/60/60),55,true);
             else hours = chatUtil.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
 
             Component lastSeen;
-            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),125,true);
-            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),125,true);
+            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),100,true);
+            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),100,true);
 
             clanMemberLines.add(member.append(KDR).append(hours).append(lastSeen));
         }
