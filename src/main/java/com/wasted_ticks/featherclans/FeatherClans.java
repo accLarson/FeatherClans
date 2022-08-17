@@ -8,6 +8,7 @@ import com.wasted_ticks.featherclans.listeners.EntityDamageByEntityEventListener
 import com.wasted_ticks.featherclans.listeners.ProjectileHitEventListener;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.managers.DatabaseManager;
+import com.wasted_ticks.featherclans.managers.FriendlyFireManager;
 import com.wasted_ticks.featherclans.managers.InviteManager;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
 import com.wasted_ticks.featherclans.util.PaginateUtil;
@@ -26,6 +27,7 @@ public final class FeatherClans extends JavaPlugin {
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
     private InviteManager inviteManager;
+    private FriendlyFireManager friendlyFireManager;
     private PaginateUtil paginateUtil;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
@@ -42,6 +44,7 @@ public final class FeatherClans extends JavaPlugin {
 
         this.databaseManager = new DatabaseManager(plugin);
         this.clanManager = new ClanManager(plugin);
+        this.friendlyFireManager = new FriendlyFireManager();
         this.inviteManager = new InviteManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
 
@@ -100,6 +103,10 @@ public final class FeatherClans extends JavaPlugin {
         return this.databaseManager;
     }
 
+    public FriendlyFireManager getFriendlyFireManager() {
+        return this.friendlyFireManager;
+    }
+
     public PaginateUtil getPaginateUtil() {
         return this.paginateUtil;
     }
@@ -133,6 +140,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("help", new HelpCommand(plugin));
         handler.register("reload", new ReloadCommand(plugin));
         handler.register("banner", new BannerCommand(plugin));
+        handler.register("friendlyfire", new FriendlyFireCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 

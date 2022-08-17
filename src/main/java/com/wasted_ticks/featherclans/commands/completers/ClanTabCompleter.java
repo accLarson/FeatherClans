@@ -1,9 +1,11 @@
 package com.wasted_ticks.featherclans.commands.completers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,7 @@ public class ClanTabCompleter implements TabCompleter {
             "create",
             "decline",
             "disband",
+            "friendlyfire",
             "help",
             "home",
             "invite",
@@ -48,23 +51,23 @@ public class ClanTabCompleter implements TabCompleter {
             case 1:
                 StringUtil.copyPartialMatches(args[0], COMMANDS, completions);
                 if(sender.isOp()) {
-                    StringUtil.copyPartialMatches(args[0], Arrays.asList("banner"), completions);
+                    StringUtil.copyPartialMatches(args[0], List.of("banner"), completions);
                 }
                 break;
             case 2:
                 if ("invite".equals(args[0])) {
                     if (this.plugin.getClanManager().isOfflinePlayerLeader((Player) sender)) {
-                        completions = plugin.getServer().getOnlinePlayers().stream().map(player -> player.getName()).collect(Collectors.toList());
+                        completions = plugin.getServer().getOnlinePlayers().stream().map(OfflinePlayer::getName).collect(Collectors.toList());
                     }
                 } else if ("kick".equals(args[0])) {
                     if (this.plugin.getClanManager().isOfflinePlayerLeader((Player) sender)) {
                         String tag = this.plugin.getClanManager().getClanByOfflinePlayer((Player) sender);
-                        completions = plugin.getClanManager().getOfflinePlayersByClan(tag).stream().map(player -> player.getName()).collect(Collectors.toList());
+                        completions = plugin.getClanManager().getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList());
                     }
                 } else if ("confer".equals(args[0])) {
                     if (this.plugin.getClanManager().isOfflinePlayerLeader((Player) sender)) {
                         String tag = this.plugin.getClanManager().getClanByOfflinePlayer((Player) sender);
-                        completions = plugin.getClanManager().getOfflinePlayersByClan(tag).stream().map(player -> player.getName()).collect(Collectors.toList());
+                        completions = plugin.getClanManager().getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList());
                     }
                 } else if ("leaderboard".equals(args[0])) {
                     // exp: total of all offline players current exp
