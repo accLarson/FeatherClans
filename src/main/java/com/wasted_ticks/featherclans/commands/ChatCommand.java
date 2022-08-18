@@ -62,6 +62,15 @@ public class ChatCommand implements CommandExecutor {
                 )));
             }
         }
+        for (OfflinePlayer operator : plugin.getServer().getOperators()) {
+            if (operator.isOnline()) {
+                operator.getPlayer().sendMessage(messages.get("clan_chat_spy_message", Map.of(
+                        "tag", clan,
+                        "player", originator.getName(),
+                        "message", message
+                )));
+            }
+        }
 
         return true;
     }
