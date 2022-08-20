@@ -31,13 +31,32 @@ public class HomeCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.invite")) {
+        if (!sender.hasPermission("feather.clans.home")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
         Player player = (Player) sender;
-        if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
+
+        if (player.isOp() && args.length >= 2) {
+
+            String tag = args[1].toLowerCase();
+
+            if (plugin.getClanManager().getClans().contains(tag)) {
+
+                if (plugin.getClanManager().hasClanHome(tag)) {
+
+                    Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
+                    player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    player.sendMessage(messages.get("clan_home_teleport_success", null));
+                }
+                else player.sendMessage(messages.get("clan_home_teleport_error_no_home",null));
+            }
+            else player.sendMessage(messages.get("clan_home_teleport_error_admin_no_clan",null));
+
+        }
+
+        else if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
 
             String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
 
@@ -62,12 +81,12 @@ public class HomeCommand implements CommandExecutor {
                 }, player.getLocation());
                 timer.start();
 
-            } else {
-                player.sendMessage(messages.get("clan_home_teleport_error_no_home", null));
             }
-        } else {
-            player.sendMessage(messages.get("clan_home_teleport_error_no_clan", null));
+            else player.sendMessage(messages.get("clan_home_teleport_error_no_home", null));
+
         }
+        else player.sendMessage(messages.get("clan_home_teleport_error_no_clan", null));
+
         return true;
     }
 }

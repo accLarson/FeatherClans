@@ -32,7 +32,7 @@ public class InviteCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.create")) {
+        if (!sender.hasPermission("feather.clans.invite")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
