@@ -70,7 +70,9 @@ public class FeatherClansMessages {
             MiniMessage parser = MiniMessage.builder().tags(
                     TagResolver.builder()
                             .resolver(StandardTags.color())
+                            .resolver(StandardTags.decorations())
                             .resolver(StandardTags.reset())
+                            .resolver(StandardTags.newline())
                             .build()
             ).build();
 

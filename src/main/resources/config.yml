@@ -10,6 +10,7 @@
 # feather.clans.create
 # feather.clans.decline
 # feather.clans.disband
+# feather.clans.friendlyfire
 # feather.clans.home
 # feather.clans.invite
 # feather.clans.kick
@@ -58,13 +59,3 @@ settings:
     - "adnim"
 page-formats:
   lines-per-page: 8
-  table-prefix-line: "<#ffffff>•<#777777>--- <#ffffff>FeatherClans</#ffffff> ------------------------------------</#777777>•"
-  table-suffix-line: "<white>•<#777777>----------------------------------------------------</#777777>•"
-  back-arrow: " <white>◀ "
-  next-arrow: " <white>▶ "
-  back-arrow-disabled: " <#aaaaaa>◀ "
-  next-arrow-disabled: " <#aaaaaa>▶ "
-  page-count-prefix: "<white>"
-  page-count-suffix: ""
-  paginator-prefix: "<white>•<#777777>--- |"
-  paginator-suffix: "<#777777>| -----------------------------------<white>•"

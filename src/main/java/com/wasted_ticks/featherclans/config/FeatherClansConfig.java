@@ -35,6 +35,8 @@ public class FeatherClansConfig {
 
     private List<String> denyTags;
 
+    private int linesPerPage;
+
     public FeatherClansConfig(FeatherClans plugin) {
         this.plugin = plugin;
         this.plugin.saveDefaultConfig();
@@ -67,6 +69,8 @@ public class FeatherClansConfig {
         this.mysqlDatabase = config.getString("settings.mysql.database");
 
         this.denyTags = config.getStringList("settings.deny_tags");
+
+        this.linesPerPage = config.getInt("page-formats.lines-per-page");
     }
 
     public boolean isEconomyEnabled() {
@@ -147,5 +151,9 @@ public class FeatherClansConfig {
 
     public List<String> getDenyTags() {
         return denyTags;
+    }
+
+    public int getLinesPerPage() {
+        return linesPerPage;
     }
 }

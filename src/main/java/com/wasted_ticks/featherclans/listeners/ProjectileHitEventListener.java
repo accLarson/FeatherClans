@@ -31,8 +31,9 @@ public class ProjectileHitEventListener implements Listener {
 
             if(manager.isOfflinePlayerInClan(player) && manager.isOfflinePlayerInClan(damager)){
                 if(manager.getClanByOfflinePlayer(player).equals(manager.getClanByOfflinePlayer(damager))) {
-                    event.setCancelled(true);
-                    return;
+                    if (!plugin.getFriendlyFireManager().isAllowingFriendlyFire(player) || !plugin.getFriendlyFireManager().isAllowingFriendlyFire(damager)) {
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
