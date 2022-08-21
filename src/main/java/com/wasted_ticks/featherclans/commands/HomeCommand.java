@@ -48,7 +48,9 @@ public class HomeCommand implements CommandExecutor {
 
                     Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
                     player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    player.sendMessage(messages.get("clan_home_teleport_success", null));
+                    player.sendMessage(messages.get("clan_home_teleport_success", Map.of(
+                            "clan", tag
+                    )));
                 }
                 else player.sendMessage(messages.get("clan_home_teleport_error_no_home",null));
             }
@@ -56,6 +58,11 @@ public class HomeCommand implements CommandExecutor {
         }
 
         else if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
+
+            if (args.length != 1) {
+                sender.sendMessage(messages.get("clan_home_teleport_error_invalid_arg_length",null));
+                return true;
+            }
 
             String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
 
@@ -70,7 +77,9 @@ public class HomeCommand implements CommandExecutor {
                 Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
 
                 TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
-                    player.sendMessage(messages.get("clan_home_teleport_success", null));
+                    player.sendMessage(messages.get("clan_home_teleport_success", Map.of(
+                            "clan", tag
+                    )));
                     player.teleport(clanHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 }, (instance) -> {
                     if (!instance.getStartLocation().getBlock().equals(player.getLocation().getBlock())) {
