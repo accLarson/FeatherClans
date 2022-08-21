@@ -38,7 +38,7 @@ public class HomeCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (player.isOp() && args.length >= 2) {
+        if (player.hasPermission("feather.clans.home.others") && args.length >= 2) {
 
             String tag = args[1].toLowerCase();
 
@@ -53,7 +53,6 @@ public class HomeCommand implements CommandExecutor {
                 else player.sendMessage(messages.get("clan_home_teleport_error_no_home",null));
             }
             else player.sendMessage(messages.get("clan_home_teleport_error_admin_no_clan",null));
-
         }
 
         else if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
@@ -80,7 +79,6 @@ public class HomeCommand implements CommandExecutor {
                     }
                 }, player.getLocation());
                 timer.start();
-
             }
             else player.sendMessage(messages.get("clan_home_teleport_error_no_home", null));
 

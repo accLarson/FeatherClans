@@ -44,6 +44,7 @@ clan_sethome_error_economy: "<#949bd1>Error<#6C719D>: Setting clan home costs <#
 clan_sethome_success: "<#6C719D>You've set your clan home to your current location."
 clan_sethome_success_economy: "<#6C719D>Setting a clan home cost you <#949bd1><amount> Lapis<#6C719D>."
 clan_help_home: "<#949bd1>/clan home<#6C719D> — Teleport to your clan home."
+clan_help_home_other: "<#949bd1>/clan home [tag]<#6C719D> — Teleport to the specified clan home."
 clan_help_sethome: "<#949bd1>/clan sethome<#6C719D> — Set clan home to your current location."
 clan_help_create: "<#949bd1>/clan create [tag]<#6C719D> — Create a new clan."
 clan_help_invite: "<#949bd1>/clan invite [player]<#6C719D> — Invite a player to your clan."
