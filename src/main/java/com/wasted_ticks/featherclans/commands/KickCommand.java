@@ -36,8 +36,8 @@ public class KickCommand implements CommandExecutor {
         }
 
         Player originator = (Player) sender;
-        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
-        if (!leader) {
+
+        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
@@ -48,6 +48,7 @@ public class KickCommand implements CommandExecutor {
         }
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
+
         if (!offlinePlayer.hasPlayedBefore()) {
             originator.sendMessage(messages.get("clan_kick_error_unresolved_player", null));
             return true;
@@ -56,6 +57,11 @@ public class KickCommand implements CommandExecutor {
         String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
         if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(offlinePlayer, tag)) {
             originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
+            return true;
+        }
+
+        if (originator == offlinePlayer.getPlayer()) {
+            originator.sendMessage(messages.get("clan_kick_error_self", null));
             return true;
         }
 
