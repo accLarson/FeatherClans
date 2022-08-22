@@ -14,9 +14,9 @@ import java.util.Map;
 public class InviteManager {
 
     private final FeatherClansMessages messages;
-    private FeatherClans plugin;
-    private HashMap<String, RequestUtil> requests = new HashMap<>();
-    private FeatherClansConfig config;
+    private final FeatherClans plugin;
+    private final HashMap<String, RequestUtil> requests = new HashMap<>();
+    private final FeatherClansConfig config;
 
     public InviteManager(FeatherClans plugin) {
         this.plugin = plugin;
@@ -45,7 +45,7 @@ public class InviteManager {
 //                economy.withdrawPlayer(originator, amount);
 //                requests.put(invitee.getName(), new RequestUtil(tag, originator));
 //            } else {
-//                originator.sendMessage(messages.get("clan_invite_error_economy", Map.of(
+//                originator.sendMessage(messages.get("_invite_error_economy", Map.of(
 //                        "amount", String.valueOf((int) amount)
 //                )));
 //                return true;

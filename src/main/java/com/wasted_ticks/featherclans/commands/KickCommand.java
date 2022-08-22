@@ -60,8 +60,8 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
-        if (originator == offlinePlayer.getPlayer()) {
-            originator.sendMessage(messages.get("clan_kick_error_self", null));
+        if (this.plugin.getClanManager().isOfflinePlayerLeader(offlinePlayer)) {
+            originator.sendMessage(messages.get("clan_kick_error_leader", null));
             return true;
         }
 

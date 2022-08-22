@@ -61,7 +61,6 @@ public class HelpCommand implements CommandExecutor {
         if (sender.hasPermission("feather.clans.decline")) {
             sender.sendMessage(messages.get("clan_help_decline", null));
         }
-
         sender.sendMessage(messages.get("clan_help_help", null));
 
         if (sender.hasPermission("feather.clans.list")) {
@@ -69,6 +68,9 @@ public class HelpCommand implements CommandExecutor {
         }
         if (sender.hasPermission("feather.clans.leaderboard")) {
             sender.sendMessage(messages.get("clan_help_leaderboard", null));
+        }
+        if (sender.hasPermission("feather.clans.manage")) {
+            sender.sendMessage(messages.get("clan_help_manage",null));
         }
         if (sender.hasPermission("feather.clans.roster")) {
             sender.sendMessage(messages.get("clan_help_roster", null));

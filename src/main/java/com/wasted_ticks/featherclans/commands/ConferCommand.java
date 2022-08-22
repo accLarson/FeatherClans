@@ -46,24 +46,30 @@ public class ConferCommand implements CommandExecutor {
             return true;
         }
 
-        Player player = Bukkit.getPlayer(args[1]);
-        if (player == null) {
+        Player potentialLeader = Bukkit.getPlayer(args[1]);
+
+        if (potentialLeader == null) {
             originator.sendMessage(messages.get("clan_confer_unresolved_player", null));
             return true;
         }
 
+        if (plugin.getClanManager().isOfflinePlayerLeader(potentialLeader)) {
+            sender.sendMessage(messages.get("clan_confer_error_leader", null));
+            return true;
+        }
+
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
-        if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(player, clan)) {
+        if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader, clan)) {
             originator.sendMessage(messages.get("clan_confer_not_in_clan", null));
             return true;
         }
 
-        boolean successful = this.plugin.getClanManager().setClanLeader(clan, player);
+        boolean successful = this.plugin.getClanManager().setClanLeader(clan, potentialLeader);
         if (successful) {
             originator.sendMessage(messages.get("clan_confer_success_originator", Map.of(
-                    "player", player.getName()
+                    "player", potentialLeader.getName()
             )));
-            player.sendMessage(messages.get("clan_confer_success_player", Map.of(
+            potentialLeader.sendMessage(messages.get("clan_confer_success_player", Map.of(
                     "player", originator.getName(),
                     "clan", clan
             )));
