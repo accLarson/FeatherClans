@@ -22,7 +22,8 @@ public class ProjectileHitEventListener implements Listener {
         if(projectile.getShooter() != null
             && projectile.getShooter() instanceof Player
             && event.getHitEntity() != null
-            && event.getHitEntity() instanceof Player) {
+            && event.getHitEntity() instanceof Player
+            && projectile.getShooter() != event.getHitEntity()) {
 
             Player player = (Player) event.getHitEntity();
             Player damager = (Player) projectile.getShooter();
@@ -38,6 +39,4 @@ public class ProjectileHitEventListener implements Listener {
             }
         }
     }
-
-
 }
