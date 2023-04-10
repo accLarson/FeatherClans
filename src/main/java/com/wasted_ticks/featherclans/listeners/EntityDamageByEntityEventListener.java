@@ -22,6 +22,7 @@ public class EntityDamageByEntityEventListener implements Listener {
             Player player = (Player) event.getEntity();
             Player damager = (Player) event.getDamager();
 
+
             ClanManager manager = this.plugin.getClanManager();
 
             if(manager.isOfflinePlayerInClan(player) && manager.isOfflinePlayerInClan(damager)){
