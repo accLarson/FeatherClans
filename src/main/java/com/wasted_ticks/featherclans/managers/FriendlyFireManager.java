@@ -18,6 +18,7 @@ public class FriendlyFireManager {
     }
 
     public boolean isAllowingFriendlyFire(Player player) {
+        if (player.hasPermission("feather.clans.forcefriendlyfire")) return true;
         return allowingFriendlyFire.contains(player);
     }
 }
