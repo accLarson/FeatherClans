@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class ClanManager {
 
-    private static final HashMap<UUID, String> players = new HashMap<>();
+    private static final HashMap<UUID, String> clanedPlayers = new HashMap<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
     private final FeatherClans plugin;
     private final DatabaseManager database;
@@ -46,7 +46,7 @@ public class ClanManager {
                     String tag = results.getString("tag");
                     String uuid = results.getString("mojang_uuid");
                     if(tag != null && uuid != null) {
-                        players.put(UUID.fromString(uuid), tag.toLowerCase());
+                        clanedPlayers.put(UUID.fromString(uuid), tag.toLowerCase());
                     }
                 }
             }
@@ -97,7 +97,7 @@ public class ClanManager {
      */
     public String getClanByOfflinePlayer(OfflinePlayer player) {
         UUID uuid = player.getUniqueId();
-        return players.get(uuid);
+        return clanedPlayers.get(uuid);
     }
 
     /**
@@ -107,7 +107,7 @@ public class ClanManager {
      * @return a list of offline players.
      */
     public List<OfflinePlayer> getOfflinePlayersByClan(String clan) {
-        return players.entrySet().stream()
+        return clanedPlayers.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(clan))
 //                .filter(entry -> entry.getValue().equalsIgnoreCase(clan))
                 .map(entry -> Bukkit.getOfflinePlayer(entry.getKey()))
@@ -146,11 +146,11 @@ public class ClanManager {
      * @return boolean
      */
     public boolean isOfflinePlayerInClan(OfflinePlayer player) {
-        return players.containsKey(player.getUniqueId());
+        return clanedPlayers.containsKey(player.getUniqueId());
     }
 
     public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, String clan) {
-        return players.get(player.getUniqueId()) == null || !players.get(player.getUniqueId()).equalsIgnoreCase(clan);
+        return clanedPlayers.get(player.getUniqueId()) == null || !clanedPlayers.get(player.getUniqueId()).equalsIgnoreCase(clan);
     }
 
 
@@ -234,7 +234,7 @@ public class ClanManager {
         {
             delete.setString(1, tag.toLowerCase(Locale.ROOT));
             if(delete.executeUpdate() != 0) {
-                players.entrySet().removeIf(entry -> entry.getValue().equals(tag));
+                clanedPlayers.entrySet().removeIf(entry -> entry.getValue().equals(tag));
                 clans.remove(tag.toLowerCase());
                 return true;
             }
@@ -259,7 +259,7 @@ public class ClanManager {
             delete.setString(1, player.getUniqueId().toString());
             int rows = delete.executeUpdate();
             if(rows != 0) {
-                players.remove(player.getUniqueId());
+                clanedPlayers.remove(player.getUniqueId());
                 return true;
             }
         } catch (SQLException e) {
@@ -320,7 +320,7 @@ public class ClanManager {
                         insert.setString(1, player.getUniqueId().toString());
                         insert.setInt(2, id);
                         if(insert.executeUpdate() != 0) {
-                            players.put(player.getUniqueId(), tag.toLowerCase());
+                            clanedPlayers.put(player.getUniqueId(), tag.toLowerCase());
                             return true;
                         }
                     } catch (SQLException e) {
@@ -382,5 +382,47 @@ public class ClanManager {
             plugin.getLog().severe("[FeatherClans] Failed check clan home for: " + tag);
         }
         return null;
+    }
+
+    /**
+     * Adds a kill record to the clan_kills table.
+     *
+     * @param killer
+     * @param killed
+     */
+    public boolean addKillRecord(OfflinePlayer killer, OfflinePlayer killed) {
+        String query = "SELECT `id` FROM `clan_members` WHERE `mojang_uuid` = ?;";
+
+        try(Connection connection = database.getConnection();
+            PreparedStatement selectKiller = connection.prepareStatement(query);
+            PreparedStatement selectKilled = connection.prepareStatement(query))
+        {
+            // Get killer clan_member id
+            selectKiller.setString(1, killer.getUniqueId().toString());
+            ResultSet killerResults = selectKiller.executeQuery();
+
+            // Get killed clan_member id
+            selectKilled.setString(1, killed.getUniqueId().toString());
+            ResultSet killedResults = selectKilled.executeQuery();
+
+            if(killerResults.next() && killedResults.next()) {
+
+                String insertQuery = "INSERT INTO `clan_kills` (`killer_id`, `victim_id`) VALUES (?,?);";
+
+                try(PreparedStatement insert = connection.prepareStatement(insertQuery)) {
+                    insert.setInt(1, killerResults.getInt("id"));
+                    insert.setInt(2, killedResults.getInt("id"));
+                    if(insert.executeUpdate() != 0) {
+                        return true;
+                    }
+                } catch (SQLException e) {
+                    plugin.getLog().severe("[FeatherClans] Failed to add kill record: Killer: " + killer.getName() + ", Victim: " + killed.getName());
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLog().severe("[FeatherClans] Failed to retrieve Clan Member ID in addKillRecord.");
+        }
+
+        return false;
     }
 }

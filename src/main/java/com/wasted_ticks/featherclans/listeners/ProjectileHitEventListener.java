@@ -11,9 +11,11 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 public class ProjectileHitEventListener implements Listener {
 
     private final FeatherClans plugin;
+    private final ClanManager manager;
 
     public ProjectileHitEventListener(FeatherClans plugin) {
         this.plugin = plugin;
+        manager = this.plugin.getClanManager();
     }
 
     @EventHandler
@@ -28,7 +30,7 @@ public class ProjectileHitEventListener implements Listener {
             Player player = (Player) event.getHitEntity();
             Player damager = (Player) projectile.getShooter();
 
-            ClanManager manager = this.plugin.getClanManager();
+
 
             if(manager.isOfflinePlayerInClan(player) && manager.isOfflinePlayerInClan(damager)){
                 if(manager.getClanByOfflinePlayer(player).equals(manager.getClanByOfflinePlayer(damager))) {

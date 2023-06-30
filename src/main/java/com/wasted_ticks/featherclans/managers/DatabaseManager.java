@@ -8,7 +8,7 @@ import java.sql.*;
 
 public class DatabaseManager {
 
-    private HikariDataSource source;
+    private final HikariDataSource source;
     private final FeatherClans plugin;
     private final boolean isUseMySQL;
 
@@ -150,6 +150,23 @@ public class DatabaseManager {
                     + " `clan_id` INTEGER NOT NULL, "
                     + " `last_seen_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
                     + " `join_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+            try(Connection connection = this.getConnection()) {
+                connection.createStatement().execute(query);
+            } catch(SQLException e) {
+                plugin.getLog().severe("[FeatherClans] Unable to create `clan_members` table.");
+            }
+        }
+        if (!this.existsTable("clan_kills")) {
+            plugin.getLog().info("[FeatherClans] Creating `clan_kills` table.");
+            String query = "CREATE TABLE IF NOT EXISTS `clan_kills` ("
+                    + " `kill_id` INT PRIMARY KEY AUTO_INCREMENT, "
+                    + " `killer_id` INT, "
+                    + " `victim_id` INT, "
+                    + " `date` DATE NOT NULL DEFAULT CURRENT_DATE, "
+                    + " INDEX(`date`), "
+                    + " FOREIGN KEY (`killer_id`) REFERENCES `clan_members`(`id`), "
+                    + " FOREIGN KEY (`victim_id`) REFERENCES `clan_members`(`id`));";
+
             try(Connection connection = this.getConnection()) {
                 connection.createStatement().execute(query);
             } catch(SQLException e) {

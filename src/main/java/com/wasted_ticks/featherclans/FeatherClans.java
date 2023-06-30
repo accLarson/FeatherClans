@@ -6,10 +6,7 @@ import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.listeners.EntityDamageByEntityEventListener;
 import com.wasted_ticks.featherclans.listeners.ProjectileHitEventListener;
-import com.wasted_ticks.featherclans.managers.ClanManager;
-import com.wasted_ticks.featherclans.managers.DatabaseManager;
-import com.wasted_ticks.featherclans.managers.FriendlyFireManager;
-import com.wasted_ticks.featherclans.managers.InviteManager;
+import com.wasted_ticks.featherclans.managers.*;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
 import com.wasted_ticks.featherclans.util.PaginateUtil;
 import net.milkbowl.vault.economy.Economy;
@@ -28,6 +25,7 @@ public final class FeatherClans extends JavaPlugin {
     private ClanManager clanManager;
     private InviteManager inviteManager;
     private FriendlyFireManager friendlyFireManager;
+    private PVPScoreManager pvpScoreManager;
     private PaginateUtil paginateUtil;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
@@ -45,6 +43,7 @@ public final class FeatherClans extends JavaPlugin {
         this.databaseManager = new DatabaseManager(plugin);
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
+        this.pvpScoreManager = new PVPScoreManager();
         this.inviteManager = new InviteManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
 
@@ -105,6 +104,10 @@ public final class FeatherClans extends JavaPlugin {
 
     public FriendlyFireManager getFriendlyFireManager() {
         return this.friendlyFireManager;
+    }
+
+    public PVPScoreManager getPVPScoreManager() {
+        return this.pvpScoreManager;
     }
 
     public PaginateUtil getPaginateUtil() {

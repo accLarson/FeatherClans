@@ -10,9 +10,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 public class EntityDamageByEntityEventListener implements Listener {
 
     private final FeatherClans plugin;
+    private final ClanManager manager;
+
 
     public EntityDamageByEntityEventListener(FeatherClans plugin) {
         this.plugin = plugin;
+        manager = this.plugin.getClanManager();
     }
 
     @EventHandler
@@ -21,9 +24,6 @@ public class EntityDamageByEntityEventListener implements Listener {
 
             Player player = (Player) event.getEntity();
             Player damager = (Player) event.getDamager();
-
-
-            ClanManager manager = this.plugin.getClanManager();
 
             if(manager.isOfflinePlayerInClan(player) && manager.isOfflinePlayerInClan(damager)){
                 if(manager.getClanByOfflinePlayer(player).equals(manager.getClanByOfflinePlayer(damager))) {
