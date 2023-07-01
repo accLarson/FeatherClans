@@ -59,5 +59,7 @@ settings:
     - "adnin"
     - "admim"
     - "adnim"
-page-formats:
-  lines-per-page: 8
+  page-formats:
+    lines-per-page: 8
+  pvp-score:
+    pvpScoreRelevantDays: 64

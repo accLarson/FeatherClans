@@ -43,7 +43,7 @@ public final class FeatherClans extends JavaPlugin {
         this.databaseManager = new DatabaseManager(plugin);
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
-        this.pvpScoreManager = new PVPScoreManager();
+        this.pvpScoreManager = new PVPScoreManager(plugin);
         this.inviteManager = new InviteManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
 

@@ -85,15 +85,15 @@ public class RosterCommand implements CommandExecutor {
         List<Component> clanMemberLines = new ArrayList<>();
 
         Component header = chatUtil.addSpacing(parser.deserialize("<gray>Member"),100)
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>KDR"),55,true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Hours"),55,true))
+                .append(chatUtil.addSpacing(parser.deserialize("<gray>PVP Score"),55,true))
+                .append(chatUtil.addSpacing(parser.deserialize("<gray>XP Score"),55,true))
                 .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Seen"),100,true));
 
         clanMemberLines.add(header);
 
         for (OfflinePlayer clanMember : sortedClanMembers) {
             int lastSeenInt = (int) ((System.currentTimeMillis() - clanMember.getLastLogin()) / 86400000);
-            double kdr = (double) clanMember.getStatistic(Statistic.PLAYER_KILLS) / clanMember.getStatistic(Statistic.DEATHS);
+            int pvpScoreInt = plugin.getPVPScoreManager().getScore(clanMember);
             String name = "null";
             if (clanMember.getName() != null) name = clanMember.getName();
 
@@ -101,9 +101,9 @@ public class RosterCommand implements CommandExecutor {
             if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(parser.deserialize(name + " <dark_gray>L"), 100);
             else member = chatUtil.addSpacing(parser.deserialize(name), 100);
 
-            Component KDR;
-            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) KDR = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + df.format(kdr)),55,true);
-            else KDR = chatUtil.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
+            Component pvpScore;
+            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) pvpScore = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + df.format(pvpScoreInt)),55,true);
+            else pvpScore = chatUtil.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
 
             Component hours;
             if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) hours = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMember.getStatistic(Statistic.PLAY_ONE_MINUTE)/20/60/60),55,true);
@@ -113,7 +113,7 @@ public class RosterCommand implements CommandExecutor {
             if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),100,true);
             else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),100,true);
 
-            clanMemberLines.add(member.append(KDR).append(hours).append(lastSeen));
+            clanMemberLines.add(member.append(pvpScore).append(hours).append(lastSeen));
         }
 
         plugin.getPaginateUtil().displayPage(args, (Player)sender, clanMemberLines);

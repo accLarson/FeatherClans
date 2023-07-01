@@ -37,6 +37,8 @@ public class FeatherClansConfig {
 
     private int linesPerPage;
 
+    private int pvpScoreRelevantDays;
+
     public FeatherClansConfig(FeatherClans plugin) {
         this.plugin = plugin;
         this.plugin.saveDefaultConfig();
@@ -70,7 +72,9 @@ public class FeatherClansConfig {
 
         this.denyTags = config.getStringList("settings.deny_tags");
 
-        this.linesPerPage = config.getInt("page-formats.lines-per-page");
+        this.linesPerPage = config.getInt("settings.page-formats.lines-per-page");
+
+        this.pvpScoreRelevantDays = config.getInt("settings.pvp-score.relevant-days");
     }
 
     public boolean isEconomyEnabled() {
@@ -155,5 +159,9 @@ public class FeatherClansConfig {
 
     public int getLinesPerPage() {
         return linesPerPage;
+    }
+
+    public int getPvpScoreRelevantDays() {
+        return pvpScoreRelevantDays;
     }
 }

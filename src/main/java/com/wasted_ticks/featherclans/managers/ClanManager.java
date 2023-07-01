@@ -11,15 +11,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ClanManager {
 
-    private static final HashMap<UUID, String> clanedPlayers = new HashMap<>();
+    private static final HashMap<UUID, String> players = new HashMap<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
     private final FeatherClans plugin;
     private final DatabaseManager database;
@@ -46,7 +44,7 @@ public class ClanManager {
                     String tag = results.getString("tag");
                     String uuid = results.getString("mojang_uuid");
                     if(tag != null && uuid != null) {
-                        clanedPlayers.put(UUID.fromString(uuid), tag.toLowerCase());
+                        players.put(UUID.fromString(uuid), tag.toLowerCase());
                     }
                 }
             }
@@ -90,6 +88,15 @@ public class ClanManager {
     }
 
     /**
+     * Gets a list of all clans members.
+     *
+     * @return list of clans
+     */
+    public List<OfflinePlayer> getAllClanMembers() {
+        return players.keySet().stream().map(Bukkit::getOfflinePlayer).collect(Collectors.toList());
+    }
+
+    /**
      * Gets the clan associated with the offline player.
      *
      * @param player
@@ -97,7 +104,7 @@ public class ClanManager {
      */
     public String getClanByOfflinePlayer(OfflinePlayer player) {
         UUID uuid = player.getUniqueId();
-        return clanedPlayers.get(uuid);
+        return players.get(uuid);
     }
 
     /**
@@ -107,7 +114,7 @@ public class ClanManager {
      * @return a list of offline players.
      */
     public List<OfflinePlayer> getOfflinePlayersByClan(String clan) {
-        return clanedPlayers.entrySet().stream()
+        return players.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(clan))
 //                .filter(entry -> entry.getValue().equalsIgnoreCase(clan))
                 .map(entry -> Bukkit.getOfflinePlayer(entry.getKey()))
@@ -146,11 +153,11 @@ public class ClanManager {
      * @return boolean
      */
     public boolean isOfflinePlayerInClan(OfflinePlayer player) {
-        return clanedPlayers.containsKey(player.getUniqueId());
+        return players.containsKey(player.getUniqueId());
     }
 
     public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, String clan) {
-        return clanedPlayers.get(player.getUniqueId()) == null || !clanedPlayers.get(player.getUniqueId()).equalsIgnoreCase(clan);
+        return players.get(player.getUniqueId()) == null || !players.get(player.getUniqueId()).equalsIgnoreCase(clan);
     }
 
 
@@ -234,7 +241,7 @@ public class ClanManager {
         {
             delete.setString(1, tag.toLowerCase(Locale.ROOT));
             if(delete.executeUpdate() != 0) {
-                clanedPlayers.entrySet().removeIf(entry -> entry.getValue().equals(tag));
+                players.entrySet().removeIf(entry -> entry.getValue().equals(tag));
                 clans.remove(tag.toLowerCase());
                 return true;
             }
@@ -259,7 +266,7 @@ public class ClanManager {
             delete.setString(1, player.getUniqueId().toString());
             int rows = delete.executeUpdate();
             if(rows != 0) {
-                clanedPlayers.remove(player.getUniqueId());
+                players.remove(player.getUniqueId());
                 return true;
             }
         } catch (SQLException e) {
@@ -320,7 +327,7 @@ public class ClanManager {
                         insert.setString(1, player.getUniqueId().toString());
                         insert.setInt(2, id);
                         if(insert.executeUpdate() != 0) {
-                            clanedPlayers.put(player.getUniqueId(), tag.toLowerCase());
+                            players.put(player.getUniqueId(), tag.toLowerCase());
                             return true;
                         }
                     } catch (SQLException e) {
@@ -422,7 +429,45 @@ public class ClanManager {
         } catch (SQLException e) {
             plugin.getLog().severe("[FeatherClans] Failed to retrieve Clan Member ID in addKillRecord.");
         }
-
         return false;
     }
+
+    /**
+     * Gets kill data within from database about a specific clan member.
+     *
+     * @param offlinePlayer
+     */
+    public Map<OfflinePlayer, Integer> getClanMemberKillData(OfflinePlayer offlinePlayer) {
+        Map<OfflinePlayer, Integer> killData = new HashMap<>();
+
+        String query = "SELECT cm.mojang_uuid, COUNT(*) AS kill_count " +
+                "FROM `clan_kills` AS ck " +
+                "INNER JOIN `clan_members` AS cm1 ON ck.`killer_id` = cm1.`id` " +
+                "INNER JOIN `clan_members` AS cm ON ck.`victim_id` = cm.`id` " +
+                "WHERE cm1.`mojang_uuid` = ? " +
+                "AND ck.`date` > DATE_SUB(CURDATE(), INTERVAL ? DAY) " +
+                "GROUP BY cm.`mojang_uuid`;";
+
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, offlinePlayer.getUniqueId().toString());
+            statement.setInt(2, plugin.getFeatherClansConfig().getPvpScoreRelevantDays());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    String victimUUIDString = resultSet.getString("mojang_uuid");
+                    int killCount = resultSet.getInt("kill_count");
+
+                    OfflinePlayer victim = Bukkit.getOfflinePlayer(UUID.fromString(victimUUIDString));
+                    killData.put(victim, killCount);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLog().severe("[FeatherClans] Failed to retrieve kill data for player: " + offlinePlayer.getName());
+        }
+
+        return killData;
+    }
+
 }

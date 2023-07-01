@@ -159,7 +159,7 @@ public class DatabaseManager {
         if (!this.existsTable("clan_kills")) {
             plugin.getLog().info("[FeatherClans] Creating `clan_kills` table.");
             String query = "CREATE TABLE IF NOT EXISTS `clan_kills` ("
-                    + " `kill_id` INT PRIMARY KEY AUTO_INCREMENT, "
+                    + " `id` INT PRIMARY KEY AUTO_INCREMENT, "
                     + " `killer_id` INT, "
                     + " `victim_id` INT, "
                     + " `date` DATE NOT NULL DEFAULT CURRENT_DATE, "
