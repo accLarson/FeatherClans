@@ -123,6 +123,22 @@ public class DatabaseManager {
                 plugin.getLog().severe("[FeatherClans] Unable to create `clan_members` table.");
             }
         }
+        if (!this.existsTable("clan_kills")) {
+            plugin.getLog().info("[FeatherClans] Creating `clan_kills` table.");
+            String query = "CREATE TABLE IF NOT EXISTS `clan_kills` ("
+                    + " `id` INT PRIMARY KEY AUTO_INCREMENT, "
+                    + " `killer_id` INT, "
+                    + " `victim_id` INT, "
+                    + " `date` DATE NOT NULL DEFAULT CURRENT_DATE, "
+                    + " INDEX(`date`), "
+                    + " FOREIGN KEY (`killer_id`) REFERENCES `clan_members`(`id`), "
+                    + " FOREIGN KEY (`victim_id`) REFERENCES `clan_members`(`id`));";
+            try(Connection connection = this.getConnection()) {
+                connection.createStatement().execute(query);
+            } catch(SQLException e) {
+                plugin.getLog().severe("[FeatherClans] Unable to create `clan_kills` table.");
+            }
+        }
     }
 
     private void initMySQLTables() {
