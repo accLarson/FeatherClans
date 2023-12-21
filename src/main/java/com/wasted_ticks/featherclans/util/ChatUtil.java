@@ -22,7 +22,7 @@ public class ChatUtil {
         this.init();
     }
 
-    public void init() {
+    private void init() {
         File file = new File(Bukkit.getPluginManager().getPlugin("FeatherClans").getDataFolder(), "characters.yml");
         if (!file.exists()) {
             Bukkit.getPluginManager().getPlugin("FeatherClans").saveResource("characters.yml", false);

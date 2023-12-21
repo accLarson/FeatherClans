@@ -5,9 +5,11 @@ import com.wasted_ticks.featherclans.commands.completers.ClanTabCompleter;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.listeners.EntityDamageByEntityEventListener;
+import com.wasted_ticks.featherclans.listeners.PlayerDeathListener;
 import com.wasted_ticks.featherclans.listeners.ProjectileHitEventListener;
 import com.wasted_ticks.featherclans.managers.*;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
+import com.wasted_ticks.featherclans.util.ActivityUtil;
 import com.wasted_ticks.featherclans.util.PaginateUtil;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -27,6 +29,7 @@ public final class FeatherClans extends JavaPlugin {
     private FriendlyFireManager friendlyFireManager;
     private PVPScoreManager pvpScoreManager;
     private PaginateUtil paginateUtil;
+    private ActivityUtil activityUtil;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
 
@@ -46,6 +49,7 @@ public final class FeatherClans extends JavaPlugin {
         this.pvpScoreManager = new PVPScoreManager(plugin);
         this.inviteManager = new InviteManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
+        this.activityUtil = new ActivityUtil(plugin);
 
         if (this.config.isEconomyEnabled()) {
             if (!setupEconomy()) {
@@ -62,6 +66,9 @@ public final class FeatherClans extends JavaPlugin {
         this.registerCommands();
         this.getServer().getPluginManager().registerEvents(new EntityDamageByEntityEventListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new ProjectileHitEventListener(plugin), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(plugin),this);
+
+        activityUtil.autoKickCheck(clanManager.getAllClanMembers());
     }
 
     private boolean setupEconomy() {
@@ -114,6 +121,10 @@ public final class FeatherClans extends JavaPlugin {
         return this.paginateUtil;
     }
 
+    public ActivityUtil getActivityUtil() {
+        return this.activityUtil;
+    }
+
     public FeatherClansConfig getFeatherClansConfig() {
         return this.config;
     }
@@ -159,6 +170,6 @@ public final class FeatherClans extends JavaPlugin {
     }
 
     public void disable() {
-        this.getPluginLoader().disablePlugin(this);
+
     }
 }

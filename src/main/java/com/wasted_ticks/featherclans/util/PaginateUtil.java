@@ -22,7 +22,7 @@ public class PaginateUtil {
         this.init();
     }
 
-    public void init(){
+    private void init(){
         this.messages = this.plugin.getFeatherClansMessages();
         this.config = this.plugin.getFeatherClansConfig();
     }

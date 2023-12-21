@@ -75,8 +75,8 @@ public class ListCommand implements CommandExecutor {
 
         Component header = chatUtil.addSpacing(parser.deserialize("<gray>Clan"),45)
                 .append(chatUtil.addSpacing(parser.deserialize("<gray>Leader"),100))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Online"), 50, true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Login"),115,true));
+                .append(chatUtil.addSpacing(parser.deserialize("<gray>Online"), 52, true))
+                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Login"),120,true));
 
         clanLines.add(header);
 
@@ -86,13 +86,13 @@ public class ListCommand implements CommandExecutor {
 
             Component tag = chatUtil.addSpacing(parser.deserialize(clan), 45);
             Component leader = chatUtil.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()),100);
-            Component online = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count() + "/" + clanMembers.size()),50,true);
+            Component online = chatUtil.addSpacing(parser.deserialize("<#949BD1>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count() + "/" + clanMembers.size()),52,true);
             Component lastSeen;
-            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),115,true);
-            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),115,true);
+            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#949BD1>Today"),120,true);
+            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#949BD1>" + lastSeenInt + " Day(s) Ago"),120,true);
 
             clanLines.add(tag.append(leader).append(online).append(lastSeen)
-                    .hoverEvent(HoverEvent.showText(parser.deserialize("<#6C719D>Click to view <white>" + clan + " <#6C719D>clan roster")))
+                    .hoverEvent(HoverEvent.showText(parser.deserialize("<#949BD1>Click to view <white>" + clan + " <#949BD1>clan roster")))
                     .clickEvent(ClickEvent.runCommand("/clan roster " + clan)));
         }
 

@@ -25,6 +25,7 @@ public class FeatherClansConfig {
     private int clanMinTagSize;
     private int clanMaxTagSize;
     private int clanMaxMembers;
+    private int clanAutoKickInactiveDays;
 
     private boolean mysqlEnabled;
     private String mysqlUsername;
@@ -39,6 +40,10 @@ public class FeatherClansConfig {
 
     private int pvpScoreRelevantDays;
 
+    private String pvpScoreCalculationExplained;
+
+    private int xpScoreRelevantDays;
+    private String xpScoreCalculationExplained;
     public FeatherClansConfig(FeatherClans plugin) {
         this.plugin = plugin;
         this.plugin.saveDefaultConfig();
@@ -62,6 +67,7 @@ public class FeatherClansConfig {
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
         this.clanMaxTagSize = config.getInt("settings.clan.max_tag_size");
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
+        this.clanAutoKickInactiveDays = config.getInt("auto_kick_inactive_days");
 
         this.mysqlEnabled = config.getBoolean("settings.mysql.enabled");
         this.mysqlUsername = config.getString("settings.mysql.username");
@@ -75,6 +81,10 @@ public class FeatherClansConfig {
         this.linesPerPage = config.getInt("settings.page-formats.lines-per-page");
 
         this.pvpScoreRelevantDays = config.getInt("settings.pvp-score.relevant-days");
+        this.pvpScoreCalculationExplained = config.getString("settings.pvp-score.calculation-explained");
+
+        this.xpScoreRelevantDays = config.getInt("settings.xp-score.relevant-days");
+        this.xpScoreCalculationExplained = config.getString("settings.xp-score.calculation-explained");
     }
 
     public boolean isEconomyEnabled() {
@@ -129,6 +139,10 @@ public class FeatherClansConfig {
         return clanMaxMembers;
     }
 
+    public int getAutoKickInactiveDays() {
+        return clanAutoKickInactiveDays;
+    }
+
     public boolean isMysqlEnabled() {
         return mysqlEnabled;
     }
@@ -161,7 +175,19 @@ public class FeatherClansConfig {
         return linesPerPage;
     }
 
-    public int getPvpScoreRelevantDays() {
+    public int getPVPScoreRelevantDays() {
         return pvpScoreRelevantDays;
+    }
+
+    public String getPVPScoreCalculationExplained() {
+        return pvpScoreCalculationExplained;
+    }
+
+    public int getXPScoreRelevantDays() {
+        return xpScoreRelevantDays;
+    }
+
+    public String getXPScoreCalculationExplained() {
+        return xpScoreCalculationExplained;
     }
 }

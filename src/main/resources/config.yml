@@ -38,6 +38,7 @@ settings:
     min_tag_size: 3
     max_tag_size: 5
     max_members: 30
+    auto_kick_inactive_days: 64
   mysql:
     enabled: true
     username: 'feather_clans'
@@ -62,4 +63,10 @@ settings:
   page-formats:
     lines-per-page: 8
   pvp-score:
-    pvpScoreRelevantDays: 64
+    relevant-days: 64
+    calculation-explained: "1 point for every clan player you've killed more than they've killed you.
+                        <br>Only the kills within the last <days> days count."
+  xp-score:
+    relevant-days: 64
+    calculation-explained: "XP score is calculated ...
+                        <br>... "

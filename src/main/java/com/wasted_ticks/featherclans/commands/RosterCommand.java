@@ -1,11 +1,15 @@
 package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.OfflinePlayer;
@@ -25,10 +29,12 @@ public class RosterCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
+    private final FeatherClansConfig config;
 
     public RosterCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
+        this.config = plugin.getFeatherClansConfig();
     }
 
     private boolean isVanished(Player player) {
@@ -78,42 +84,70 @@ public class RosterCommand implements CommandExecutor {
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !plugin.getClanManager().isOfflinePlayerLeader(m))).collect(Collectors.toList());
 
-        DecimalFormat df = new DecimalFormat("0.00");
         ChatUtil chatUtil = new ChatUtil(this.plugin);
-        MiniMessage parser = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.color()).resolver(StandardTags.reset()).build()).build();
+        MiniMessage mm = MiniMessage.miniMessage();
 
         List<Component> clanMemberLines = new ArrayList<>();
 
-        Component header = chatUtil.addSpacing(parser.deserialize("<gray>Member"),100)
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>PVP Score"),55,true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>XP Score"),55,true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Seen"),100,true));
+        Component pvpScoreCalculationExplained = mm.deserialize(config.getPVPScoreCalculationExplained(), Placeholder.parsed("days",String.valueOf(config.getPVPScoreRelevantDays())));
+        Component xpScoreCalculationExplained = mm.deserialize(config.getXPScoreCalculationExplained(), Placeholder.parsed("days",String.valueOf(config.getXPScoreRelevantDays())));
+
+        Component header = chatUtil.addSpacing(mm.deserialize("<gray>Member"),100)
+                .append(chatUtil.addSpacing(Component.text(" "),12))
+                .append(chatUtil.addSpacing(mm.deserialize("<gray>[i] PVP"),36,true).hoverEvent(HoverEvent.showText(pvpScoreCalculationExplained)))
+                .append(chatUtil.addSpacing(Component.text(" "),12))
+                .append(chatUtil.addSpacing(mm.deserialize("<gray>[i] XP"),36,true).hoverEvent(HoverEvent.showText(xpScoreCalculationExplained)))
+                .append(chatUtil.addSpacing(mm.deserialize("<gray>Last Seen"),120,true));
 
         clanMemberLines.add(header);
 
         for (OfflinePlayer clanMember : sortedClanMembers) {
+
             int lastSeenInt = (int) ((System.currentTimeMillis() - clanMember.getLastLogin()) / 86400000);
+
             int pvpScoreInt = plugin.getPVPScoreManager().getScore(clanMember);
+
+            List<Component> pvpScoreBreakdownLines = new ArrayList<>();
+
+            pvpScoreBreakdownLines.add(mm.deserialize("<gray>PVP Score Breakdown"));
+
+            String finalClanTag = clanTag;
+            plugin.getPVPScoreManager().getKills(clanMember).forEach((killed, killCount) -> {
+                int killedCount = plugin.getPVPScoreManager().getKills(killed).getOrDefault(clanMember,0);
+                String killedClan = manager.getClanByOfflinePlayer(killed);
+                int score = killCount > killedCount ? 1 : 0;
+                Component pvpScoreHoverLine = mm.deserialize("<br>")
+                        .append(chatUtil.addSpacing(mm.deserialize("<white>" + finalClanTag + " <#656B96>" + clanMember.getName()  + " <gray>vs " + "<white>" + killedClan + " <#656B96>" + killed.getName()), 180))
+                        .append(chatUtil.addSpacing(mm.deserialize("<#949BD1>" + killCount + ":" + killedCount),46, true))
+                        .append(chatUtil.addSpacing(mm.deserialize("<gold>" + score),20,true));
+                pvpScoreBreakdownLines.add(pvpScoreHoverLine);
+            });
+            Component pvpScoreBreakdownComponent = Component.text("");
+            for (Component line : pvpScoreBreakdownLines)
+                pvpScoreBreakdownComponent = pvpScoreBreakdownComponent.append(line);
+
+            int xpScoreInt = 0;
+
             String name = "null";
+
             if (clanMember.getName() != null) name = clanMember.getName();
 
             Component member;
-            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(parser.deserialize(name + " <dark_gray>L"), 100);
-            else member = chatUtil.addSpacing(parser.deserialize(name), 100);
+            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray>L"), 100);
+            else member = chatUtil.addSpacing(mm.deserialize(name), 100);
 
-            Component pvpScore;
-            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) pvpScore = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + df.format(pvpScoreInt)),55,true);
-            else pvpScore = chatUtil.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
+            Component pvpScore = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + pvpScoreInt),36,true)
+                    .hoverEvent(HoverEvent.showText(pvpScoreBreakdownComponent));
 
-            Component hours;
-            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) hours = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMember.getStatistic(Statistic.PLAY_ONE_MINUTE)/20/60/60),55,true);
-            else hours = chatUtil.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
+            Component spacer = chatUtil.addSpacing(Component.text(" "),12);
+
+            Component xpScore = chatUtil.addSpacing(mm.deserialize("<#949BD1>Soon"),36,true);
 
             Component lastSeen;
-            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),100,true);
-            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),100,true);
+            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>Today"),120,true);
+            else lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + lastSeenInt + " Day(s) Ago"),120,true);
 
-            clanMemberLines.add(member.append(pvpScore).append(hours).append(lastSeen));
+            clanMemberLines.add(member.append(spacer).append(pvpScore).append(spacer).append(xpScore).append(lastSeen));
         }
 
         plugin.getPaginateUtil().displayPage(args, (Player)sender, clanMemberLines);

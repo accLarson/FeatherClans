@@ -452,7 +452,7 @@ public class ClanManager {
              PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setString(1, offlinePlayer.getUniqueId().toString());
-            statement.setInt(2, plugin.getFeatherClansConfig().getPvpScoreRelevantDays());
+            statement.setInt(2, plugin.getFeatherClansConfig().getPVPScoreRelevantDays());
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {

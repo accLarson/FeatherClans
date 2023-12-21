@@ -9,23 +9,21 @@ import java.util.Map;
 public class PVPScoreManager {
 
     private final FeatherClans plugin;
-    private final ClanManager manager;
+    private final ClanManager clanManager;
 
     Map<OfflinePlayer,Map<OfflinePlayer,Integer>> killMap = new HashMap<>();
     Map<OfflinePlayer,Integer> scoreMap = new HashMap<>();
 
     public PVPScoreManager(FeatherClans plugin) {
         this.plugin = plugin;
-        this.manager = plugin.getClanManager();
+        this.clanManager = plugin.getClanManager();
         this.init();
+        killMap.forEach((k,v) -> System.out.println(k + " " + v));
     }
 
     private void init() {
-        manager.getAllClanMembers().forEach( offlinePlayer -> {
-            killMap.put(offlinePlayer, manager.getClanMemberKillData(offlinePlayer));
-
-            this.updateScore(offlinePlayer);
-        });
+        clanManager.getAllClanMembers().forEach(offlinePlayer -> killMap.put(offlinePlayer, clanManager.getClanMemberKillData(offlinePlayer)));
+        killMap.forEach((killer, kills) -> this.updateScore(killer));
     }
 
     private void updateScore(OfflinePlayer offlinePlayer) {
@@ -41,7 +39,7 @@ public class PVPScoreManager {
     public void addKill(OfflinePlayer killer, OfflinePlayer killed) {
         killMap.compute(killer, (key, value) -> {
             if (value == null) value = new HashMap<>(Map.of(killed, 1));
-            else value.put(killed, value.getOrDefault(killed, 1) + 1);
+            else value.put(killed, value.getOrDefault(killed, 0) + 1);
 
             this.updateScore(killer);
             this.updateScore(killed);
@@ -52,6 +50,13 @@ public class PVPScoreManager {
 
     public int getScore(OfflinePlayer offlinePlayer) {
         return scoreMap.getOrDefault(offlinePlayer,0);
+    }
+    public int getScore(String tag){
+        return clanManager.getOfflinePlayersByClan(tag).stream().mapToInt(member -> scoreMap.getOrDefault(member, 0)).sum();
+    }
+
+    public Map<OfflinePlayer, Integer> getKills(OfflinePlayer offlinePlayer) {
+        return killMap.getOrDefault(offlinePlayer, new HashMap<>());
     }
 }
 

@@ -12,7 +12,8 @@ Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/Placeholder
     %featherclans_clan%             (players clan tag or empty string)
     %featherclans_is_clanmember%    (PAPI boolean for true or false)
 ### Permission Nodes:  
-    feather.clans.accept 
+    feather.clans.accept
+    feather.clans.appoint
     feather.clans.chat  
     feather.clans.confer  
     feather.clans.create  
