@@ -10,6 +10,7 @@ import com.wasted_ticks.featherclans.listeners.ProjectileHitEventListener;
 import com.wasted_ticks.featherclans.managers.*;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
 import com.wasted_ticks.featherclans.util.ActivityUtil;
+import com.wasted_ticks.featherclans.util.ColorTagUtil;
 import com.wasted_ticks.featherclans.util.PaginateUtil;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -30,6 +31,7 @@ public final class FeatherClans extends JavaPlugin {
     private PVPScoreManager pvpScoreManager;
     private PaginateUtil paginateUtil;
     private ActivityUtil activityUtil;
+    private ColorTagUtil colorTagUtil;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
 
@@ -50,6 +52,7 @@ public final class FeatherClans extends JavaPlugin {
         this.inviteManager = new InviteManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
         this.activityUtil = new ActivityUtil(plugin);
+        this.colorTagUtil = new ColorTagUtil(plugin);
 
         if (this.config.isEconomyEnabled()) {
             if (!setupEconomy()) {
@@ -123,6 +126,10 @@ public final class FeatherClans extends JavaPlugin {
 
     public ActivityUtil getActivityUtil() {
         return this.activityUtil;
+    }
+
+    public ColorTagUtil getColorTagUtil() {
+        return this.colorTagUtil;
     }
 
     public FeatherClansConfig getFeatherClansConfig() {
