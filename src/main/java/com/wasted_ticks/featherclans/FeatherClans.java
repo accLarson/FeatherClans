@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 public final class FeatherClans extends JavaPlugin {
 
-    private static final Logger logger = Logger.getLogger("Minecraft");
     private FeatherClans plugin;
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
@@ -56,13 +55,13 @@ public final class FeatherClans extends JavaPlugin {
 
         if (this.config.isEconomyEnabled()) {
             if (!setupEconomy()) {
-                plugin.getLog().severe("[FeatherClans] Unable to hook into vault, economy functions will be disabled.");
+                plugin.getLogger().severe("Unable to hook into vault, economy functions will be disabled.");
                 this.config.setEconomyEnabled(false);
             }
         }
 
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            plugin.getLog().info("[FeatherClans] Hooking into Placeholder API.");
+            plugin.getLogger().info("Hooking into Placeholder API.");
             new FeatherClansPlaceholderExpansion(this).register();
         }
 
@@ -94,10 +93,6 @@ public final class FeatherClans extends JavaPlugin {
     public void reload() {
         this.config = new FeatherClansConfig(plugin);
         this.messages = new FeatherClansMessages(plugin);
-    }
-
-    public Logger getLog() {
-        return logger;
     }
 
     public ClanManager getClanManager() {
