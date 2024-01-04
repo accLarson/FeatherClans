@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.io.File;
 import java.sql.*;
 
+@SuppressWarnings("SqlNoDataSourceInspection")
 public class DatabaseManager {
 
     private final HikariDataSource source;
@@ -97,12 +98,13 @@ public class DatabaseManager {
             plugin.getLogger().info("Creating `clans` table.");
             String query = "CREATE TABLE IF NOT EXISTS `clans` ("
                     + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + " `banner` VARCHAR(255) NOT NULL, "
+                    + " `banner` TEXT NOT NULL, "
                     + " `tag` VARCHAR(255) NOT NULL, "
                     + " `home` TEXT NULL, "
                     + " `camp` TEXT NULL, "
                     + " `leader_uuid` VARCHAR(255) NOT NULL, "
-                    + " `officer_count` INTEGER NOT NULL DEFAULT 0"
+                    + " `officer_count` INTEGER NOT NULL DEFAULT 0,"
+                    + " `ally_id` INTEGER DEFAULT NULL,"
                     + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
                     + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             try(Connection connection = this.getConnection()) {
@@ -139,7 +141,6 @@ public class DatabaseManager {
                 connection.createStatement().execute(query);
             } catch(SQLException e) {
                 plugin.getLogger().severe("Unable to create `clan_kills` table.");
-                plugin.getLogger().severe(e.getMessage());
             }
         }
         if (!this.existsTable("clan_memberships")) {
@@ -196,7 +197,7 @@ public class DatabaseManager {
         if (!this.existsTable("clan_kills")) {
             plugin.getLogger().info("Creating `clan_kills` table.");
             String query = "CREATE TABLE IF NOT EXISTS `clan_kills` ("
-                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
                     + " `killer_id` INTEGER, "
                     + " `victim_id` INTEGER, "
                     + " `date` DATE NOT NULL DEFAULT CURRENT_DATE, "
@@ -211,7 +212,7 @@ public class DatabaseManager {
         if (!this.existsTable("clan_memberships")) {
             plugin.getLogger().info("Creating `clan_memberships` table.");
             String query = "CREATE TABLE IF NOT EXISTS `clan_memberships` ("
-                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
                     + " `mojang_uuid` VARCHAR(255) NOT NULL, "
                     + " `date` DATE NOT NULL DEFAULT CURRENT_DATE, "
                     + " `tag` VARCHAR(255) NOT NULL);";

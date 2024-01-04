@@ -13,8 +13,8 @@ Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/Placeholder
 
 ### Placeholders:  
     %featherclans_clan%                 (players clan tag followed by a space or empty string)
-    %featherclans_clan_parenthesis      (player clan tag within parenthesis or empty string)
-    %featherclans_clan_brackets         (player clan tag within brackets or empty string)
+    %featherclans_clan_parenthesis%     (player clan tag within parenthesis or empty string)
+    %featherclans_clan_brackets%        (player clan tag within brackets or empty string)
     %featherclans_is_clanmember%        (boolean for true or false)
 ### Permission Nodes:  
 #### Player Permissions
