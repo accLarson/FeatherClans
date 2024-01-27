@@ -5,7 +5,6 @@ import com.wasted_ticks.featherclans.util.SerializationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
@@ -14,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ClanManager {
 
@@ -428,7 +426,7 @@ public class ClanManager {
         return false;
     }
 
-    public boolean isOfficer(OfflinePlayer offlinePlayer) {
+    public boolean isOfflinePlayerOfficer(OfflinePlayer offlinePlayer) {
         return officers.contains(offlinePlayer.getUniqueId());
     }
 

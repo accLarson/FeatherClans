@@ -6,14 +6,10 @@ import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.util.ChatUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,7 +77,8 @@ public class RosterCommand implements CommandExecutor {
         List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(clanTag.toLowerCase());
 
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
-        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !plugin.getClanManager().isOfflinePlayerLeader(m))).collect(Collectors.toList());
+        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerOfficer(m))).collect(Collectors.toList());
+        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerLeader(m))).collect(Collectors.toList());
 
         ChatUtil chatUtil = new ChatUtil(this.plugin);
         MiniMessage mm = MiniMessage.miniMessage();
@@ -133,7 +129,8 @@ public class RosterCommand implements CommandExecutor {
             if (clanMember.getName() != null) name = clanMember.getName();
 
             Component member;
-            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray>L"), 100);
+            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray>L").hoverEvent(HoverEvent.showText(Component.text("This player is the clan leader."))), 100);
+            else if (manager.isOfflinePlayerOfficer(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray>O").hoverEvent(HoverEvent.showText(Component.text("This player is a clan officer."))), 100);
             else member = chatUtil.addSpacing(mm.deserialize(name), 100);
 
             Component pvpScore = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + pvpScoreInt),36,true)
