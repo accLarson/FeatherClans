@@ -11,15 +11,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
-public class AppointCommand implements CommandExecutor {
+public class ElectCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
     private final ClanManager clanManager;
 
-    public AppointCommand(FeatherClans plugin) {
+    public ElectCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
         this.clanManager = plugin.getClanManager();
@@ -41,61 +42,69 @@ public class AppointCommand implements CommandExecutor {
         }
 
         if (!clanManager.isOfflinePlayerInClan(originator)) {
-            originator.sendMessage(messages.get("clan_appoint_no_clan", null));
+            originator.sendMessage(messages.get("clan_elect_no_clan", null));
             return true;
         }
 
         String clan = clanManager.getClanByOfflinePlayer(originator);
 
         if (clanManager.isOfflinePlayerLeader(originator)) {
-            originator.sendMessage(messages.get("clan_appoint_error_is_leader", null));
+            originator.sendMessage(messages.get("clan_elect_error_is_leader", null));
             return true;
         }
 
         OfflinePlayer currentLeader = Bukkit.getOfflinePlayer(clanManager.getLeader(clan));
 
         if (!plugin.getActivityUtil().isInactive(currentLeader)) {
-            originator.sendMessage(messages.get("clan_appoint_active_leader", null));
+            originator.sendMessage(messages.get("clan_elect_active_leader", null));
             return true;
         }
 
+        List<OfflinePlayer> clanOfficers = clanManager.getClanOfficers(clan);
+
+        for (OfflinePlayer officer : clanOfficers) {
+            if (!plugin.getActivityUtil().isInactive(officer)) {
+                originator.sendMessage(messages.get("clan_elect_active_officer", null));
+                return true;
+            }
+        }
         if (args.length != 2) {
-            originator.sendMessage(messages.get("clan_appoint_no_player", null));
+            originator.sendMessage(messages.get("clan_elect_no_player", null));
             return true;
         }
 
-        Player potentialLeader = Bukkit.getPlayer(args[1]);
+        Player potentialOfficer = Bukkit.getPlayer(args[1]);
 
-        if (potentialLeader == null) {
-            originator.sendMessage(messages.get("clan_appoint_unresolved_player", null));
+        if (potentialOfficer == null) {
+            originator.sendMessage(messages.get("clan_elect_unresolved_player", null));
             return true;
         }
 
-        if (originator == potentialLeader) {
-            originator.sendMessage(messages.get("clan_appoint_error_self", null));
+        if (originator == potentialOfficer) {
+            originator.sendMessage(messages.get("clan_elect_error_self", null));
             return true;
         }
 
-        if (clanManager.isOfflinePlayerInSpecificClan(potentialLeader, clan)) {
-            originator.sendMessage(messages.get("clan_appoint_not_in_clan", null));
+        if (clanManager.isOfflinePlayerInSpecificClan(potentialOfficer, clan)) {
+            originator.sendMessage(messages.get("clan_elect_not_in_clan", null));
             return true;
         }
         
-        if (!potentialLeader.isOnline()) {
-            originator.sendMessage(messages.get("clan_appoint_offline_player", null));
+        if (!potentialOfficer.isOnline()) {
+            originator.sendMessage(messages.get("clan_elect_offline_player", null));
             return true;
         }
 
-        clanManager.setClanLeader(clan, potentialLeader);
+        clanManager.setClanLeader(clan, potentialOfficer);
         clanManager.resignOfflinePlayer(currentLeader);
 
-        plugin.getLogger().info(potentialLeader.getName() + " was appointed leader of " + clan + " clan by clan member " + originator.getName() + ".");
+        plugin.getLogger().info(potentialOfficer.getName() + " was appointed leader of " + clan + " clan by clan member " + originator.getName() + ".");
         plugin.getLogger().info(currentLeader.getName() + ",the previous leader of " + clan + ", was kicked from the clan automatically.");
 
-        originator.sendMessage(messages.get("clan_appoint_success_originator", Map.of(
-                "player", potentialLeader.getName()
+        originator.sendMessage(messages.get("clan_elect_success_originator", Map.of(
+                "player", potentialOfficer.getName()
         )));
-        potentialLeader.sendMessage(messages.get("clan_appoint_success_player", Map.of(
+        potentialOfficer.sendMessage(messages.get("clan_elect_success_player", Map.of(
                 "player", originator.getName(),
                 "clan", clan
         )));

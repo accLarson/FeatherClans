@@ -18,8 +18,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
-
 public final class FeatherClans extends JavaPlugin {
 
     private FeatherClans plugin;
@@ -70,7 +68,7 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ProjectileHitEventListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(plugin),this);
 
-        activityUtil.autoKickCheck(clanManager.getAllClanMembers());
+        activityUtil.inactiveStatusCheck(clanManager.getAllClanMembers());
     }
 
     private boolean setupEconomy() {

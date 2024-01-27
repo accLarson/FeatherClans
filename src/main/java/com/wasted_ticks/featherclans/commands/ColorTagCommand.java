@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ColortagCommand implements CommandExecutor {
+public class ColorTagCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
 
@@ -17,7 +17,7 @@ public class ColortagCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
 
-    public ColortagCommand(FeatherClans plugin, FeatherClansMessages messages, ColorTagUtil colorTagUtil) {
+    public ColorTagCommand(FeatherClans plugin, FeatherClansMessages messages, ColorTagUtil colorTagUtil) {
         this.plugin = plugin;
         this.colorTagUtil = plugin.getColorTagUtil();
         this.messages = plugin.getFeatherClansMessages();
@@ -46,15 +46,15 @@ public class ColortagCommand implements CommandExecutor {
 
         if (strings.length != 2) {
             //This message needs to be created
-            originator.sendMessage(messages.get("clan_error_colortag_args", null));
+            originator.sendMessage(messages.get("clan_colortag_error_invalid_arg_length", null));
             return true;
         }
 
         String potentialTag = strings[1];
         String originalTag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        if ( plugin.getColorTagUtil().isValid(potentialTag, originalTag)) {
-            originator.sendMessage(messages.get("clan_confer_unresolved_player", null));
+        if (!plugin.getColorTagUtil().isValid(potentialTag, originalTag)) {
+            originator.sendMessage(messages.get("clan_colortag_invalid_tag", null));
             return true;
         }
 

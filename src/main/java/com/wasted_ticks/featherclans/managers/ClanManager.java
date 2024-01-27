@@ -5,6 +5,7 @@ import com.wasted_ticks.featherclans.util.SerializationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
@@ -19,6 +20,7 @@ public class ClanManager {
 
     private static final HashMap<UUID, String> players = new HashMap<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
+    private static final List<UUID> officers = new ArrayList<>();
     private final FeatherClans plugin;
     private final DatabaseManager database;
 
@@ -31,6 +33,7 @@ public class ClanManager {
     private void load() {
         loadPlayers();
         loadClans();
+        loadOfficers();
     }
 
     private void loadPlayers() {
@@ -55,6 +58,8 @@ public class ClanManager {
         }
     }
 
+
+
     private void loadClans() {
         String string = "SELECT `tag`, `leader_uuid` FROM clans;";
         try(Connection connection = database.getConnection();
@@ -74,6 +79,26 @@ public class ClanManager {
             plugin.getLogger().info("Failed to load clans.");
         } catch(IllegalArgumentException e) {
             plugin.getLogger().severe("Failed to parse UUID into clan cache.");
+        }
+    }
+
+    private void loadOfficers() {
+        String query = "SELECT mojang_uuid FROM clan_members WHERE is_officer = 1;";
+
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet results = statement.executeQuery()) {
+
+            if(results != null) {
+                while (results.next()) {
+                    String uuid = results.getString("mojang_uuid");
+                    if (uuid != null) officers.add(UUID.fromString(uuid));
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().info("Failed to load officers.");
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().severe("Failed to parse UUID for officers.");
         }
     }
 
@@ -371,6 +396,49 @@ public class ClanManager {
         return clans.get(tag.toLowerCase());
     }
 
+    public boolean promoteOfficer(OfflinePlayer offlinePlayer) {
+        String string = "UPDATE clan_members SET `is_officer` = 1 WHERE `mojang_uuid` = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(string))
+        {
+            update.setString(1, offlinePlayer.getUniqueId().toString());
+            if(update.executeUpdate() != 0) {
+                officers.add(offlinePlayer.getUniqueId());
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to promote " + offlinePlayer.getName() + " to officer role.");
+        }
+        return false;
+    }
+
+    public boolean demoteOfficer(OfflinePlayer offlinePlayer) {
+        String string = "UPDATE clan_members SET `is_officer` = 0 WHERE `mojang_uuid` = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(string))
+        {
+            update.setString(1, offlinePlayer.getUniqueId().toString());
+            if(update.executeUpdate() != 0) {
+                officers.remove(offlinePlayer.getUniqueId());
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to demote " + offlinePlayer.getName() + " from officer role.");
+        }
+        return false;
+    }
+
+    public boolean isOfficer(OfflinePlayer offlinePlayer) {
+        return officers.contains(offlinePlayer.getUniqueId());
+    }
+
+    public List<OfflinePlayer> getClanOfficers(String clan) {
+        return officers.stream()
+                .filter(officerUUID -> isOfflinePlayerInSpecificClan(Bukkit.getOfflinePlayer(officerUUID),clan))
+                .map(Bukkit::getOfflinePlayer)
+                .collect(Collectors.toList());
+    }
+
     public ItemStack getBanner(String tag) {
         String query = "SELECT `banner` FROM clans WHERE lower(tag) = ?;";
         try(Connection connection = database.getConnection();
@@ -469,5 +537,6 @@ public class ClanManager {
 
         return killData;
     }
+
 
 }

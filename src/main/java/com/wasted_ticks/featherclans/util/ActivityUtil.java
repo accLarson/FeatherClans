@@ -23,7 +23,7 @@ public class ActivityUtil {
         this.clanManager = this.plugin.getClanManager();
     }
 
-    public void autoKickCheck(List<OfflinePlayer> clanMembers){
+    public void inactiveStatusCheck(List<OfflinePlayer> clanMembers){
 
         clanMembers.forEach(member -> {
             if (clanManager.isOfflinePlayerLeader(member)) return;
@@ -31,7 +31,7 @@ public class ActivityUtil {
             if (isInactive(member)) {
                 String tag = clanManager.getClanByOfflinePlayer(member);
                 clanManager.resignOfflinePlayer(member);
-                plugin.getLogger().info(member.getName() + " was auto kicked from " + tag + " clan because they have not logged in for " + config.getAutoKickInactiveDays() + " days.");
+                plugin.getLogger().info(member.getName() + " (" + tag + " clan) has been set as inactive, having not logged in for " + config.getAutoKickInactiveDays() + " days.");
             }
 
         });
