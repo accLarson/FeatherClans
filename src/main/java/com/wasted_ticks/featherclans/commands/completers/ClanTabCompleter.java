@@ -30,25 +30,41 @@ public class ClanTabCompleter implements TabCompleter {
     );
     private static final List<String> MEMBER_COMMANDS = Arrays.asList(
             "chat",
+            "elect",
             "friendlyfire",
             "help",
             "home",
-            // "leaderboard",
             "list",
             "resign",
             "roster"
     );
+    private static final List<String> OFFICER_COMMANDS = Arrays.asList(
+            "chat",
+            "colortag",
+            "friendlyfire",
+            "help",
+            "home",
+            "invite",
+            "kick",
+            "list",
+            "promote",
+            "resign",
+            "roster",
+            "sethome"
+    );
     private static final List<String> LEADER_COMMANDS = Arrays.asList(
             "chat",
+            "colortag",
             "confer",
+            "demote",
             "disband",
             "friendlyfire",
             "help",
             "home",
             "invite",
             "kick",
-            // "leaderboard",
             "list",
+            "promote",
             "resign",
             "roster",
             "sethome"

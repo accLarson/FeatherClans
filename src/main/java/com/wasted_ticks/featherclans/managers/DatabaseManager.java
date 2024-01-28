@@ -152,17 +152,17 @@ public class DatabaseManager {
             plugin.getLogger().info("Creating `clans` table.");
             String query = "CREATE TABLE IF NOT EXISTS `clans` ("
                     + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
-                    + " `is_elevated` BIT NOT NULL DEFAULT 0"
+                    + " `is_elevated` BIT NOT NULL DEFAULT 0, "
                     + " `banner` TEXT NOT NULL, "
                     + " `tag` VARCHAR(255) NOT NULL, "
-                    + " `colored_tag` VARCHAR(255) NOT NULL, "
+                    + " `colored_tag` VARCHAR(255) DEFAULT NULL, "
                     + " `home` TEXT NULL, "
                     + " `camp` TEXT NULL, "
                     + " `leader_uuid` VARCHAR(255) NOT NULL, "
-                    + " `ally_id` INTEGER DEFAULT NULL,"
+                    + " `partner_id` INTEGER DEFAULT NULL,"
                     + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
                     + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-                    + " FOREIGN KEY (`ally_id`) REFERENCES `clans`(`id`));";
+                    + " FOREIGN KEY (`partner_id`) REFERENCES `clans`(`id`));";
             try(Connection connection = this.getConnection()) {
                 connection.createStatement().execute(query);
             } catch(SQLException e) {

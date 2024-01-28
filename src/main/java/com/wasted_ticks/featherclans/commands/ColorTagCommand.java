@@ -17,7 +17,7 @@ public class ColorTagCommand implements CommandExecutor {
     private final FeatherClansMessages messages;
 
 
-    public ColorTagCommand(FeatherClans plugin, FeatherClansMessages messages, ColorTagUtil colorTagUtil) {
+    public ColorTagCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.colorTagUtil = plugin.getColorTagUtil();
         this.messages = plugin.getFeatherClansMessages();
