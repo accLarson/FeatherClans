@@ -105,6 +105,8 @@ public class ClanTabCompleter implements TabCompleter {
 
                     case "kick":
                     case "confer":
+                    case "assignofficer":
+                    case "dismissofficer":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             String tag = manager.getClanByOfflinePlayer((Player) sender);
                             StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);

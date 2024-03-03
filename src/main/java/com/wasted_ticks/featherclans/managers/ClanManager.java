@@ -536,5 +536,16 @@ public class ClanManager {
         return killData;
     }
 
+    public void updateLastSeenDate(OfflinePlayer offlinePlayer) {
+        String sql = "UPDATE clan_members SET `last_seen_date` = CURRENT_TIMESTAMP WHERE `mojang_uuid` = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(sql)) {
+            update.setString(1, offlinePlayer.getUniqueId().toString());
+            update.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to update last seen date for " + offlinePlayer.getName());
+        }
+    }
+
 
 }
