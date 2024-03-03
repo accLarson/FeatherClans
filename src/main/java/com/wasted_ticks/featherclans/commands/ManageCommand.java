@@ -3,10 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
-import com.wasted_ticks.featherclans.managers.InviteManager;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -105,7 +101,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (manager.isOfflinePlayerInSpecificClan(potentialLeader, tag)) {
+                if (!manager.isOfflinePlayerInSpecificClan(potentialLeader, tag)) {
                     sender.sendMessage(messages.get("clan_manage_confer_not_in_clan", null));
                     break;
                 }
@@ -177,7 +173,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (manager.isOfflinePlayerInSpecificClan(kickee, tag)) {
+                if (!manager.isOfflinePlayerInSpecificClan(kickee, tag)) {
                     sender.sendMessage(messages.get("clan_manage_kick_error_not_in_clan", Map.of(
                             "clan", tag
                     )));

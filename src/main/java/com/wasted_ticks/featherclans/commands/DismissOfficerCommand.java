@@ -11,14 +11,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class PromoteCommand implements CommandExecutor {
-
+public class DismissOfficerCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
 
-
-    public PromoteCommand(FeatherClans plugin) {
+    public DismissOfficerCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
@@ -26,13 +24,12 @@ public class PromoteCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
 
-
         if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.promote")) {
+        if (!sender.hasPermission("feather.clans.demote")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
@@ -45,46 +42,45 @@ public class PromoteCommand implements CommandExecutor {
         }
 
         if (args.length != 2) {
-            originator.sendMessage(messages.get("clan_promote_no_player", null));
+            originator.sendMessage(messages.get("clan_dismiss_officer_no_player", null));
             return true;
         }
 
-        Player potentialOfficer = Bukkit.getPlayer(args[1]);
+        Player potentialDemotedOfficer = Bukkit.getPlayer(args[1]);
 
-        if (potentialOfficer == null) {
-            originator.sendMessage(messages.get("clan_promote_unresolved_player", null));
+        if (potentialDemotedOfficer == null) {
+            originator.sendMessage(messages.get("clan_dismiss_officer_unresolved_player", null));
             return true;
         }
 
-        if (potentialOfficer.equals(originator)) {
-            sender.sendMessage(messages.get("clan_promote_error_leader", null));
+        if (potentialDemotedOfficer.equals(originator)) {
+            sender.sendMessage(messages.get("clan_dismiss_officer_error_leader", null));
             return true;
         }
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
-        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialOfficer, clan)) {
-            originator.sendMessage(messages.get("clan_promote_not_in_clan", null));
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialDemotedOfficer, clan)) {
+            originator.sendMessage(messages.get("clan_dismiss_officer_not_in_clan", null));
             return true;
         }
 
-        if (!this.plugin.getClanManager().isOfflinePlayerOfficer(potentialOfficer)) {
-            originator.sendMessage(messages.get("clan_promote_already_officer", null));
+        if (!this.plugin.getClanManager().isOfflinePlayerOfficer(potentialDemotedOfficer)) {
+            originator.sendMessage(messages.get("clan_dismiss_officer_not_officer", null));
             return true;
         }
 
-        boolean successful = this.plugin.getClanManager().promoteOfficer(potentialOfficer);
+        boolean successful = this.plugin.getClanManager().demoteOfficer(potentialDemotedOfficer);
         if (successful) {
-            originator.sendMessage(messages.get("clan_promote_success_originator", Map.of(
-                    "player", potentialOfficer.getName()
+            originator.sendMessage(messages.get("clan_dismiss_officer_success_originator", Map.of(
+                    "player", potentialDemotedOfficer.getName()
             )));
-            potentialOfficer.sendMessage(messages.get("clan_promote_success_player", Map.of(
+            potentialDemotedOfficer.sendMessage(messages.get("clan_dismiss_officer_success_player", Map.of(
                     "player", originator.getName(),
                     "clan", clan
             )));
         } else {
-            originator.sendMessage(messages.get("clan_promote_error_generic", null));
+            originator.sendMessage(messages.get("clan_dismiss_officer_error_generic", null));
         }
         return true;
-
     }
 }

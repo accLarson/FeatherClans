@@ -180,9 +180,9 @@ public class ClanManager {
     }
 
     public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, String clan) {
-        return players.get(player.getUniqueId()) == null || !players.get(player.getUniqueId()).equalsIgnoreCase(clan);
+        String playerClan = players.get(player.getUniqueId());
+        return playerClan != null && playerClan.equalsIgnoreCase(clan);
     }
-
 
     /**
      * Determines if an offline player is a leader of a clan.

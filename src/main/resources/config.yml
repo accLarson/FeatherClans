@@ -37,7 +37,7 @@ settings:
     teleport_delay_seconds: 4
     min_tag_size: 3
     max_tag_size: 5
-    max_members: 30
+    max_members: 32
     auto_kick_inactive_days: 64
   mysql:
     enabled: true
