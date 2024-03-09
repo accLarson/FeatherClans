@@ -22,8 +22,14 @@ public class DatabaseManager {
     }
 
     public void close() {
+        plugin.getLogger().warning("Attempting to close DB");
         if(!source.isClosed()) {
+            plugin.getLogger().warning("HikariDataSource not closed, closing");
             source.close();
+        }
+        else{
+            plugin.getLogger().warning("HikariDataSource was already closed. why..?");
+
         }
     }
 
