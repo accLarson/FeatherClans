@@ -25,7 +25,7 @@ public class FeatherClansConfig {
     private int clanMinTagSize;
     private int clanMaxTagSize;
     private int clanMaxMembers;
-    private int clanAutoKickInactiveDays;
+    private int clanInactiveDays;
 
     private boolean mysqlEnabled;
     private String mysqlUsername;
@@ -67,7 +67,7 @@ public class FeatherClansConfig {
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
         this.clanMaxTagSize = config.getInt("settings.clan.max_tag_size");
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
-        this.clanAutoKickInactiveDays = config.getInt("auto_kick_inactive_days");
+        this.clanInactiveDays = config.getInt("inactive_days");
 
         this.mysqlEnabled = config.getBoolean("settings.mysql.enabled");
         this.mysqlUsername = config.getString("settings.mysql.username");
@@ -139,8 +139,8 @@ public class FeatherClansConfig {
         return clanMaxMembers;
     }
 
-    public int getAutoKickInactiveDays() {
-        return clanAutoKickInactiveDays;
+    public int getInactiveDays() {
+        return clanInactiveDays;
     }
 
     public boolean isMysqlEnabled() {

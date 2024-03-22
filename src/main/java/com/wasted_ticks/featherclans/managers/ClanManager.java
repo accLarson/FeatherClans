@@ -19,6 +19,8 @@ public class ClanManager {
     private static final HashMap<UUID, String> players = new HashMap<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
     private static final List<UUID> officers = new ArrayList<>();
+    private static final Set<UUID> activeMembers = new HashSet<>();
+    private static final List<String> activeClans = new ArrayList<>();
     private final FeatherClans plugin;
     private final DatabaseManager database;
 
@@ -32,6 +34,7 @@ public class ClanManager {
         loadPlayers();
         loadClans();
         loadOfficers();
+        loadActive();
     }
 
     private void loadPlayers() {
@@ -97,6 +100,26 @@ public class ClanManager {
             plugin.getLogger().info("Failed to load officers.");
         } catch (IllegalArgumentException e) {
             plugin.getLogger().severe("Failed to parse UUID for officers.");
+        }
+    }
+
+    private void loadActive() {
+        String query = "SELECT mojang_uuid FROM clan_members WHERE is_active = 1;";
+
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet results = statement.executeQuery()) {
+
+            if(results != null) {
+                while (results.next()) {
+                    String uuid = results.getString("mojang_uuid");
+                    if (uuid != null) activeMembers.add(UUID.fromString(uuid));
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().info("Failed to load active clan members.");
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().severe("Failed to parse UUID for active clan members.");
         }
     }
 
@@ -428,6 +451,27 @@ public class ClanManager {
 
     public boolean isOfflinePlayerOfficer(OfflinePlayer offlinePlayer) {
         return officers.contains(offlinePlayer.getUniqueId());
+    }
+
+    public boolean setOfflinePlayerActive(OfflinePlayer offlinePlayer, boolean b) {
+        String string = "UPDATE clan_members SET `is_active` = 1 WHERE `mojang_uuid` = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(string))
+        {
+            update.setBoolean(1, b);
+            update.setString(2, offlinePlayer.getUniqueId().toString());
+            if(update.executeUpdate() != 0) {
+                if (b) activeMembers.add(offlinePlayer.getUniqueId());
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to set " + offlinePlayer.getName() + " as active.");
+        }
+        return false;
+    }
+
+    public boolean isOfflinePlayerActive(OfflinePlayer offlinePlayer) {
+        return activeMembers.contains(offlinePlayer.getUniqueId());
     }
 
     public List<OfflinePlayer> getClanOfficers(String clan) {
