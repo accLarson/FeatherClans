@@ -77,6 +77,7 @@ public class RosterCommand implements CommandExecutor {
         List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(clanTag.toLowerCase());
 
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
+        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerActive(m))).collect(Collectors.toList());
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerOfficer(m))).collect(Collectors.toList());
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerLeader(m))).collect(Collectors.toList());
 
@@ -127,6 +128,7 @@ public class RosterCommand implements CommandExecutor {
             String name = "null";
 
             if (clanMember.getName() != null) name = clanMember.getName();
+            if (!manager.isOfflinePlayerActive(clanMember)) name = "<gray><italic>" + name;
 
             Component member;
             if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray>L").hoverEvent(HoverEvent.showText(Component.text("This player is the clan leader."))), 100);

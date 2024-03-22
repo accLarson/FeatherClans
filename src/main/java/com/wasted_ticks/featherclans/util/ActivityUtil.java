@@ -23,21 +23,12 @@ public class ActivityUtil {
         this.clanManager = this.plugin.getClanManager();
     }
 
-    public void inactiveStatusCheck(List<OfflinePlayer> clanMembers){
-
-        clanMembers.forEach(member -> {
-            if (isActive(member)) clanManager.setOfflinePlayerActive(member, true);
-            else {
-                clanManager.setOfflinePlayerActive(member, false);
-                String tag = clanManager.getClanByOfflinePlayer(member);
-                plugin.getLogger().info(member.getName() + " (" + tag + " clan) has been set as inactive, having not logged in for " + config.getInactiveDays() + " days.");
-            }
-        });
+    public void activityCheck(List<OfflinePlayer> clanMembers){
+        clanMembers.forEach(member -> clanManager.setOfflinePlayerActive(member, isActive(member)));
     }
 
     public boolean isActive(OfflinePlayer offlinePlayer) {
         int lastSeenInt = (int) ((System.currentTimeMillis() - offlinePlayer.getLastLogin()) / 86400000);
         return lastSeenInt <= config.getInactiveDays();
     }
-
 }

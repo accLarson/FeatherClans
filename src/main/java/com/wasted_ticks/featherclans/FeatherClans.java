@@ -68,7 +68,7 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(plugin),this);
 
-        activityUtil.inactiveStatusCheck(clanManager.getAllClanMembers());
+        activityUtil.activityCheck(clanManager.getAllClanMembers());
     }
 
     private boolean setupEconomy() {

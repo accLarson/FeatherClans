@@ -454,7 +454,7 @@ public class ClanManager {
     }
 
     public boolean setOfflinePlayerActive(OfflinePlayer offlinePlayer, boolean b) {
-        String string = "UPDATE clan_members SET `is_active` = 1 WHERE `mojang_uuid` = ?;";
+        String string = "UPDATE clan_members SET `is_active` = ? WHERE `mojang_uuid` = ?;";
         try(Connection connection = database.getConnection();
             PreparedStatement update = connection.prepareStatement(string))
         {
@@ -465,6 +465,7 @@ public class ClanManager {
                 return true;
             }
         } catch (SQLException e) {
+            plugin.getLogger().warning(e.toString());
             plugin.getLogger().severe("Failed to set " + offlinePlayer.getName() + " as active.");
         }
         return false;
