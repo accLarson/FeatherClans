@@ -7,7 +7,6 @@ import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.listeners.*;
 import com.wasted_ticks.featherclans.managers.*;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
-import com.wasted_ticks.featherclans.util.ActivityUtil;
 import com.wasted_ticks.featherclans.util.ColorTagUtil;
 import com.wasted_ticks.featherclans.util.PaginateUtil;
 import net.milkbowl.vault.economy.Economy;
@@ -25,7 +24,6 @@ public final class FeatherClans extends JavaPlugin {
     private FriendlyFireManager friendlyFireManager;
     private PVPScoreManager pvpScoreManager;
     private PaginateUtil paginateUtil;
-    private ActivityUtil activityUtil;
     private ColorTagUtil colorTagUtil;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
@@ -46,7 +44,6 @@ public final class FeatherClans extends JavaPlugin {
         this.pvpScoreManager = new PVPScoreManager(plugin);
         this.inviteManager = new InviteManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
-        this.activityUtil = new ActivityUtil(plugin);
         this.colorTagUtil = new ColorTagUtil(plugin);
 
         if (this.config.isEconomyEnabled()) {
@@ -67,8 +64,6 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(plugin),this);
-
-        activityUtil.activityCheck(clanManager.getAllClanMembers());
     }
 
     private boolean setupEconomy() {
@@ -115,10 +110,6 @@ public final class FeatherClans extends JavaPlugin {
 
     public PaginateUtil getPaginateUtil() {
         return this.paginateUtil;
-    }
-
-    public ActivityUtil getActivityUtil() {
-        return this.activityUtil;
     }
 
     public ColorTagUtil getColorTagUtil() {

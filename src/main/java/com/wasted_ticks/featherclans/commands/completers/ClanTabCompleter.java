@@ -124,7 +124,6 @@ public class ClanTabCompleter implements TabCompleter {
                     case "roster":
                         if (sender.hasPermission("feather.clans.roster")) StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
                         // name
-                        // exp
                         // hours
                         // kdr
                         // last seen
@@ -132,10 +131,9 @@ public class ClanTabCompleter implements TabCompleter {
                         break;
 
                     case "leaderboard":
-                        // exp: total of all offline players current exp
                         // hours: total of all offline players current hours
                         // kdr: mode, resets monthly
-                        // completions.addAll(Arrays.asList("exp", "hours", "kdr"));
+                        // completions.addAll(Arrays.asList("hours", "kdr"));
                         break;
 
                     case "list":

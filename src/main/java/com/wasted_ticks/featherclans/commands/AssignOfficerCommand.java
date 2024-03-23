@@ -67,7 +67,7 @@ public class AssignOfficerCommand implements CommandExecutor {
             return true;
         }
 
-        if (!this.plugin.getClanManager().isOfflinePlayerOfficer(potentialOfficer)) {
+        if (this.plugin.getClanManager().isOfflinePlayerOfficer(potentialOfficer)) {
             originator.sendMessage(messages.get("clan_appoint_officer_already_officer", null));
             return true;
         }

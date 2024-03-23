@@ -87,14 +87,12 @@ public class RosterCommand implements CommandExecutor {
         List<Component> clanMemberLines = new ArrayList<>();
 
         Component pvpScoreCalculationExplained = mm.deserialize(config.getPVPScoreCalculationExplained(), Placeholder.parsed("days",String.valueOf(config.getPVPScoreRelevantDays())));
-        Component xpScoreCalculationExplained = mm.deserialize(config.getXPScoreCalculationExplained(), Placeholder.parsed("days",String.valueOf(config.getXPScoreRelevantDays())));
 
-        Component header = chatUtil.addSpacing(mm.deserialize("<gray>Member"),100)
+        Component header = chatUtil.addSpacing(mm.deserialize("<gray>Member"),140)
                 .append(chatUtil.addSpacing(Component.text(" "),12))
                 .append(chatUtil.addSpacing(mm.deserialize("<gray>[i] PVP"),36,true).hoverEvent(HoverEvent.showText(pvpScoreCalculationExplained)))
                 .append(chatUtil.addSpacing(Component.text(" "),12))
-                .append(chatUtil.addSpacing(mm.deserialize("<gray>[i] XP"),36,true).hoverEvent(HoverEvent.showText(xpScoreCalculationExplained)))
-                .append(chatUtil.addSpacing(mm.deserialize("<gray>Last Seen"),120,true));
+                .append(chatUtil.addSpacing(mm.deserialize("<gray>Last Seen"),100,true));
 
         clanMemberLines.add(header);
 
@@ -123,30 +121,27 @@ public class RosterCommand implements CommandExecutor {
             for (Component line : pvpScoreBreakdownLines)
                 pvpScoreBreakdownComponent = pvpScoreBreakdownComponent.append(line);
 
-            int xpScoreInt = 0;
-
             String name = "null";
 
             if (clanMember.getName() != null) name = clanMember.getName();
-            if (!manager.isOfflinePlayerActive(clanMember)) name = "<gray><italic>" + name;
+            if (!manager.isOfflinePlayerActive(clanMember)) name = "<dark_gray><italic>" + name + "</italic>";
 
             Component member;
-            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray>L").hoverEvent(HoverEvent.showText(Component.text("This player is the clan leader."))), 100);
-            else if (manager.isOfflinePlayerOfficer(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray>O").hoverEvent(HoverEvent.showText(Component.text("This player is a clan officer."))), 100);
-            else member = chatUtil.addSpacing(mm.deserialize(name), 100);
+            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <#656b96>Leader").hoverEvent(HoverEvent.showText(Component.text("This player is the clan leader."))), 140);
+            else if (manager.isOfflinePlayerOfficer(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <#656b96>Officer").hoverEvent(HoverEvent.showText(Component.text("This player is a clan officer."))), 140);
+            else if (!manager.isOfflinePlayerActive(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray><italic>Inactive</italic>").hoverEvent(HoverEvent.showText(Component.text("This player is inactive and wont be be counted when calculating active membership count for elevated status."))), 140);
+            else member = chatUtil.addSpacing(mm.deserialize(name), 140);
 
             Component pvpScore = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + pvpScoreInt),36,true)
                     .hoverEvent(HoverEvent.showText(pvpScoreBreakdownComponent));
 
             Component spacer = chatUtil.addSpacing(Component.text(" "),12);
 
-            Component xpScore = chatUtil.addSpacing(mm.deserialize("<#949BD1>Soon"),36,true);
-
             Component lastSeen;
-            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>Today"),120,true);
-            else lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + lastSeenInt + " Day(s) Ago"),120,true);
+            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>Today"),100,true);
+            else lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + lastSeenInt + " Day(s) Ago"),100,true);
 
-            clanMemberLines.add(member.append(spacer).append(pvpScore).append(spacer).append(xpScore).append(lastSeen));
+            clanMemberLines.add(member.append(spacer).append(pvpScore).append(spacer).append(lastSeen));
         }
 
         plugin.getPaginateUtil().displayPage(args, (Player)sender, clanMemberLines);

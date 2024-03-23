@@ -42,8 +42,6 @@ public class FeatherClansConfig {
 
     private String pvpScoreCalculationExplained;
 
-    private int xpScoreRelevantDays;
-    private String xpScoreCalculationExplained;
     public FeatherClansConfig(FeatherClans plugin) {
         this.plugin = plugin;
         this.plugin.saveDefaultConfig();
@@ -82,112 +80,78 @@ public class FeatherClansConfig {
 
         this.pvpScoreRelevantDays = config.getInt("settings.pvp-score.relevant-days");
         this.pvpScoreCalculationExplained = config.getString("settings.pvp-score.calculation-explained");
-
-        this.xpScoreRelevantDays = config.getInt("settings.xp-score.relevant-days");
-        this.xpScoreCalculationExplained = config.getString("settings.xp-score.calculation-explained");
     }
 
     public boolean isEconomyEnabled() {
         return economyEnabled;
     }
-
     public void setEconomyEnabled(boolean economyEnabled) {
         this.economyEnabled = economyEnabled;
     }
-
     public double getEconomyCreationPrice() {
         return economyCreationPrice;
     }
-
     public double getEconomyInvitePrice() {
         return economyInvitePrice;
     }
-
     public double getEconomySetHomePrice() {
         return economySetHomePrice;
     }
-
     public boolean isCleanupEnabled() {
         return cleanupEnabled;
     }
-
     public int getCleanupArchiveDays() {
         return cleanupArchiveDays;
     }
-
     public int getCleanupDeleteDays() {
         return cleanupDeleteDays;
     }
-
     public int getClanInviteTimeout() {
         return clanInviteTimeout;
     }
-
     public int getClanTeleportDelaySeconds() {
         return clanTeleportDelaySeconds;
     }
-
     public int getClanMinTagSize() {
         return clanMinTagSize;
     }
-
     public int getClanMaxTagSize() {
         return clanMaxTagSize;
     }
-
     public int getClanMaxMembers() {
         return clanMaxMembers;
     }
-
     public int getInactiveDays() {
         return clanInactiveDays;
     }
-
     public boolean isMysqlEnabled() {
         return mysqlEnabled;
     }
-
     public String getMysqlUsername() {
         return mysqlUsername;
     }
-
     public String getMysqlHost() {
         return mysqlHost;
     }
-
     public int getMysqlPort() {
         return mysqlPort;
     }
-
     public String getMysqlPassword() {
         return mysqlPassword;
     }
-
     public String getMysqlDatabase() {
         return mysqlDatabase;
     }
-
     public List<String> getDenyTags() {
         return denyTags;
     }
-
     public int getLinesPerPage() {
         return linesPerPage;
     }
-
     public int getPVPScoreRelevantDays() {
         return pvpScoreRelevantDays;
     }
-
     public String getPVPScoreCalculationExplained() {
         return pvpScoreCalculationExplained;
-    }
-
-    public int getXPScoreRelevantDays() {
-        return xpScoreRelevantDays;
-    }
-
-    public String getXPScoreCalculationExplained() {
-        return xpScoreCalculationExplained;
     }
 }

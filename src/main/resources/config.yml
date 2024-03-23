@@ -66,7 +66,3 @@ settings:
     relevant-days: 64
     calculation-explained: "1 point for every clan player you've killed more than they've killed you.
                         <br>Only the kills within the last <days> days count."
-  xp-score:
-    relevant-days: 64
-    calculation-explained: "XP score is calculated ...
-                        <br>... "

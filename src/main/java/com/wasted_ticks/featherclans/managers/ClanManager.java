@@ -21,6 +21,7 @@ public class ClanManager {
     private static final List<UUID> officers = new ArrayList<>();
     private static final Set<UUID> activeMembers = new HashSet<>();
     private static final List<String> activeClans = new ArrayList<>();
+
     private final FeatherClans plugin;
     private final DatabaseManager database;
 
@@ -34,7 +35,7 @@ public class ClanManager {
         loadPlayers();
         loadClans();
         loadOfficers();
-        loadActive();
+        loadActiveMembers();
     }
 
     private void loadPlayers() {
@@ -103,26 +104,17 @@ public class ClanManager {
         }
     }
 
-    private void loadActive() {
-        String query = "SELECT mojang_uuid FROM clan_members WHERE is_active = 1;";
+    private void loadActiveMembers() {
+        players.keySet().forEach(memberUUID -> {
 
-        try (Connection connection = database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet results = statement.executeQuery()) {
+            OfflinePlayer member = Bukkit.getOfflinePlayer(memberUUID);
 
-            if(results != null) {
-                while (results.next()) {
-                    String uuid = results.getString("mojang_uuid");
-                    if (uuid != null) activeMembers.add(UUID.fromString(uuid));
-                }
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().info("Failed to load active clan members.");
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().severe("Failed to parse UUID for active clan members.");
-        }
+            int lastSeenInt = (int) ((System.currentTimeMillis() - member.getLastLogin()) / 86400000);
+            boolean isActive = lastSeenInt < plugin.getFeatherClansConfig().getInactiveDays();
+
+            setOfflinePlayerActive(member, isActive);
+        });
     }
-
 
     /**
      * Gets a list of all clans.
@@ -462,6 +454,7 @@ public class ClanManager {
             update.setString(2, offlinePlayer.getUniqueId().toString());
             if(update.executeUpdate() != 0) {
                 if (b) activeMembers.add(offlinePlayer.getUniqueId());
+                else activeMembers.remove(offlinePlayer.getUniqueId());
                 return true;
             }
         } catch (SQLException e) {
