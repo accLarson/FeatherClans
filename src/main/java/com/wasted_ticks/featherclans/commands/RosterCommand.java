@@ -17,7 +17,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class RosterCommand implements CommandExecutor {
@@ -124,21 +127,29 @@ public class RosterCommand implements CommandExecutor {
             String name = "null";
 
             if (clanMember.getName() != null) name = clanMember.getName();
-            if (!manager.isOfflinePlayerActive(clanMember)) name = "<dark_gray><italic>" + name + "</italic>";
 
             Component member;
-            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <#656b96>Leader").hoverEvent(HoverEvent.showText(Component.text("This player is the clan leader."))), 140);
-            else if (manager.isOfflinePlayerOfficer(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <#656b96>Officer").hoverEvent(HoverEvent.showText(Component.text("This player is a clan officer."))), 140);
-            else if (!manager.isOfflinePlayerActive(clanMember)) member = chatUtil.addSpacing(mm.deserialize(name + " <dark_gray><italic>Inactive</italic>").hoverEvent(HoverEvent.showText(Component.text("This player is inactive and wont be be counted when calculating active membership count for elevated status."))), 140);
-            else member = chatUtil.addSpacing(mm.deserialize(name), 140);
+            if (!manager.isOfflinePlayerActive(clanMember)) member = (mm.deserialize("<dark_gray>" + name).hoverEvent(HoverEvent.showText(Component.text("This player is inactive and wont be be counted when calculating active membership count for elevated status."))));
+            else member = mm.deserialize(name);
+            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(member.append(mm.deserialize(" <reset><#656b96>Leader").hoverEvent(HoverEvent.showText(Component.text("This player is the clan leader.")))), 140);
+            else if (manager.isOfflinePlayerOfficer(clanMember)) member = chatUtil.addSpacing(member.append(mm.deserialize(" <reset><#656b96>Officer").hoverEvent(HoverEvent.showText(Component.text("This player is a clan officer.")))), 140);
+            else member = chatUtil.addSpacing(member, 140);
 
-            Component pvpScore = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + pvpScoreInt),36,true)
-                    .hoverEvent(HoverEvent.showText(pvpScoreBreakdownComponent));
+            Component pvpScore;
+            if (!manager.isOfflinePlayerActive(clanMember)) {
+                pvpScore = chatUtil.addSpacing(mm.deserialize("<dark_gray>" + pvpScoreInt),36,true)
+                        .hoverEvent(HoverEvent.showText(pvpScoreBreakdownComponent));
+            }
+            else {
+                pvpScore = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + pvpScoreInt),36,true)
+                        .hoverEvent(HoverEvent.showText(pvpScoreBreakdownComponent));
+            }
 
             Component spacer = chatUtil.addSpacing(Component.text(" "),12);
 
             Component lastSeen;
             if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>Today"),100,true);
+            else if (!manager.isOfflinePlayerActive(clanMember)) lastSeen = chatUtil.addSpacing(mm.deserialize("<dark_gray>" + lastSeenInt + " Day(s) Ago"),100,true);
             else lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + lastSeenInt + " Day(s) Ago"),100,true);
 
             clanMemberLines.add(member.append(spacer).append(pvpScore).append(spacer).append(lastSeen));
