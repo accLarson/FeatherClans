@@ -27,6 +27,7 @@ public final class FeatherClans extends JavaPlugin {
     private ColorTagUtil colorTagUtil;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
+    private Handler handler;
 
     private Economy economy;
 
@@ -124,9 +125,12 @@ public final class FeatherClans extends JavaPlugin {
         return this.messages;
     }
 
+    public Handler getCommandHandler() {
+        return this.handler;
+    }
     private void registerCommands() {
 
-        Handler handler = new Handler(plugin);
+        this.handler = new Handler(plugin);
 
         handler.register("create", new CreateCommand(plugin));
         handler.register("invite", new InviteCommand(plugin));
@@ -150,6 +154,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("promote", new PromoteCommand(plugin));
         handler.register("demote", new DemoteCommand(plugin));
         handler.register("colortag",new ColorTagCommand(plugin));
+        handler.register("lookup", new LookupCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 

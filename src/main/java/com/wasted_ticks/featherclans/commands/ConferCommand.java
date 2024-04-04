@@ -46,6 +46,8 @@ public class ConferCommand implements CommandExecutor {
             return true;
         }
 
+        // TODO: Player is required to be online. Should be possible for offline.
+
         Player potentialLeader = Bukkit.getPlayer(args[1]);
 
         if (potentialLeader == null) {
