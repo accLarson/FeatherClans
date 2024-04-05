@@ -585,5 +585,11 @@ public class ClanManager {
         }
     }
 
-
+    public int getClanSize(String tag, boolean onlyActive) {
+        return (int) players.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(tag))
+                // if OnlyActive, this filter will check the activity, otherwise all players will filter valid active or not.
+                .filter(entry -> !onlyActive || activeMembers.contains(entry.getKey()))
+                .count();
+    }
 }

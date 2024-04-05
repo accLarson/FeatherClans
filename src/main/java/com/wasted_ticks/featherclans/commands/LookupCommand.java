@@ -50,7 +50,9 @@ public class LookupCommand implements CommandExecutor {
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        plugin.getCommandHandler().onCommand(sender, plugin.getCommand("roster"), "roster", new String[]{clan});
+        plugin.getLogger().info("Passing command to RosterCommand");
+
+        plugin.getCommandHandler().onCommand(sender, plugin.getCommand("clan"), "clan", new String[]{"roster", clan});
         return false;
     }
 }
