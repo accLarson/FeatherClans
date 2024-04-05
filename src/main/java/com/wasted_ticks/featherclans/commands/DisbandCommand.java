@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -42,15 +43,26 @@ public class DisbandCommand implements CommandExecutor {
         boolean isLeader = manager.isOfflinePlayerLeader(player);
         boolean successful = false;
         if (isLeader) {
-            if (!args[0].equalsIgnoreCase("confirm")){
+            if (args.length == 1) {
                 player.sendMessage(messages.get("clan_confirm_notice", Map.of(
                         "label", label,
                         "args", String.join(" ", args)
                 )));
                 return true;
             }
+            else if (args.length == 2 && !args[1].equalsIgnoreCase("confirm")) {
+                player.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                        "label", label,
+                        "args", String.join(" ", Arrays.copyOf(args, args.length-1))
+                )));
+                return true;
+            }
+            else if (args.length >= 3) {
+                player.sendMessage(messages.get("clan_disband_error_generic", null));
+                return true;
+            }
 
-                String tag = manager.getClanByOfflinePlayer(player);
+            String tag = manager.getClanByOfflinePlayer(player);
             List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
             for (OfflinePlayer member : members) {
                 manager.resignOfflinePlayer(member);

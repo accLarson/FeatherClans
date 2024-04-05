@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class ResignCommand implements CommandExecutor {
@@ -45,11 +46,22 @@ public class ResignCommand implements CommandExecutor {
             return true;
         }
 
-        if (!args[0].equalsIgnoreCase("confirm")){
+        if (args.length == 1) {
             player.sendMessage(messages.get("clan_confirm_notice", Map.of(
                     "label", label,
                     "args", String.join(" ", args)
             )));
+            return true;
+        }
+        else if (args.length == 2 && !args[1].equalsIgnoreCase("confirm")) {
+            player.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", Arrays.copyOf(args, args.length-1))
+            )));
+            return true;
+        }
+        else if (args.length >= 3) {
+            player.sendMessage(messages.get("clan_resign_error_generic", null));
             return true;
         }
 

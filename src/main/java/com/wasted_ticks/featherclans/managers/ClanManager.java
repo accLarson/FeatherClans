@@ -366,6 +366,7 @@ public class ClanManager {
                         insert.setInt(2, id);
                         if(insert.executeUpdate() != 0) {
                             players.put(player.getUniqueId(), tag.toLowerCase());
+                            setOfflinePlayerActive(player,true);
                             return true;
                         }
                     } catch (SQLException e) {
