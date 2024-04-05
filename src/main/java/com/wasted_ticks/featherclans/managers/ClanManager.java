@@ -397,6 +397,7 @@ public class ClanManager {
             update.setString(2, tag.toLowerCase());
             if(update.executeUpdate() != 0) {
                 clans.put(tag.toLowerCase(), player.getUniqueId());
+                if (isOfflinePlayerOfficer(player)) demoteOfficer(player);
                 return true;
             }
         } catch (SQLException e) {

@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class ResignCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
@@ -40,6 +42,14 @@ public class ResignCommand implements CommandExecutor {
         boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
         if (leader) {
             player.sendMessage(messages.get("clan_resign_error_leader", null));
+            return true;
+        }
+
+        if (!args[0].equalsIgnoreCase("confirm")){
+            player.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", args)
+            )));
             return true;
         }
 
