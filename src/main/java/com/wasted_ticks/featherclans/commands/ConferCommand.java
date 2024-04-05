@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class ConferCommand implements CommandExecutor {
@@ -41,7 +42,7 @@ public class ConferCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length != 2) {
+        if (args.length < 2) {
             originator.sendMessage(messages.get("clan_confer_no_player", null));
             return true;
         }
@@ -63,6 +64,24 @@ public class ConferCommand implements CommandExecutor {
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
         if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader, clan)) {
             originator.sendMessage(messages.get("clan_confer_not_in_clan", null));
+            return true;
+        }
+        if (args.length == 2) {
+            originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", args)
+            )));
+            return true;
+        }
+        else if (args.length == 3 && !args[1].equalsIgnoreCase("confirm")) {
+            originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", Arrays.copyOf(args, args.length-1))
+            )));
+            return true;
+        }
+        else if (args.length >= 4) {
+            originator.sendMessage(messages.get("clan_confer_error_generic", null));
             return true;
         }
 
