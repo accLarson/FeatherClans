@@ -39,9 +39,8 @@ public class ResignCommand implements CommandExecutor {
             player.sendMessage(messages.get("clan_resign_error_no_clan", null));
             return true;
         }
-
-        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
-        if (leader) {
+        ;
+        if (plugin.getClanManager().isOfflinePlayerLeader(player)) {
             player.sendMessage(messages.get("clan_resign_error_leader", null));
             return true;
         }

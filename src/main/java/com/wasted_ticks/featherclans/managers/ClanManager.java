@@ -302,6 +302,7 @@ public class ClanManager {
             PreparedStatement delete = connection.prepareStatement(string))
         {
             delete.setString(1, player.getUniqueId().toString());
+            if (isOfflinePlayerOfficer(player)) this.demoteOfficer(player);
             int rows = delete.executeUpdate();
             if(rows != 0) {
                 players.remove(player.getUniqueId());
