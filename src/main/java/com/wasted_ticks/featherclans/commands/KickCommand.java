@@ -73,7 +73,7 @@ public class KickCommand implements CommandExecutor {
             )));
             return true;
         }
-        else if (args.length == 3 && !args[1].equalsIgnoreCase("confirm")) {
+        else if (args.length == 3 && !args[2].equalsIgnoreCase("confirm")) {
             originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
                     "label", label,
                     "args", String.join(" ", Arrays.copyOf(args, args.length-1))
