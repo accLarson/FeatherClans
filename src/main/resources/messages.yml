@@ -117,6 +117,7 @@ clan_kick_error_leader: "<#949BD1>Error<#656B96>: Can't kick yourself. Confer an
 clan_kick_error: "<#949BD1>Error<#656B96>: Unable to kick player."
 clan_kick_success: "<#656B96>You've kicked <#949BD1><player> <#656B96>from your clan."
 clan_kick_success_target: "<#656B96>You have been kicked from <#949BD1><clan><#656B96>."
+clan_kick_error_generic: "<#949BD1>Error<#656B96>: Unable to kick."
 clan_decline_no_invitation: "<#656B96>You currently don't have an invitation request."
 clan_decline_success: "<#656B96>You've declined invitation request from <#949BD1><clan><#656B96>."
 clan_decline_originator: "<#656B96>Your clan invitation to <#949BD1><player> <#656B96>has been declined."

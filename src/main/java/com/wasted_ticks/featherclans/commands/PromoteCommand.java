@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class PromoteCommand implements CommandExecutor {
@@ -24,7 +25,7 @@ public class PromoteCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
 
         if (!(sender instanceof Player)) {
@@ -44,7 +45,7 @@ public class PromoteCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length != 2) {
+        if (args.length < 2) {
             originator.sendMessage(messages.get("clan_promote_no_player", null));
             return true;
         }
@@ -71,6 +72,25 @@ public class PromoteCommand implements CommandExecutor {
 
         if (this.plugin.getClanManager().isOfflinePlayerOfficer(potentialOfficer)) {
             originator.sendMessage(messages.get("clan_promote_already_officer", null));
+            return true;
+        }
+
+        if (args.length == 2) {
+            originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", args)
+            )));
+            return true;
+        }
+        else if (args.length == 3 && !args[1].equalsIgnoreCase("confirm")) {
+            originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", Arrays.copyOf(args, args.length-1))
+            )));
+            return true;
+        }
+        else if (args.length >= 4) {
+            originator.sendMessage(messages.get("clan_promote_error_generic", null));
             return true;
         }
 

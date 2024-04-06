@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class DemoteCommand implements CommandExecutor {
@@ -22,7 +23,7 @@ public class DemoteCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
@@ -41,7 +42,7 @@ public class DemoteCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length != 2) {
+        if (args.length < 2) {
             originator.sendMessage(messages.get("clan_demote_no_player", null));
             return true;
         }
@@ -68,6 +69,26 @@ public class DemoteCommand implements CommandExecutor {
             originator.sendMessage(messages.get("clan_demote_not_officer", null));
             return true;
         }
+
+        if (args.length == 2) {
+            originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", args)
+            )));
+            return true;
+        }
+        else if (args.length == 3 && !args[1].equalsIgnoreCase("confirm")) {
+            originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", Arrays.copyOf(args, args.length-1))
+            )));
+            return true;
+        }
+        else if (args.length >= 4) {
+            originator.sendMessage(messages.get("clan_demote_error_generic", null));
+            return true;
+        }
+
 
         boolean successful = this.plugin.getClanManager().demoteOfficer(potentialDemotedOfficer);
         if (successful) {

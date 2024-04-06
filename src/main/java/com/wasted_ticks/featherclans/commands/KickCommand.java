@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class KickCommand implements CommandExecutor {
@@ -42,7 +43,7 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length != 2) {
+        if (args.length < 2) {
             originator.sendMessage(messages.get("clan_kick_error_no_player_specified", null));
             return true;
         }
@@ -62,6 +63,25 @@ public class KickCommand implements CommandExecutor {
 
         if (this.plugin.getClanManager().isOfflinePlayerLeader(offlinePlayer)) {
             originator.sendMessage(messages.get("clan_kick_error_leader", null));
+            return true;
+        }
+
+        if (args.length == 2) {
+            originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", args)
+            )));
+            return true;
+        }
+        else if (args.length == 3 && !args[1].equalsIgnoreCase("confirm")) {
+            originator.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                    "label", label,
+                    "args", String.join(" ", Arrays.copyOf(args, args.length-1))
+            )));
+            return true;
+        }
+        else if (args.length >= 4) {
+            originator.sendMessage(messages.get("clan_kick_error_generic", null));
             return true;
         }
 
