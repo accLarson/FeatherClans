@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,9 +48,9 @@ public class DemoteCommand implements CommandExecutor {
             return true;
         }
 
-        Player potentialDemotedOfficer = Bukkit.getPlayer(args[1]);
+        OfflinePlayer potentialDemotedOfficer = Bukkit.getOfflinePlayer(args[1]);
 
-        if (potentialDemotedOfficer == null) {
+        if (!potentialDemotedOfficer.hasPlayedBefore()) {
             originator.sendMessage(messages.get("clan_demote_unresolved_player", null));
             return true;
         }
@@ -89,16 +90,17 @@ public class DemoteCommand implements CommandExecutor {
             return true;
         }
 
-
         boolean successful = this.plugin.getClanManager().demoteOfficer(potentialDemotedOfficer);
         if (successful) {
             originator.sendMessage(messages.get("clan_demote_success_originator", Map.of(
                     "player", potentialDemotedOfficer.getName()
             )));
-            potentialDemotedOfficer.sendMessage(messages.get("clan_demote_success_player", Map.of(
-                    "player", originator.getName(),
-                    "clan", clan
-            )));
+            if (potentialDemotedOfficer.isOnline()) {
+                ((Player)potentialDemotedOfficer).sendMessage(messages.get("clan_demote_success_player", Map.of(
+                        "player", originator.getName(),
+                        "clan", clan
+                )));
+            }
         } else {
             originator.sendMessage(messages.get("clan_demote_error_generic", null));
         }

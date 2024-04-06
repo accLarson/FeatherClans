@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,11 +48,9 @@ public class ConferCommand implements CommandExecutor {
             return true;
         }
 
-        // TODO: Player is required to be online. Should be possible for offline.
+        OfflinePlayer potentialLeader = Bukkit.getOfflinePlayer(args[1]);
 
-        Player potentialLeader = Bukkit.getPlayer(args[1]);
-
-        if (potentialLeader == null) {
+        if (!potentialLeader.hasPlayedBefore()) {
             originator.sendMessage(messages.get("clan_confer_unresolved_player", null));
             return true;
         }
@@ -90,10 +89,13 @@ public class ConferCommand implements CommandExecutor {
             originator.sendMessage(messages.get("clan_confer_success_originator", Map.of(
                     "player", potentialLeader.getName()
             )));
-            potentialLeader.sendMessage(messages.get("clan_confer_success_player", Map.of(
-                    "player", originator.getName(),
-                    "clan", clan
-            )));
+            if (potentialLeader.isOnline()) {
+                ((Player) potentialLeader).sendMessage(messages.get("clan_confer_success_player", Map.of(
+                        "player", originator.getName(),
+                        "clan", clan
+                )));
+
+            }
         } else {
             originator.sendMessage(messages.get("clan_confer_error_generic", null));
         }

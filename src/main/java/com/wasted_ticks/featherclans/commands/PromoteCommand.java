@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,11 +51,9 @@ public class PromoteCommand implements CommandExecutor {
             return true;
         }
 
-        // TODO: Player is required to be online. Should be possible for offline.
+        OfflinePlayer potentialOfficer = Bukkit.getOfflinePlayer(args[1]);
 
-        Player potentialOfficer = Bukkit.getPlayer(args[1]);
-
-        if (potentialOfficer == null) {
+        if (!potentialOfficer.hasPlayedBefore()) {
             originator.sendMessage(messages.get("clan_promote_unresolved_player", null));
             return true;
         }
@@ -99,10 +98,12 @@ public class PromoteCommand implements CommandExecutor {
             originator.sendMessage(messages.get("clan_promote_success_originator", Map.of(
                     "player", potentialOfficer.getName()
             )));
-            potentialOfficer.sendMessage(messages.get("clan_promote_success_player", Map.of(
-                    "player", originator.getName(),
-                    "clan", clan
-            )));
+            if (potentialOfficer.isOnline()){
+                ((Player)potentialOfficer).sendMessage(messages.get("clan_promote_success_player", Map.of(
+                        "player", originator.getName(),
+                        "clan", clan
+                )));
+            }
         } else {
             originator.sendMessage(messages.get("clan_promote_error_generic", null));
         }

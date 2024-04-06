@@ -99,17 +99,41 @@ public class ClanTabCompleter implements TabCompleter {
                 switch (args[0]) {
                     case "invite":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
-                            StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream().filter(p -> !manager.isOfflinePlayerInClan(p)).map(Player::getName).collect(Collectors.toList()), completions);
+                            StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream()
+                                    .filter(p -> !manager.isOfflinePlayerInClan(p))
+                                    .map(Player::getName)
+                                    .collect(Collectors.toList()), completions);
                         }
                         break;
 
                     case "kick":
                     case "confer":
+                        if (manager.isOfflinePlayerLeader((Player) sender)) {
+                            String tag = manager.getClanByOfflinePlayer((Player) sender);
+                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream()
+                                    .filter(p -> !manager.isOfflinePlayerLeader(p))
+                                    .map(OfflinePlayer::getName)
+                                    .collect(Collectors.toList()), completions);
+                        }
+                        break;
+
                     case "promote":
+                        if (manager.isOfflinePlayerLeader((Player) sender)) {
+                            String tag = manager.getClanByOfflinePlayer((Player) sender);
+                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream()
+                                    .filter(p -> !manager.isOfflinePlayerLeader(p) && !manager.isOfflinePlayerOfficer(p))
+                                    .map(OfflinePlayer::getName)
+                                    .collect(Collectors.toList()), completions);
+                        }
+                        break;
+
                     case "demote":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             String tag = manager.getClanByOfflinePlayer((Player) sender);
-                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
+                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream()
+                                    .filter(manager::isOfflinePlayerOfficer)
+                                    .map(OfflinePlayer::getName)
+                                    .collect(Collectors.toList()), completions);
                         }
                         break;
 
