@@ -19,6 +19,7 @@ public class ClanManager {
     private static final HashMap<UUID, String> players = new HashMap<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
     private static final List<UUID> officers = new ArrayList<>();
+    private final Map<String, String> partnerships = new HashMap<>();
     private static final Set<UUID> activeMembers = new HashSet<>();
     private static final List<String> activeClans = new ArrayList<>();
 
@@ -595,4 +596,47 @@ public class ClanManager {
                 .filter(entry -> !onlyActive || activeMembers.contains(entry.getKey()))
                 .count();
     }
+
+    public int getClanIdByClan(String tag) {
+        String query = "SELECT `id` FROM clans WHERE lower(tag) = ?;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setString(1, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+
+            if (results.next()) {
+                return results.getInt("id");
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to retrieve clan ID for clan: " + tag);
+        }
+        return -1;
+    }
+
+
+    public boolean createPartnership(String clanTag1, String clanTag2) {
+        // Sort clan tags to enforce a consistent order
+        String lowerClanTag1 = clanTag1.toLowerCase();
+        String lowerClanTag2 = clanTag2.toLowerCase();
+        List<String> sortedTags = Arrays.asList(lowerClanTag1, lowerClanTag2);
+        Collections.sort(sortedTags);
+
+        // Use the first clan as the key based on the sorted order
+        String key = sortedTags.get(0);
+        String value = sortedTags.get(1);
+
+        // Check if either clan is already in a partnership
+        if (partnerships.containsKey(key) || partnerships.containsKey(value)) {
+            plugin.getLogger().info("One of the clans is already in a partnership.");
+            return false;
+        }
+
+        // Insert the new partnership
+        partnerships.put(key, value);
+
+        // Assuming database update is handled elsewhere
+        return true;
+    }
+
 }
