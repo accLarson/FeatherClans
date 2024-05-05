@@ -2,7 +2,9 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.managers.InviteRequestManager;
+import com.wasted_ticks.featherclans.managers.PartnerRequestManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -14,14 +16,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-public class InviteCommand implements CommandExecutor {
+public class PartnerCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
+    private final ClanManager manager;
 
-    public InviteCommand(FeatherClans plugin) {
+    public PartnerCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
+        this.manager = plugin.getClanManager();
     }
 
     @Override
@@ -32,7 +36,7 @@ public class InviteCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.invite")) {
+        if (!sender.hasPermission("feather.clans.partner")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
@@ -43,35 +47,29 @@ public class InviteCommand implements CommandExecutor {
             return true;
         }
 
+        //check if own clan already has a partnership
+
         if (args.length != 2) {
-            originator.sendMessage(messages.get("clan_invite_error_no_player_specified", null));
+            originator.sendMessage(messages.get("clan_partner_request_error_no_clan_specified", null));
             return true;
         }
 
-        Player invitee = Bukkit.getPlayer(args[1]);
-        if (invitee == null) {
-            originator.sendMessage(messages.get("clan_invite_error_unresolved_player", null));
+        String clan = args[1].toLowerCase();
+        if (!manager.getClans().contains(clan)) {
+            originator.sendMessage(messages.get("clan_partner_request_error_unresolved_clan", null));
             return true;
         }
 
-        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(invitee);
-        if (inClan) {
-            originator.sendMessage(messages.get("clan_invite_error_already_in_clan", null));
+        boolean isLeaderOnline = Bukkit.getOfflinePlayer(manager.getLeader(clan)).isOnline();
+        if (!isLeaderOnline) {
+            originator.sendMessage(messages.get("clan_partner_request_error_leader_offline", null));
             return true;
         }
 
-        String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
-        int max = this.plugin.getFeatherClansConfig().getClanMaxMembers();
-        List<OfflinePlayer> players = plugin.getClanManager().getOfflinePlayersByClan(tag);
-        if(players.size() >= max) {
-            originator.sendMessage(messages.get("clan_invite_error_max", Map.of(
-                    "max", String.valueOf(max)
-            )));
-            return true;
-        }
+        // check if requested clan already has a partner
 
-        InviteRequestManager manager = plugin.getInviteManager();
-        manager.invite(invitee, tag, originator);
+
+        plugin.getInviteManager().invite(invitee, clan, originator);
         return true;
     }
 }

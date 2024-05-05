@@ -10,14 +10,14 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InviteManager {
+public class InviteRequestManager {
 
     private final FeatherClansMessages messages;
     private final FeatherClans plugin;
     private final HashMap<String, RequestUtil> requests = new HashMap<>();
     private final FeatherClansConfig config;
 
-    public InviteManager(FeatherClans plugin) {
+    public InviteRequestManager(FeatherClans plugin) {
         this.plugin = plugin;
         this.config = plugin.getFeatherClansConfig();
         this.messages = plugin.getFeatherClansMessages();

@@ -14,6 +14,7 @@ public class FeatherClansConfig {
     private boolean economyEnabled;
     private double economyCreationPrice;
     private double economyInvitePrice;
+    private double economyPartnershipPrice;
     private double economySetHomePrice;
 
     private boolean cleanupEnabled;
@@ -54,6 +55,7 @@ public class FeatherClansConfig {
         this.economyEnabled = config.getBoolean("settings.economy.enabled");
         this.economyCreationPrice = config.getDouble("settings.economy.creation_price");
         this.economyInvitePrice = config.getDouble("settings.economy.invite_price");
+        this.economyPartnershipPrice = config.getDouble("settings.economy.partnership_price");
         this.economySetHomePrice = config.getDouble("settings.economy.set_home_price");
 
         this.cleanupEnabled = config.getBoolean("settings.clean_up.enabled");
@@ -93,6 +95,9 @@ public class FeatherClansConfig {
     }
     public double getEconomyInvitePrice() {
         return economyInvitePrice;
+    }
+    public double getEconomyPartnershipPrice() {
+        return economyPartnershipPrice;
     }
     public double getEconomySetHomePrice() {
         return economySetHomePrice;

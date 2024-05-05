@@ -27,6 +27,7 @@ settings:
     enabled: true
     creation_price: 25000.0
     invite_price: 100.0
+    partnership_price: 5000.0
     set_home_price: 1000.0
   clean_up:
     enabled: false

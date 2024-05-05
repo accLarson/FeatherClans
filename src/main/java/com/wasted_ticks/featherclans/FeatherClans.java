@@ -20,7 +20,7 @@ public final class FeatherClans extends JavaPlugin {
     private FeatherClans plugin;
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
-    private InviteManager inviteManager;
+    private InviteRequestManager inviteRequestManager;
     private FriendlyFireManager friendlyFireManager;
     private PVPScoreManager pvpScoreManager;
     private PaginateUtil paginateUtil;
@@ -43,7 +43,7 @@ public final class FeatherClans extends JavaPlugin {
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
         this.pvpScoreManager = new PVPScoreManager(plugin);
-        this.inviteManager = new InviteManager(plugin);
+        this.inviteRequestManager = new InviteRequestManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
         this.colorTagUtil = new ColorTagUtil(plugin);
 
@@ -93,8 +93,8 @@ public final class FeatherClans extends JavaPlugin {
         return this.clanManager;
     }
 
-    public InviteManager getInviteManager() {
-        return this.inviteManager;
+    public InviteRequestManager getInviteManager() {
+        return this.inviteRequestManager;
     }
 
     public DatabaseManager getDatabaseManager() {
