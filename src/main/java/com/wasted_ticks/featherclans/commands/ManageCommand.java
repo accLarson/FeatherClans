@@ -156,7 +156,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                plugin.getInviteManager().invite(invitee, tag, (Player) sender);
+                plugin.getInviteRequestManager().invite(invitee, tag, (Player) sender);
                 break;
 
             case "kick":

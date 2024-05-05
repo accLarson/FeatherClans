@@ -21,6 +21,9 @@ public final class FeatherClans extends JavaPlugin {
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
     private InviteRequestManager inviteRequestManager;
+
+    private PartnerRequestManager partnerRequestManager;
+
     private FriendlyFireManager friendlyFireManager;
     private PVPScoreManager pvpScoreManager;
     private PaginateUtil paginateUtil;
@@ -28,7 +31,6 @@ public final class FeatherClans extends JavaPlugin {
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
     private Handler handler;
-
     private Economy economy;
 
     @Override
@@ -44,6 +46,7 @@ public final class FeatherClans extends JavaPlugin {
         this.friendlyFireManager = new FriendlyFireManager();
         this.pvpScoreManager = new PVPScoreManager(plugin);
         this.inviteRequestManager = new InviteRequestManager(plugin);
+        this.partnerRequestManager = new PartnerRequestManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
         this.colorTagUtil = new ColorTagUtil(plugin);
 
@@ -93,8 +96,12 @@ public final class FeatherClans extends JavaPlugin {
         return this.clanManager;
     }
 
-    public InviteRequestManager getInviteManager() {
+    public InviteRequestManager getInviteRequestManager() {
         return this.inviteRequestManager;
+    }
+
+    public PartnerRequestManager getPartnerRequestManager() {
+        return partnerRequestManager;
     }
 
     public DatabaseManager getDatabaseManager() {

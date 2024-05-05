@@ -35,7 +35,7 @@ public class DeclineCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        RequestUtil request = this.plugin.getInviteManager().getRequest(player);
+        RequestUtil request = this.plugin.getInviteRequestManager().getRequest(player);
         if (request == null) {
             player.sendMessage(messages.get("clan_decline_no_invitation", null));
             return true;
@@ -51,7 +51,7 @@ public class DeclineCommand implements CommandExecutor {
                 "player", player.getName()
         )));
 
-        plugin.getInviteManager().clearRequest(player);
+        plugin.getInviteRequestManager().clearRequest(player);
 
         return true;
     }

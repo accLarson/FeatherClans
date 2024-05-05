@@ -166,7 +166,6 @@ public class DatabaseManager {
                     + " `banner` TEXT NOT NULL, "
                     + " `tag` VARCHAR(255) NOT NULL, "
                     + " `home` TEXT NULL, "
-                    + " `home_elevated` TEXT NULL, "
                     + " `home_partner` TEXT NULL, "
                     + " `tag_elevated` VARCHAR(255) DEFAULT NULL, "
                     + " `leader_uuid` VARCHAR(255) NOT NULL, "

@@ -42,7 +42,7 @@ public class AcceptCommand implements CommandExecutor {
             return false;
         }
 
-        RequestUtil request = this.plugin.getInviteManager().getRequest(player);
+        RequestUtil request = this.plugin.getInviteRequestManager().getRequest(player);
         if (request == null) {
             player.sendMessage(messages.get("clan_accept_no_request", null));
             return false;
@@ -70,7 +70,7 @@ public class AcceptCommand implements CommandExecutor {
         }
 
         if(success) {
-            plugin.getInviteManager().clearRequest(player);
+            plugin.getInviteRequestManager().clearRequest(player);
             player.sendMessage(messages.get("clan_accept_success_player", Map.of(
                     "clan", tag
             )));

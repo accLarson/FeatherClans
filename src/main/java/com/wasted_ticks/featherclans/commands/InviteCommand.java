@@ -70,7 +70,7 @@ public class InviteCommand implements CommandExecutor {
             return true;
         }
 
-        InviteRequestManager manager = plugin.getInviteManager();
+        InviteRequestManager manager = plugin.getInviteRequestManager();
         manager.invite(invitee, tag, originator);
         return true;
     }

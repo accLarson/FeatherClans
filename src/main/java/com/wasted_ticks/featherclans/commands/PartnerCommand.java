@@ -49,6 +49,8 @@ public class PartnerCommand implements CommandExecutor {
 
         //check if own clan already has a partnership
 
+        //check if own clan is elevated
+
         if (args.length != 2) {
             originator.sendMessage(messages.get("clan_partner_request_error_no_clan_specified", null));
             return true;
@@ -60,16 +62,19 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
+        OfflinePlayer leader = Bukkit.getOfflinePlayer(manager.getLeader(clan));
         boolean isLeaderOnline = Bukkit.getOfflinePlayer(manager.getLeader(clan)).isOnline();
         if (!isLeaderOnline) {
             originator.sendMessage(messages.get("clan_partner_request_error_leader_offline", null));
             return true;
         }
 
-        // check if requested clan already has a partner
+        // check if requested partner already has a partner
+
+        // check if requested partner is elevated
 
 
-        plugin.getInviteManager().invite(invitee, clan, originator);
+        plugin.getPartnerRequestManager().requestPartnership((Player) leader, clan, originator);
         return true;
     }
 }
