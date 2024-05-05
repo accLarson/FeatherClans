@@ -95,114 +95,88 @@ public class DatabaseManager {
         if (this.isUseMySQL) {
             this.initMySQLTables();
         } else {
-            this.initSQLiteTables();
+            plugin.getLogger().warning("SQLite no longer supported. No database created");
+//            this.initSQLiteTables();
         }
     }
 
-    private void initSQLiteTables() {
-        if (!this.existsTable("clans")) {
-            plugin.getLogger().info("Creating `clans` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `clans` ("
-                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + " `is_elevated` INTEGER NOT NULL DEFAULT 0"
-                    + " `banner` TEXT NOT NULL, "
-                    + " `tag` VARCHAR(255) NOT NULL, "
-                    + " `home` TEXT NULL, "
-                    + " `tag_elevated` VARCHAR(255) NOT NULL, "
-                    + " `home_elevated` TEXT NULL, "
-                    + " `leader_uuid` VARCHAR(255) NOT NULL, "
-                    + " `partner_id` INTEGER DEFAULT NULL,"
-                    + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-                    + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-            try(Connection connection = this.getConnection()) {
-                connection.createStatement().execute(query);
-            } catch(SQLException e) {
-                plugin.getLogger().severe("Unable to create `clans` table.");
-            }
-        }
-        if (!this.existsTable("partners")) {
-            plugin.getLogger().info("Creating `partners` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `partners` ("
-                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + " `home` TEXT NULL, "
-                    + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-                    + " FOREIGN KEY (`clan1_id`) REFERENCES `clans`(`id`)"
-                    + " FOREIGN KEY (`clan2_id`) REFERENCES `clans`(`id`));";
+    // sqlite init out of date / broken - Derek
 
-            try(Connection connection = this.getConnection()) {
-                connection.createStatement().execute(query);
-            } catch(SQLException e) {
-                plugin.getLogger().severe("Unable to create `partners` table.");
-            }
-        }
-        if (!this.existsTable("clan_members")) {
-            plugin.getLogger().info("Creating `clan_members` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `clan_members` ("
-                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + " `mojang_uuid` VARCHAR(255) NOT NULL, "
-                    + " `clan_id` INTEGER NOT NULL, "
-                    + " `is_officer` INTEGER NOT NULL DEFAULT 0"
-                    + " `is_active` INTEGER NOT NULL DEFAULT 1"
-                    + " `last_seen_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-                    + " `join_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-            try(Connection connection = this.getConnection()) {
-                connection.createStatement().execute(query);
-            } catch(SQLException e) {
-                plugin.getLogger().severe("Unable to create `clan_members` table.");
-            }
-        }
-        if (!this.existsTable("clan_kills")) {
-            plugin.getLogger().info("Creating `clan_kills` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `clan_kills` ("
-                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + " `killer_id` INTEGER, "
-                    + " `victim_id` INTEGER, "
-                    + " `date` DATE NOT NULL DEFAULT CURRENT_DATE, "
-                    + " FOREIGN KEY (`killer_id`) REFERENCES `clan_members`(`id`), "
-                    + " FOREIGN KEY (`victim_id`) REFERENCES `clan_members`(`id`));";
-            try(Connection connection = this.getConnection()) {
-                connection.createStatement().execute(query);
-            } catch(SQLException e) {
-                plugin.getLogger().severe("Unable to create `clan_kills` table.");
-            }
-        }
-    }
+//    private void initSQLiteTables() {
+//        if (!this.existsTable("clans")) {
+//            plugin.getLogger().info("Creating `clans` table.");
+//            String query = "CREATE TABLE IF NOT EXISTS `clans` ("
+//                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                    + " `is_elevated` INTEGER NOT NULL DEFAULT 0"
+//                    + " `banner` TEXT NOT NULL, "
+//                    + " `tag` VARCHAR(255) NOT NULL, "
+//                    + " `home` TEXT NULL, "
+//                    + " `tag_elevated` VARCHAR(255) NOT NULL, "
+//                    + " `home_elevated` TEXT NULL, "
+//                    + " `leader_uuid` VARCHAR(255) NOT NULL, "
+//                    + " `partner_id` INTEGER DEFAULT NULL,"
+//                    + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+//                    + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+//            try(Connection connection = this.getConnection()) {
+//                connection.createStatement().execute(query);
+//            } catch(SQLException e) {
+//                plugin.getLogger().severe("Unable to create `clans` table.");
+//            }
+//        }
+//        if (!this.existsTable("clan_members")) {
+//            plugin.getLogger().info("Creating `clan_members` table.");
+//            String query = "CREATE TABLE IF NOT EXISTS `clan_members` ("
+//                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                    + " `mojang_uuid` VARCHAR(255) NOT NULL, "
+//                    + " `clan_id` INTEGER NOT NULL, "
+//                    + " `is_officer` INTEGER NOT NULL DEFAULT 0"
+//                    + " `is_active` INTEGER NOT NULL DEFAULT 1"
+//                    + " `last_seen_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+//                    + " `join_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+//            try(Connection connection = this.getConnection()) {
+//                connection.createStatement().execute(query);
+//            } catch(SQLException e) {
+//                plugin.getLogger().severe("Unable to create `clan_members` table.");
+//            }
+//        }
+//        if (!this.existsTable("clan_kills")) {
+//            plugin.getLogger().info("Creating `clan_kills` table.");
+//            String query = "CREATE TABLE IF NOT EXISTS `clan_kills` ("
+//                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                    + " `killer_id` INTEGER, "
+//                    + " `victim_id` INTEGER, "
+//                    + " `date` DATE NOT NULL DEFAULT CURRENT_DATE, "
+//                    + " FOREIGN KEY (`killer_id`) REFERENCES `clan_members`(`id`), "
+//                    + " FOREIGN KEY (`victim_id`) REFERENCES `clan_members`(`id`));";
+//            try(Connection connection = this.getConnection()) {
+//                connection.createStatement().execute(query);
+//            } catch(SQLException e) {
+//                plugin.getLogger().severe("Unable to create `clan_kills` table.");
+//            }
+//        }
+//    }
 
     private void initMySQLTables() {
         if (!this.existsTable("clans")) {
             plugin.getLogger().info("Creating `clans` table.");
             String query = "CREATE TABLE IF NOT EXISTS `clans` ("
                     + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
+                    + " `partner_id` INTEGER default NULL, "
                     + " `is_elevated` BIT NOT NULL DEFAULT 0, "
                     + " `banner` TEXT NOT NULL, "
                     + " `tag` VARCHAR(255) NOT NULL, "
                     + " `home` TEXT NULL, "
-                    + " `tag_elevated` VARCHAR(255) DEFAULT NULL, "
                     + " `home_elevated` TEXT NULL, "
+                    + " `home_partner` TEXT NULL, "
+                    + " `tag_elevated` VARCHAR(255) DEFAULT NULL, "
                     + " `leader_uuid` VARCHAR(255) NOT NULL, "
                     + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-                    + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-                    + " FOREIGN KEY (`partnership_id`) REFERENCES `partners`(`id`));";
+                    + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 
             try(Connection connection = this.getConnection()) {
                 connection.createStatement().execute(query);
             } catch(SQLException e) {
-                plugin.getLogger().severe("Unable to create `clans` table.");
-            }
-        }
-        if (!this.existsTable("partnerships")) {
-            plugin.getLogger().info("Creating `partnerships` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `partnerships` ("
-                    + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
-                    + " `home` TEXT NULL, "
-                    + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-                    + " FOREIGN KEY (`clan1_id`) REFERENCES `clans`(`id`)"
-                    + " FOREIGN KEY (`clan2_id`) REFERENCES `clans`(`id`));";
-
-            try(Connection connection = this.getConnection()) {
-                connection.createStatement().execute(query);
-            } catch(SQLException e) {
-                plugin.getLogger().severe("Unable to create `partnerships` table.");
+                plugin.getLogger().severe("Unable to create `clans` table. " + e.getMessage());
             }
         }
         if (!this.existsTable("clan_members")) {
@@ -218,7 +192,7 @@ public class DatabaseManager {
             try(Connection connection = this.getConnection()) {
                 connection.createStatement().execute(query);
             } catch(SQLException e) {
-                plugin.getLogger().severe("Unable to create `clan_members` table.");
+                plugin.getLogger().severe("Unable to create `clan_members` table. " + e.getMessage());
             }
         }
         if (!this.existsTable("clan_kills")) {
@@ -233,7 +207,7 @@ public class DatabaseManager {
             try(Connection connection = this.getConnection()) {
                 connection.createStatement().execute(query);
             } catch(SQLException e) {
-                plugin.getLogger().severe("Unable to create `clan_kills` table.");
+                plugin.getLogger().severe("Unable to create `clan_kills` table. " + e.getMessage());
             }
         }
     }

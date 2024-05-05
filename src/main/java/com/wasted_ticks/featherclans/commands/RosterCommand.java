@@ -109,7 +109,7 @@ public class RosterCommand implements CommandExecutor {
                 .append(spacer)
                 .append(chatUtil.addSpacing(mm.deserialize("<gray>[i] PVP"),42,true).hoverEvent(HoverEvent.showText(pvpScoreCalculationExplained)))
                 .append(spacer)
-                .append(chatUtil.addSpacing(mm.deserialize("<gray>Last Seen"),100,true));
+                .append(chatUtil.addSpacing(mm.deserialize("<gray>Seen"),100,true));
 
         clanMemberLines.add(header);
 
@@ -181,7 +181,7 @@ public class RosterCommand implements CommandExecutor {
             Component lastSeen;
             if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>Today"),106,true);
             else if (!manager.isOfflinePlayerActive(clanMember)) lastSeen = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>" + lastSeenInt + " Day(s) Ago"),100,true);
-            else lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + lastSeenInt + " Day(s) Ago"),106,true);
+            else lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + lastSeenInt + "d"),106,true);
 
             clanMemberLines.add(member.append(spacer).append(role).append(spacer).append(pvpScore).append(spacer).append(lastSeen));
         }
