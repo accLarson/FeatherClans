@@ -1,7 +1,7 @@
 package com.wasted_ticks.featherclans.managers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
-import com.wasted_ticks.featherclans.util.SerializationUtil;
+import com.wasted_ticks.featherclans.utilities.SerializationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;

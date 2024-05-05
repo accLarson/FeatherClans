@@ -2,7 +2,7 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.util.ColorTagUtil;
+import com.wasted_ticks.featherclans.utilities.ColorTagUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

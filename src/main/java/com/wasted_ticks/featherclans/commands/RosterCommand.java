@@ -4,7 +4,7 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
-import com.wasted_ticks.featherclans.util.ChatUtil;
+import com.wasted_ticks.featherclans.utilities.ChatUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;

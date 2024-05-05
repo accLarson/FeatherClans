@@ -3,8 +3,7 @@ package com.wasted_ticks.featherclans.managers;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.util.RequestUtil;
-import net.milkbowl.vault.economy.Economy;
+import com.wasted_ticks.featherclans.utilities.RequestUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

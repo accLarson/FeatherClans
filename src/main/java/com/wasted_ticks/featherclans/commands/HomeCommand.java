@@ -2,7 +2,7 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.util.TeleportTimerUtil;
+import com.wasted_ticks.featherclans.utilities.TeleportTimerUtil;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

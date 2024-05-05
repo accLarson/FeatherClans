@@ -1,4 +1,4 @@
-package com.wasted_ticks.featherclans.util;
+package com.wasted_ticks.featherclans.utilities;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import org.bukkit.Bukkit;
