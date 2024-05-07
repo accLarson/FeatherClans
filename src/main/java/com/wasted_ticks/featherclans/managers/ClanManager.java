@@ -22,7 +22,7 @@ public class ClanManager {
 
     private static final Map<String, String> partnerships = new HashMap<>();
     private static final Set<UUID> activeMembers = new HashSet<>();
-    private static final List<String> activeClans = new ArrayList<>();
+    private static final List<String> activeStatusClans = new ArrayList<>();
 
     private final FeatherClans plugin;
     private final DatabaseManager database;
@@ -38,6 +38,7 @@ public class ClanManager {
         loadClans();
         loadOfficers();
         loadActiveMembers();
+        loadActiveClans();
     }
 
     private void loadPlayers() {
@@ -131,7 +132,7 @@ public class ClanManager {
                 if (isOfflinePlayerActive(m)) activeCount++;
             }
             if (activeCount >= plugin.getFeatherClansConfig().getClanActiveStatusCount()) {
-                activeClans.add(c);
+                activeStatusClans.add(c);
             }
         });
     }
@@ -681,5 +682,9 @@ public class ClanManager {
             plugin.getLogger().severe("Failed to setup partnership: " + tag1 + ", and " + tag2);
         }
         return false;
+    }
+
+    public boolean isClanActiveStatus(String tag) {
+        return activeStatusClans.contains(tag);
     }
 }

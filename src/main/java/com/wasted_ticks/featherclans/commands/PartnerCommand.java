@@ -52,35 +52,42 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-            //check if own clan is active status
+        if (!manager.isClanActiveStatus(manager.getClanByOfflinePlayer(proposingLeader))) {
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_not_active_status", null));
+            return true;
+        }
 
         if (args.length != 2) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_no_clan_specified", null));
             return true;
         }
 
-        String clan = args[1].toLowerCase();
-        if (!manager.getClans().contains(clan)) {
+        String tag = args[1].toLowerCase();
+        if (!manager.getClans().contains(tag)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_unresolved_clan", null));
             return true;
         }
 
-        if (manager.hasPartner(clan)) {
+        if (manager.hasPartner(tag)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_already_partnered", null));
             return true;
         }
 
-        OfflinePlayer receivingLeader = Bukkit.getOfflinePlayer(manager.getLeader(clan));
-        boolean isLeaderOnline = Bukkit.getOfflinePlayer(manager.getLeader(clan)).isOnline();
+        OfflinePlayer receivingLeader = Bukkit.getOfflinePlayer(manager.getLeader(tag));
+        boolean isLeaderOnline = Bukkit.getOfflinePlayer(manager.getLeader(tag)).isOnline();
         if (!isLeaderOnline) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_leader_offline", null));
             return true;
         }
 
         // check if requested partner is active status
+        if (!manager.isClanActiveStatus(tag)) {
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_not_active_status", null));
+            return true;
+        }
 
 
-        plugin.getPartnerRequestManager().requestPartnership((Player) receivingLeader, clan, proposingLeader);
+        plugin.getPartnerRequestManager().requestPartnership((Player) receivingLeader, tag, proposingLeader);
         return true;
     }
 }
