@@ -40,6 +40,7 @@ settings:
     max_tag_size: 5
     max_members: 32
     inactive_days: 8
+    active_status_count: 8
   mysql:
     enabled: true
     username: 'feather_clans'

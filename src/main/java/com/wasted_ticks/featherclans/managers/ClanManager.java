@@ -124,6 +124,18 @@ public class ClanManager {
         });
     }
 
+    private  void loadActiveClans() {
+        clans.keySet().forEach(c -> {
+            int activeCount = 0;
+            for (OfflinePlayer m : this.getOfflinePlayersByClan(c)) {
+                if (isOfflinePlayerActive(m)) activeCount++;
+            }
+            if (activeCount >= plugin.getFeatherClansConfig().getClanActiveStatusCount()) {
+                activeClans.add(c);
+            }
+        });
+    }
+
     /**
      * Gets a list of all clans.
      *

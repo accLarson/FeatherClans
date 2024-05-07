@@ -28,13 +28,15 @@ public class FeatherClansConfig {
     private int clanMaxMembers;
     private int clanInactiveDays;
 
+    private int clanActiveStatusCount;
+
     private boolean mysqlEnabled;
+
     private String mysqlUsername;
     private String mysqlHost;
     private int mysqlPort;
     private String mysqlPassword;
     private String mysqlDatabase;
-
     private List<String> denyTags;
 
     private int linesPerPage;
@@ -67,7 +69,8 @@ public class FeatherClansConfig {
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
         this.clanMaxTagSize = config.getInt("settings.clan.max_tag_size");
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
-        this.clanInactiveDays = config.getInt("inactive_days");
+        this.clanInactiveDays = config.getInt("settings.clan.inactive_days");
+        this.clanActiveStatusCount = config.getInt("settings.clan.active_status_count");
 
         this.mysqlEnabled = config.getBoolean("settings.mysql.enabled");
         this.mysqlUsername = config.getString("settings.mysql.username");
@@ -87,6 +90,7 @@ public class FeatherClansConfig {
     public boolean isEconomyEnabled() {
         return economyEnabled;
     }
+
     public void setEconomyEnabled(boolean economyEnabled) {
         this.economyEnabled = economyEnabled;
     }
@@ -128,6 +132,9 @@ public class FeatherClansConfig {
     }
     public int getInactiveDays() {
         return clanInactiveDays;
+    }
+    public int getClanActiveStatusCount() {
+        return clanActiveStatusCount;
     }
     public boolean isMysqlEnabled() {
         return mysqlEnabled;

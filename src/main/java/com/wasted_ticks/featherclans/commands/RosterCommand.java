@@ -147,7 +147,7 @@ public class RosterCommand implements CommandExecutor {
             Component member;
             if (!manager.isOfflinePlayerActive(clanMember)) {
                 member = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>" + name)
-                        .hoverEvent(HoverEvent.showText(Component.text("This player is inactive and wont be be counted when calculating active membership count for elevated status."))),100);
+                        .hoverEvent(HoverEvent.showText(Component.text("This player is inactive and wont be be counted when calculating active membership count for active status."))),100);
             }
             else {
                 member = chatUtil.addSpacing(mm.deserialize(name), 100);

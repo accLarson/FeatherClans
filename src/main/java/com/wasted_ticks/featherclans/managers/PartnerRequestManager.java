@@ -34,8 +34,17 @@ public class PartnerRequestManager {
     public boolean requestPartnership(Player invitee, String tag, Player originator) {
 
         if (requests.containsKey(invitee.getName())) {
+            originator.sendMessage(messages.get("clan_partner_request_error_already_have_request", null));
             return false;
         }
+
+        for (RequestUtil ru : requests.values()) {
+            if (ru.getOriginator().equals(originator)) {
+                originator.sendMessage(messages.get("clan_partner_request_error_already_sent_request", null));
+                return false;
+            }
+        }
+
 
         requests.put(invitee.getName(), new RequestUtil(tag, originator));
 

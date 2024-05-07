@@ -52,7 +52,7 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-            //check if own clan is elevated
+            //check if own clan is active status
 
         if (args.length != 2) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_no_clan_specified", null));
@@ -77,7 +77,7 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        // check if requested partner is elevated
+        // check if requested partner is active status
 
 
         plugin.getPartnerRequestManager().requestPartnership((Player) receivingLeader, clan, proposingLeader);
