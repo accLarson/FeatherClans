@@ -19,7 +19,8 @@ public class ClanManager {
     private static final HashMap<UUID, String> players = new HashMap<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
     private static final List<UUID> officers = new ArrayList<>();
-    private final Map<String, String> partnerships = new HashMap<>();
+
+    private static final Map<String, String> partnerships = new HashMap<>();
     private static final Set<UUID> activeMembers = new HashSet<>();
     private static final List<String> activeClans = new ArrayList<>();
 
@@ -64,7 +65,7 @@ public class ClanManager {
 
 
     private void loadClans() {
-        String string = "SELECT `tag`, `leader_uuid` FROM clans;";
+        String string = "SELECT `tag`, `leader_uuid`, partner_id FROM clans;";
         try(Connection connection = database.getConnection();
             PreparedStatement statement = connection.prepareStatement(string);
             ResultSet results = statement.executeQuery())
@@ -73,8 +74,14 @@ public class ClanManager {
                 while (results.next()) {
                     String tag = results.getString("tag");
                     String uuid = results.getString("leader_uuid");
+                    int partnerId = results.getInt("partner_id");
                     if(tag != null && uuid != null) {
                         clans.put(tag.toLowerCase(), UUID.fromString(uuid));
+
+                        // LOAD PARTNERSHIPS
+                        if (partnerId != -1) {
+                            partnerships.put(tag,this.getTagById(partnerId));
+                        }
                     }
                 }
             }
@@ -614,29 +621,53 @@ public class ClanManager {
         return -1;
     }
 
+    public String getTagById(int id) {
+        String query = "SELECT `tag` FROM clans WHERE id = ?;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement select = connection.prepareStatement(query)) {
 
-    public boolean createPartnership(String clanTag1, String clanTag2) {
-        // Sort clan tags to enforce a consistent order
-        String lowerClanTag1 = clanTag1.toLowerCase();
-        String lowerClanTag2 = clanTag2.toLowerCase();
-        List<String> sortedTags = Arrays.asList(lowerClanTag1, lowerClanTag2);
-        Collections.sort(sortedTags);
+            select.setInt(1, id);
+            ResultSet results = select.executeQuery();
 
-        // Use the first clan as the key based on the sorted order
-        String key = sortedTags.get(0);
-        String value = sortedTags.get(1);
-
-        // Check if either clan is already in a partnership
-        if (partnerships.containsKey(key) || partnerships.containsKey(value)) {
-            plugin.getLogger().info("One of the clans is already in a partnership.");
-            return false;
+            if (results.next()) {
+                return results.getString("tag");
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to retrieve clan tag for id: " + id);
         }
-
-        // Insert the new partnership
-        partnerships.put(key, value);
-
-        // Assuming database update is handled elsewhere
-        return true;
+        return null;
     }
 
+    public boolean hasPartner(String tag) {
+        return partnerships.containsKey(tag);
+    }
+
+    public String getPartner(String tag) {
+        return partnerships.get(tag);
+    }
+
+    public boolean setPartnership(String tag1, String tag2) {
+        partnerships.put(tag2.toLowerCase(), tag1.toLowerCase());
+
+
+        String string = "UPDATE clans SET `partner_id` = ? WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(string))
+        {
+            update.setString(1, tag2);
+            update.setString(2, tag1);
+            if(update.executeUpdate() != 0) {
+                partnerships.put(tag1.toLowerCase(), tag2.toLowerCase());
+            }
+            update.setString(1, tag1);
+            update.setString(2, tag2);
+            if(update.executeUpdate() != 0) {
+                partnerships.put(tag2.toLowerCase(), tag1.toLowerCase());
+            }
+
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to setup partnership: " + tag1 + ", and " + tag2);
+        }
+        return false;
+    }
 }

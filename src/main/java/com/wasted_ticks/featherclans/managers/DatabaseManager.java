@@ -161,7 +161,7 @@ public class DatabaseManager {
             plugin.getLogger().info("Creating `clans` table.");
             String query = "CREATE TABLE IF NOT EXISTS `clans` ("
                     + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
-                    + " `partner_id` INTEGER default NULL, "
+                    + " `partner_id` INTEGER DEFAULT -1, "
                     + " `is_elevated` BIT NOT NULL DEFAULT 0, "
                     + " `banner` TEXT NOT NULL, "
                     + " `tag` VARCHAR(255) NOT NULL, "

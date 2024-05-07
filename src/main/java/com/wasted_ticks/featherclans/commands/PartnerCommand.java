@@ -41,40 +41,46 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        Player originator = (Player) sender;
-        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
-            originator.sendMessage(messages.get("clan_error_leader", null));
+        Player proposingLeader = (Player) sender;
+        if (!manager.isOfflinePlayerLeader(proposingLeader)) {
+            proposingLeader.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
 
-        //check if own clan already has a partnership
+        if (manager.hasPartner(manager.getClanByOfflinePlayer(proposingLeader))) {
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_already_partnered", null));
+            return true;
+        }
 
-        //check if own clan is elevated
+            //check if own clan is elevated
 
         if (args.length != 2) {
-            originator.sendMessage(messages.get("clan_partner_request_error_no_clan_specified", null));
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_no_clan_specified", null));
             return true;
         }
 
         String clan = args[1].toLowerCase();
         if (!manager.getClans().contains(clan)) {
-            originator.sendMessage(messages.get("clan_partner_request_error_unresolved_clan", null));
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_unresolved_clan", null));
             return true;
         }
 
-        OfflinePlayer leader = Bukkit.getOfflinePlayer(manager.getLeader(clan));
+        if (manager.hasPartner(clan)) {
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_already_partnered", null));
+            return true;
+        }
+
+        OfflinePlayer receivingLeader = Bukkit.getOfflinePlayer(manager.getLeader(clan));
         boolean isLeaderOnline = Bukkit.getOfflinePlayer(manager.getLeader(clan)).isOnline();
         if (!isLeaderOnline) {
-            originator.sendMessage(messages.get("clan_partner_request_error_leader_offline", null));
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_leader_offline", null));
             return true;
         }
-
-        // check if requested partner already has a partner
 
         // check if requested partner is elevated
 
 
-        plugin.getPartnerRequestManager().requestPartnership((Player) leader, clan, originator);
+        plugin.getPartnerRequestManager().requestPartnership((Player) receivingLeader, clan, proposingLeader);
         return true;
     }
 }

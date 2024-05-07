@@ -100,7 +100,6 @@ clan_demote_success_originator: "<#656B96>You've demoted <#949BD1><player><#656B
 clan_demote_success_player: "<#949BD1><player> <#656B96>has demoted you from the officer role in <#949BD1><clan> <#656B96> clan."
 clan_lookup_no_player: "<#949BD1>Error<#656B96>: No player requested to lookup."
 clan_lookup_not_in_clan: "<#656B96>That player is not in a clan."
-
 clan_invite_error_no_player_specified: "<#949BD1>Error<#656B96>: No player specified for invitation to clan."
 clan_invite_error_unresolved_player: "<#949BD1>Error<#656B96>: Unable to resolve player name."
 clan_invite_error_already_in_clan: "<#949BD1>Error<#656B96>: Requested player is currently in a clan."
@@ -115,11 +114,14 @@ clan_invite_expired: "<#656B96>Clan invitation from <#949BD1><player> <#656B96>h
 clan_partner_request_error_no_clan_specified: "<#949BD1>Error<#656B96>: No clan specified for partnership request."
 clan_partner_request_error_unresolved_clan: "<#949BD1>Error<#656B96>: That clan doesn't exist."
 clan_partner_request_error_leader_offline: "<#949BD1>Error<#656B96>: The leader of that clan is offline."
+clan_partner_request_error_self_already_partnered: "<#949BD1>Error<#656B96>: You already have a partner."
+clan_partner_request_error_already_partnered: "<#949BD1>Error<#656B96>: That clan already has a partner."
 clan_partner_request_text: "<#c0a1d1><player> <#846d91>(<#c0a1d1><clan><#846d91>) has requested partnership."
 clan_partner_request_text_response: "<#846d91>Reply with '<#c0a1d1>/clan accept<#846d91>' or '<#c0a1d1>/clan decline<#846d91>'."
-clan_partner_request_text_economy: "<#846d91>Accepting this invite will cost you <#c0a1d1><amount> Lapis<#846d91>."
+clan_partner_request_text_economy: "<#846d91>Accepting this request will cost you <#c0a1d1><amount> Lapis<#846d91>."
 clan_partner_request_text_sent: "<#656B96>Clan partnership request sent to <#949BD1><player><#656B96>."
 clan_partner_request_expired: "<#656B96>Clan partnership request from <#949BD1><player> <#656B96>has expired."
+
 
 clan_kick_error_no_player_specified: "<#949BD1>Error<#656B96>: No player specified to kick."
 clan_kick_error_unresolved_player: "<#949BD1>Error<#656B96>: Unable to resolve player name."
