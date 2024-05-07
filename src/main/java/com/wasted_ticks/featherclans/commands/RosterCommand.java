@@ -55,14 +55,14 @@ public class RosterCommand implements CommandExecutor {
             return true;
         }
 
-        String clanTag = null;
+        String tag = null;
         ClanManager manager = plugin.getClanManager();
 
         if (args.length == 1) {
             if (manager.isOfflinePlayerInClan((OfflinePlayer) sender)) {
-                clanTag = manager.getClanByOfflinePlayer((OfflinePlayer) sender);
+                tag = manager.getClanByOfflinePlayer((OfflinePlayer) sender);
                 String[] newArgs = Arrays.copyOf(args,args.length+1);
-                newArgs[args.length] = clanTag;
+                newArgs[args.length] = tag;
                 args = newArgs;
             } else {
                 sender.sendMessage(messages.get("clan_roster_error_unresolved_clan", null));
@@ -70,14 +70,14 @@ public class RosterCommand implements CommandExecutor {
             }
         }
 
-        if (clanTag == null) clanTag = args[1];
+        if (tag == null) tag = args[1];
 
-        if (manager.getClans().stream().noneMatch(clanTag::equalsIgnoreCase)) {
+        if (manager.getClans().stream().noneMatch(tag::equalsIgnoreCase)) {
             sender.sendMessage(messages.get("clan_roster_error_unresolved_clan", null));
             return true;
         }
 
-        List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(clanTag.toLowerCase());
+        List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(tag.toLowerCase());
 
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerActive(m))).collect(Collectors.toList());
@@ -88,11 +88,13 @@ public class RosterCommand implements CommandExecutor {
         MiniMessage mm = MiniMessage.miniMessage();
 
         List<Component> clanMemberLines = new ArrayList<>();
+        String partnerTag = "-";
+        if (manager.hasPartner(tag)) partnerTag = manager.getPartner(tag);
 
-        Component clanName = mm.deserialize("<gray>Clan: <#656b96>" + clanTag);
-        //TODO: add a manager.getPartner method
-        Component partner = mm.deserialize("<gray>Partner: <#656b96>" + "TODO");
-        Component activity = mm.deserialize("<gray>Active members: <#656b96>" + manager.getClanSize(clanTag,true) + "/" + manager.getClanSize(clanTag,false));
+
+        Component clanName = mm.deserialize("<gray>Clan: <#656b96>" + tag);
+        Component partner = mm.deserialize("<gray>Partner: <#656b96>" + partnerTag);
+        Component activity = mm.deserialize("<gray>Active members: <#656b96>" + manager.getClanSize(tag,true) + "/" + manager.getClanSize(tag,false));
 
         Component title = chatUtil.addSpacing(clanName, 70).append(chatUtil.addSpacing(partner,70)).append(chatUtil.addSpacing(activity,170,true));
 
@@ -123,7 +125,7 @@ public class RosterCommand implements CommandExecutor {
 
             pvpScoreBreakdownLines.add(mm.deserialize("<gray>PVP Score Breakdown"));
 
-            String finalClanTag = clanTag;
+            String finalClanTag = tag;
             plugin.getPVPScoreManager().getKills(clanMember).forEach((killed, killCount) -> {
                 int killedCount = plugin.getPVPScoreManager().getKills(killed).getOrDefault(clanMember,0);
                 String killedClan = manager.getClanByOfflinePlayer(killed);
