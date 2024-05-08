@@ -2,6 +2,7 @@ package com.wasted_ticks.featherclans.commands.completers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.managers.ClanManager;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -105,7 +106,14 @@ public class ClanTabCompleter implements TabCompleter {
                                     .collect(Collectors.toList()), completions);
                         }
                         break;
-
+                    case "partner":
+                        if (manager.isOfflinePlayerLeader((Player) sender)) {
+                            StringUtil.copyPartialMatches(args[1], manager.getClans().stream()
+                                    .filter(c -> !Bukkit.getOfflinePlayer(manager.getLeader(c)).isOnline())
+                                    .filter(c -> !c.equals(manager.getClanByOfflinePlayer((OfflinePlayer) sender)))
+                                    .collect(Collectors.toList()), completions);
+                        }
+                        break;
                     case "kick":
                     case "confer":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
