@@ -80,12 +80,10 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        // check if requested partner is active status
         if (!manager.isClanActiveStatus(tag)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_not_active_status", null));
             return true;
         }
-
 
         plugin.getPartnerRequestManager().requestPartnership((Player) receivingLeader, tag, proposingLeader);
         return true;

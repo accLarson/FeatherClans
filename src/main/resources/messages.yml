@@ -118,7 +118,7 @@ clan_partner_request_error_self_already_partnered: "<#949BD1>Error<#656B96>: You
 clan_partner_request_error_already_partnered: "<#949BD1>Error<#656B96>: That clan already has a partner."
 clan_partner_request_error_already_have_request: "<#949BD1>Error<#656B96>: That clan already has a partnership request, try again in a few seconds."
 clan_partner_request_error_already_sent_request: "<#949BD1>Error<#656B96>: You just sent a partnership request, try again in a few seconds."
-clan_partner_request_error_self_not_active_status: "<#949BD1>Error<#656B96>: Your clan does not have active status. You need 8 players logged in within 8 days to be considered active."
+clan_partner_request_error_self_not_active_status: "<#949BD1>Error<#656B96>: Your clan does not have active status which is required to partner."
 clan_partner_request_error_not_active_status: "<#949BD1>Error<#656B96>: That clan does not have active status which is required to partner."
 
 clan_partner_request_text: "<#c0a1d1><player> <#846d91>(<#c0a1d1><clan><#846d91>) has requested partnership."
