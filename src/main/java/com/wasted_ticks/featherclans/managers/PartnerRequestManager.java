@@ -46,7 +46,7 @@ public class PartnerRequestManager {
         }
 
 
-        requests.put(invitee.getName(), new RequestUtil(tag, originator));
+        requests.put(invitee.getName(), new RequestUtil(tag, originator, RequestUtil.RequestType.PARTNERSHIP_INVITE));
 
         invitee.sendMessage(messages.get("clan_partner_request_text", Map.of(
                 "player", originator.getName(),
@@ -57,7 +57,7 @@ public class PartnerRequestManager {
 
         if (config.isEconomyEnabled()) {
             double amount = config.getEconomyPartnershipPrice();
-            invitee.sendMessage(messages.get("clan_invite_text_economy", Map.of(
+            invitee.sendMessage(messages.get("clan_partner_request_text_economy", Map.of(
                     "amount", String.valueOf((int) amount)
             )));
         }

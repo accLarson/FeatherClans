@@ -50,7 +50,7 @@ public class InviteRequestManager {
 //                return true;
 //            }
 //        } else {
-        requests.put(invitee.getName(), new RequestUtil(tag, originator));
+        requests.put(invitee.getName(), new RequestUtil(tag, originator, RequestUtil.RequestType.CLAN_INVITE));
 //        }
 
         invitee.sendMessage(messages.get("clan_invite_text", Map.of(

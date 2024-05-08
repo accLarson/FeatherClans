@@ -2,6 +2,7 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.utilities.RequestUtil;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
@@ -17,9 +18,12 @@ public class AcceptCommand implements CommandExecutor {
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
 
+    private final ClanManager manager;
+
     public AcceptCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
+        this.manager = plugin.getClanManager();
     }
 
     @Override
@@ -35,39 +39,50 @@ public class AcceptCommand implements CommandExecutor {
             return true;
         }
 
-        Player player = (Player) sender;
-        boolean inClan = plugin.getClanManager().isOfflinePlayerLeader(player);
-        if (inClan) {
-            player.sendMessage(messages.get("clan_accept_in_clan", null));
+        Player acceptingPlayer = (Player) sender;
+        RequestUtil request = this.plugin.getInviteRequestManager().getRequest(acceptingPlayer);
+
+        if (request == null) {
+            acceptingPlayer.sendMessage(messages.get("clan_accept_no_request", null));
             return false;
         }
 
-        RequestUtil request = this.plugin.getInviteRequestManager().getRequest(player);
-        if (request == null) {
-            player.sendMessage(messages.get("clan_accept_no_request", null));
-            return false;
+        switch (request.getType()) {
+            case CLAN_INVITE:
+                return handleClanInvite(acceptingPlayer, request);
+            case PARTNERSHIP_INVITE:
+                return handlePartnershipRequest(acceptingPlayer, request);
+            default:
+                return true;
+        }
+    }
+
+    private boolean handleClanInvite(Player player, RequestUtil request) {
+
+        boolean inClan = manager.isOfflinePlayerInClan(player);
+        if (inClan) {
+            player.sendMessage(messages.get("clan_accept_in_clan", null));
+            return true;
         }
 
         String tag = request.getClan();
         Player originator = request.getOriginator();
 
-        boolean success = false;
+        boolean success;
         if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
             double amount = this.plugin.getFeatherClansConfig().getEconomyInvitePrice();
+
             if (economy.has(player, amount)) {
                 economy.withdrawPlayer(player, amount);
-                success = plugin.getClanManager().addOfflinePlayerToClan(player, tag);
+                success = manager.addOfflinePlayerToClan(player, tag);
             } else {
                 player.sendMessage(messages.get("clan_accept_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)
                 )));
                 return true;
             }
-        } else {
-            success = plugin.getClanManager().addOfflinePlayerToClan(player, tag);
-
-        }
+        } else success = manager.addOfflinePlayerToClan(player, tag);
 
         if(success) {
             plugin.getInviteRequestManager().clearRequest(player);
@@ -78,8 +93,46 @@ public class AcceptCommand implements CommandExecutor {
                     "player", player.getName()
             )));
         }
+        return true;
+    }
 
+    private boolean handlePartnershipRequest(Player acceptingPlayer, RequestUtil request) {
 
+        boolean isLeader = manager.isOfflinePlayerLeader(acceptingPlayer);
+        if (!isLeader) {
+            acceptingPlayer.sendMessage(messages.get("clan_accept_error_not_leader", null));
+            return true;
+        }
+
+        String tag = request.getClan();
+        Player originator = request.getOriginator();
+
+        boolean success;
+        if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
+            Economy economy = plugin.getEconomy();
+            double amount = this.plugin.getFeatherClansConfig().getEconomyPartnershipPrice();
+
+            if (economy.has(acceptingPlayer, amount) && economy.has(request.getOriginator(), amount)) {
+                economy.withdrawPlayer(acceptingPlayer, amount);
+                economy.withdrawPlayer(request.getOriginator(), amount);
+                success = manager.setPartnership(tag, manager.getClanByOfflinePlayer(acceptingPlayer));
+            } else {
+                acceptingPlayer.sendMessage(messages.get("clan_partner_request_error_economy", Map.of(
+                        "amount", String.valueOf((int) amount)
+                )));
+                return true;
+            }
+        } else success = manager.setPartnership(tag, manager.getClanByOfflinePlayer(acceptingPlayer));
+
+        if(success) {
+            plugin.getPartnerRequestManager().clearRequest(acceptingPlayer);
+            acceptingPlayer.sendMessage(messages.get("clan_accept_partnership_success_player", Map.of(
+                    "clan", tag
+            )));
+            originator.sendMessage(messages.get("clan_accept_partnership_success_originator", Map.of(
+                    "clan", manager.getClanByOfflinePlayer(acceptingPlayer)
+            )));
+        }
         return true;
     }
 }

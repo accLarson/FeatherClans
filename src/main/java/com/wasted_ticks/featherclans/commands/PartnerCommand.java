@@ -85,7 +85,16 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        plugin.getPartnerRequestManager().requestPartnership((Player) receivingLeader, tag, proposingLeader);
+        double amount = this.plugin.getFeatherClansConfig().getEconomyPartnershipPrice();
+        if (!plugin.getEconomy().has(proposingLeader, amount)) {
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_economy", Map.of(
+                    "amount", String.valueOf((int) amount)
+            )));
+            return true;
+
+        }
+
+        plugin.getPartnerRequestManager().requestPartnership((Player) receivingLeader, manager.getClanByOfflinePlayer(proposingLeader), proposingLeader);
         return true;
     }
 }
