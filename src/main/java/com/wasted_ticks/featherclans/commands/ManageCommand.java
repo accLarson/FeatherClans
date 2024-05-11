@@ -127,11 +127,6 @@ public class ManageCommand implements CommandExecutor {
 
             case "invite":
 
-                if (!(sender instanceof Player)) {
-                    sender.sendMessage(messages.get("clan_error_player", null));
-                    break;
-                }
-
                 if (args.length != 4) {
                     sender.sendMessage(messages.get("clan_invite_error_no_player_specified", null));
                     break;
@@ -203,6 +198,54 @@ public class ManageCommand implements CommandExecutor {
                 }
                 break;
 
+            case "promote":
+
+                if (args.length != 4) {
+                    sender.sendMessage(messages.get("clan_promote_no_player", null));
+                    break;
+                }
+
+                OfflinePlayer potentialOfficer = Bukkit.getOfflinePlayer(args[3]);
+
+                if (!potentialOfficer.hasPlayedBefore()) {
+                    sender.sendMessage(messages.get("clan_promote_unresolved_player", null));
+                    break;
+                }
+
+                if (manager.isOfflinePlayerLeader(potentialOfficer)) {
+                    sender.sendMessage(messages.get("clan_manage_promote_error_leader", null));
+                    break;
+                }
+
+                if (!manager.isOfflinePlayerInSpecificClan(potentialOfficer, tag)) {
+                    sender.sendMessage(messages.get("clan_manage_promote_not_in_clan", Map.of(
+                            "clan", tag
+                    )));
+                    break;
+                }
+
+                if (manager.isOfflinePlayerOfficer(potentialOfficer)) {
+                    sender.sendMessage(messages.get("clan_promote_already_officer", null));
+                    break;
+                }
+
+                boolean successful = this.plugin.getClanManager().promoteOfficer(potentialOfficer);
+
+                if (successful) {
+                    sender.sendMessage(messages.get("clan_promote_success_originator", Map.of(
+                            "player", potentialOfficer.getName()
+                    )));
+                    if (potentialOfficer.isOnline()){
+                        ((Player)potentialOfficer).sendMessage(messages.get("clan_promote_success_player", Map.of(
+                                "player", sender.getName(),
+                                "clan", tag
+                        )));
+                    }
+                } else {
+                    sender.sendMessage(messages.get("clan_promote_error_generic", null));
+                }
+                break;
+
             case "disband":
 
                 for (OfflinePlayer member : manager.getOfflinePlayersByClan(tag)) {
@@ -233,7 +276,7 @@ public class ManageCommand implements CommandExecutor {
                 )));
 
                 else player.sendMessage(messages.get("clan_sethome_error_generic",null));
-
+                break;
         }
         return true;
     }
