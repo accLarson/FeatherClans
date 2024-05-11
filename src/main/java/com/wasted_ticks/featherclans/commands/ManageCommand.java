@@ -31,7 +31,9 @@ public class ManageCommand implements CommandExecutor {
     // clan manage test confer  <clan-member>
     // clan manage test kick    <clan-member>
     // clan manage test invite  <player>
-
+    //TODO: clan manage test partner <clan>
+    //TODO: clan manage test promote <player>
+    //TODO: clan manage test demote <player>
 
     // clan manage test disband
     // clan manage test sethome
