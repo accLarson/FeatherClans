@@ -16,14 +16,14 @@ public class AsyncChatListener implements Listener {
 
     @EventHandler
     public void onAsyncChat(AsyncChatEvent e) {
-        if (plugin.getClanManager().isOfflinePlayerInClan(e.getPlayer()) && plugin.getClanChatModeManager().isInClanChatMode(e.getPlayer())) {
+        if (plugin.getClanManager().isOfflinePlayerInClan(e.getPlayer()) && plugin.getClanChatLockManager().isInClanChatLock(e.getPlayer())) {
 
             e.setCancelled(true);
 
-            String plainText = PlainTextComponentSerializer.plainText().serialize(e.originalMessage());
+            String plainText = "chat " + PlainTextComponentSerializer.plainText().serialize(e.originalMessage());
             String[] args = plainText.split("\\s+");
 
-            plugin.getClanChatModeManager().sendClanChat(e.getPlayer(),args);
+            plugin.getClanChatLockManager().sendClanChat(e.getPlayer(),args);
         }
 
     }

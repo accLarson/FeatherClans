@@ -8,11 +8,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ChatModeCommand implements CommandExecutor {
+public class ChatLockCommand implements CommandExecutor {
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
 
-    public ChatModeCommand(FeatherClans plugin) {
+    public ChatLockCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
@@ -25,7 +25,7 @@ public class ChatModeCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.chatmode")) {
+        if (!sender.hasPermission("feather.clans.chatlock")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
@@ -33,16 +33,16 @@ public class ChatModeCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if (!plugin.getClanManager().isOfflinePlayerInClan(player)) {
-            player.sendMessage(messages.get("clan_chatmode_error_not_in_clan", null));
+            player.sendMessage(messages.get("clan_chatlock_error_not_in_clan", null));
             return true;
         }
 
-        if (plugin.getClanChatModeManager().isInClanChatMode(player)) {
-            plugin.getClanChatModeManager().removePlayer(player);
-            player.sendMessage(messages.get("clan_chatmode_disabled", null));
+        if (plugin.getClanChatLockManager().isInClanChatLock(player)) {
+            plugin.getClanChatLockManager().removePlayer(player);
+            player.sendMessage(messages.get("clan_chatlock_disabled", null));
         } else {
-            plugin.getClanChatModeManager().addPlayer(player);
-            player.sendMessage(messages.get("clan_chatmode_enabled", null));
+            plugin.getClanChatLockManager().addPlayer(player);
+            player.sendMessage(messages.get("clan_chatlock_enabled", null));
         }
 
         return true;

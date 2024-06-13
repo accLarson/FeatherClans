@@ -25,7 +25,7 @@ public final class FeatherClans extends JavaPlugin {
     private PartnerRequestManager partnerRequestManager;
 
     private FriendlyFireManager friendlyFireManager;
-    private ClanChatModeManager clanChatModeManager;
+    private ClanChatLockManager clanChatLockManager;
     private PVPScoreManager pvpScoreManager;
     private PaginateUtil paginateUtil;
     private ColorTagUtil colorTagUtil;
@@ -45,7 +45,7 @@ public final class FeatherClans extends JavaPlugin {
         this.databaseManager = new DatabaseManager(plugin);
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
-        this.clanChatModeManager = new ClanChatModeManager(plugin);
+        this.clanChatLockManager = new ClanChatLockManager(plugin);
         this.pvpScoreManager = new PVPScoreManager(plugin);
         this.inviteRequestManager = new InviteRequestManager(plugin);
         this.partnerRequestManager = new PartnerRequestManager(plugin);
@@ -115,8 +115,8 @@ public final class FeatherClans extends JavaPlugin {
         return this.friendlyFireManager;
     }
 
-    public ClanChatModeManager getClanChatModeManager() {
-        return this.clanChatModeManager;
+    public ClanChatLockManager getClanChatLockManager() {
+        return this.clanChatLockManager;
     }
 
     public PVPScoreManager getPVPScoreManager() {
@@ -170,7 +170,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("demote", new DemoteCommand(plugin));
         handler.register("colortag",new ColorTagCommand(plugin));
         handler.register("lookup", new LookupCommand(plugin));
-        handler.register("chatmode", new ChatModeCommand(plugin));
+        handler.register("chatlock", new ChatLockCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 

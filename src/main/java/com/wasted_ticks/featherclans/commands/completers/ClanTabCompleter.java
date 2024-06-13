@@ -31,7 +31,7 @@ public class ClanTabCompleter implements TabCompleter {
     );
     private static final List<String> MEMBER_COMMANDS = Arrays.asList(
             "chat",
-            "chatmode",
+            "chatlock",
             "elect",
             "friendlyfire",
             "help",
@@ -42,7 +42,7 @@ public class ClanTabCompleter implements TabCompleter {
     );
     private static final List<String> OFFICER_COMMANDS = Arrays.asList(
             "chat",
-            "chatmode",
+            "chatlock",
             "colortag",
             "friendlyfire",
             "help",
@@ -57,7 +57,7 @@ public class ClanTabCompleter implements TabCompleter {
     );
     private static final List<String> LEADER_COMMANDS = Arrays.asList(
             "chat",
-            "chatmode",
+            "chatlock",
             "colortag",
             "confer",
             "demote",
