@@ -70,6 +70,7 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(plugin),this);
+        this.getServer().getPluginManager().registerEvents(new AsyncChatListener(plugin),this);
     }
 
     private boolean setupEconomy() {
