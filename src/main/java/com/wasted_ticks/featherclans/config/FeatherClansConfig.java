@@ -16,33 +16,26 @@ public class FeatherClansConfig {
     private double economyInvitePrice;
     private double economyPartnershipPrice;
     private double economySetHomePrice;
-
     private boolean cleanupEnabled;
     private int cleanupArchiveDays;
     private int cleanupDeleteDays;
-
     private int clanInviteTimeout;
     private int clanTeleportDelaySeconds;
     private int clanMinTagSize;
     private int clanMaxTagSize;
     private int clanMaxMembers;
     private int clanInactiveDays;
-
     private int clanActiveStatusCount;
-
+    private String defaultClanColor;
     private boolean mysqlEnabled;
-
     private String mysqlUsername;
     private String mysqlHost;
     private int mysqlPort;
     private String mysqlPassword;
     private String mysqlDatabase;
     private List<String> denyTags;
-
     private int linesPerPage;
-
     private int pvpScoreRelevantDays;
-
     private String pvpScoreCalculationExplained;
 
     public FeatherClansConfig(FeatherClans plugin) {
@@ -59,11 +52,9 @@ public class FeatherClansConfig {
         this.economyInvitePrice = config.getDouble("settings.economy.invite_price");
         this.economyPartnershipPrice = config.getDouble("settings.economy.partnership_price");
         this.economySetHomePrice = config.getDouble("settings.economy.set_home_price");
-
         this.cleanupEnabled = config.getBoolean("settings.clean_up.enabled");
         this.cleanupArchiveDays = config.getInt("settings.clean_up.archive_days");
         this.cleanupDeleteDays = config.getInt("settings.clean_up.delete_days");
-
         this.clanInviteTimeout = config.getInt("settings.clan.invite_timeout");
         this.clanTeleportDelaySeconds = config.getInt("settings.clan.teleport_delay_seconds");
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
@@ -71,7 +62,7 @@ public class FeatherClansConfig {
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
         this.clanInactiveDays = config.getInt("settings.clan.inactive_days");
         this.clanActiveStatusCount = config.getInt("settings.clan.active_status_count");
-
+        this.defaultClanColor = config.getString("settings.clan.default_clan_tag_color");
         this.mysqlEnabled = config.getBoolean("settings.mysql.enabled");
         this.mysqlUsername = config.getString("settings.mysql.username");
         this.mysqlHost = config.getString("settings.mysql.host");
@@ -90,7 +81,6 @@ public class FeatherClansConfig {
     public boolean isEconomyEnabled() {
         return economyEnabled;
     }
-
     public void setEconomyEnabled(boolean economyEnabled) {
         this.economyEnabled = economyEnabled;
     }
@@ -135,6 +125,9 @@ public class FeatherClansConfig {
     }
     public int getClanActiveStatusCount() {
         return clanActiveStatusCount;
+    }
+    public String getDefaultClanColor() {
+        return defaultClanColor;
     }
     public boolean isMysqlEnabled() {
         return mysqlEnabled;

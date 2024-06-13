@@ -45,7 +45,6 @@ public class ColorTagCommand implements CommandExecutor {
         }
 
         if (strings.length != 2) {
-            //This message needs to be created
             originator.sendMessage(messages.get("clan_colortag_error_invalid_arg_length", null));
             return true;
         }

@@ -599,6 +599,7 @@ public class ClanManager {
     }
 
     public void updateLastSeenDate(OfflinePlayer offlinePlayer) {
+        this.setOfflinePlayerActive(offlinePlayer, true);
         String sql = "UPDATE clan_members SET `last_seen_date` = CURRENT_TIMESTAMP WHERE `mojang_uuid` = ?;";
         try(Connection connection = database.getConnection();
             PreparedStatement update = connection.prepareStatement(sql)) {
@@ -686,5 +687,43 @@ public class ClanManager {
 
     public boolean isClanActiveStatus(String tag) {
         return activeStatusClans.contains(tag);
+    }
+
+    public boolean hasColoredTag(String tag) {
+        String query = "SELECT `tag_color` FROM clans WHERE tag = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setString(1, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+            if(results != null && results.next()) {
+                if(results.getString("tag_color") != null) return true;
+            }
+        } catch (SQLException ignored) {
+            return false;
+        }
+        return false;
+    }
+
+    private String getColoredTag(String tag) {
+        String query = "SELECT `tag_color` FROM clans WHERE tag = ?;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setString(1, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+
+            if (results.next()) {
+                return results.getString("tag_color");
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to get Colored tag for clan: " + tag);
+        }
+        return null;
+    }
+
+    public String getFormattedTag(String tag) {
+        if (this.isClanActiveStatus(tag) && this.hasColoredTag(tag)) return this.getColoredTag(tag);
+        else return plugin.getFeatherClansConfig().getDefaultClanColor() + tag;
     }
 }

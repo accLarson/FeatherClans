@@ -106,12 +106,11 @@ public class DatabaseManager {
             String query = "CREATE TABLE IF NOT EXISTS `clans` ("
                     + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
                     + " `partner_id` INTEGER DEFAULT -1, "
-                    + " `is_active` BIT NOT NULL DEFAULT 0, "
                     + " `banner` TEXT NOT NULL, "
                     + " `tag` VARCHAR(255) NOT NULL, "
+                    + " `tag_color` VARCHAR(255) DEFAULT NULL, "
                     + " `home` TEXT NULL, "
                     + " `home_partner` TEXT NULL, "
-                    + " `tag_color` VARCHAR(255) DEFAULT NULL, "
                     + " `leader_uuid` VARCHAR(255) NOT NULL, "
                     + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
                     + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";

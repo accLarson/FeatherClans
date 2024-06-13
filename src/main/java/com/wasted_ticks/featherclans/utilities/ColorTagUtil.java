@@ -14,8 +14,6 @@ public class ColorTagUtil {
 
      {
         colorMap = new HashMap<>();
-        colorMap.put("&q", "<#BBBBBB>");
-        colorMap.put("&r", "<#9F9F9F>");
         colorMap.put("&s", "<#888888>");
         colorMap.put("&t", "<#DA9696>");
         colorMap.put("&u", "<#E6BE99>");

@@ -39,8 +39,9 @@ settings:
     min_tag_size: 3
     max_tag_size: 5
     max_members: 32
-    inactive_days: 8
-    active_status_count: 8
+    inactive_days: 4
+    active_status_count: 4
+    default_clan_tag_color: "&#BBBBBB"
   mysql:
     enabled: true
     username: 'feather_clans'
