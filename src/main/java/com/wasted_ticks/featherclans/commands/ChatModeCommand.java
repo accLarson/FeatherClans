@@ -31,19 +31,20 @@ public class ChatModeCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
 
-            if (plugin.getClanChatModeManager().isInClanChatMode(player)) {
-                plugin.getClanChatModeManager().removePlayer(player);
-                player.sendMessage(messages.get("clan_chatmode_disabled", null));
-            } else {
-                plugin.getClanChatModeManager().addPlayer(player);
-                player.sendMessage(messages.get("clan_chatmode_enabled", null));
-            }
-
-        } else {
+        if (!plugin.getClanManager().isOfflinePlayerInClan(player)) {
             player.sendMessage(messages.get("clan_chatmode_error_not_in_clan", null));
+            return true;
         }
+
+        if (plugin.getClanChatModeManager().isInClanChatMode(player)) {
+            plugin.getClanChatModeManager().removePlayer(player);
+            player.sendMessage(messages.get("clan_chatmode_disabled", null));
+        } else {
+            plugin.getClanChatModeManager().addPlayer(player);
+            player.sendMessage(messages.get("clan_chatmode_enabled", null));
+        }
+
         return true;
     }
 
