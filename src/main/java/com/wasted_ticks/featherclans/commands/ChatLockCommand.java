@@ -47,5 +47,4 @@ public class ChatLockCommand implements CommandExecutor {
 
         return true;
     }
-
 }
