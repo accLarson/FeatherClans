@@ -171,4 +171,7 @@ clan_manage_sethome_success: "<#656B96>You've set <clan> clan home to your curre
 clan_manage_promote_error_leader: "<#949BD1>Error<#656B96>: You can't promote the leader to officer role."
 clan_managepromote_not_in_clan: "<#949BD1>Error<#656B96>: Player must be in <clan> clan."
 
+clan_displaysetup_not_banner: "<#949BD1>Clan Display Setup<#656B96>: place a banner."
+clan_displaysetup_not_armorstand: "<#949BD1>Clan Display Setup<#656B96>: place an armorstand."
+clan_displaysetup_not_sign: "<#949BD1>Clan Display Setup<#656B96>: place a sign."
 

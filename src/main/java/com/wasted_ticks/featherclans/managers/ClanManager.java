@@ -5,6 +5,10 @@ import com.wasted_ticks.featherclans.utilities.SerializationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Banner;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
@@ -39,6 +43,7 @@ public class ClanManager {
         loadOfficers();
         loadActiveMembers();
         loadActiveClans();
+        loadDisplays();
     }
 
     private void loadPlayers() {
@@ -135,6 +140,29 @@ public class ClanManager {
                 activeStatusClans.add(c);
             }
         });
+    }
+
+    private void loadDisplays() {
+        String string = "SELECT `banner`, `armorstand`, `sign` FROM clan_displays;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement statement = connection.prepareStatement(string);
+            ResultSet results = statement.executeQuery())
+        {
+            if(results != null) {
+                while (results.next()) {
+
+                    Banner banner = SerializationUtil.stringToBannerBlock(results.getString("banner"));
+                    ArmorStand armorStand = SerializationUtil.stringToArmorStand(results.getString("armorstand"));
+                    Sign sign = SerializationUtil.stringToSignBlock(results.getString("sign"));
+
+                    if(banner != null && armorStand != null && sign != null) {
+                        plugin.getDisplayManager().storeDisplayInMemory(banner, armorStand, sign);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().info("Failed to load displays.");
+        }
     }
 
     /**
@@ -726,4 +754,40 @@ public class ClanManager {
         if (this.isClanActiveStatus(tag) && this.hasColoredTag(tag)) return this.getColoredTag(tag);
         else return plugin.getFeatherClansConfig().getDefaultClanColor() + tag;
     }
+
+    public boolean createDisplayRecord(Banner banner, ArmorStand armorStand, Sign sign) {
+
+        String bannerString = SerializationUtil.bannerBlockToString(banner);
+        String armorStandString = SerializationUtil.armorStandToString(armorStand);
+        String signString = SerializationUtil.signBlockToString(sign);
+
+        String string = "INSERT INTO clan_displays (`banner`, `armorstand`, `sign`) VALUES (?,?,?);";
+        try(Connection connection = database.getConnection();
+            PreparedStatement insert = connection.prepareStatement(string))
+        {
+            insert.setString(1, bannerString);
+            insert.setString(2, armorStandString);
+            insert.setString(3, signString);
+
+            if(insert.executeUpdate() != 0) return true;
+
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to add display");
+        }
+        return false;
+    }
+
+    public boolean deleteDisplays() {
+        String string = "DELETE FROM clan_displays;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement delete = connection.prepareStatement(string))
+        {
+            if(delete.executeUpdate() != 0) return true;
+
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to delete displays");
+        }
+        return false;
+    }
+
 }

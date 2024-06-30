@@ -21,12 +21,11 @@ public final class FeatherClans extends JavaPlugin {
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
     private InviteRequestManager inviteRequestManager;
-
     private PartnerRequestManager partnerRequestManager;
-
     private FriendlyFireManager friendlyFireManager;
     private ClanChatLockManager clanChatLockManager;
     private PVPScoreManager pvpScoreManager;
+    private DisplayManager displayManager;
     private PaginateUtil paginateUtil;
     private ColorTagUtil colorTagUtil;
     private FeatherClansConfig config;
@@ -49,6 +48,7 @@ public final class FeatherClans extends JavaPlugin {
         this.pvpScoreManager = new PVPScoreManager(plugin);
         this.inviteRequestManager = new InviteRequestManager(plugin);
         this.partnerRequestManager = new PartnerRequestManager(plugin);
+        this.displayManager = new DisplayManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
         this.colorTagUtil = new ColorTagUtil(plugin);
 
@@ -71,6 +71,8 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(plugin),this);
         this.getServer().getPluginManager().registerEvents(new AsyncChatListener(plugin),this);
+        this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(plugin),this);
+        this.getServer().getPluginManager().registerEvents(new EntityPlaceListener(plugin),this);
     }
 
     private boolean setupEconomy() {
@@ -98,50 +100,43 @@ public final class FeatherClans extends JavaPlugin {
     public ClanManager getClanManager() {
         return this.clanManager;
     }
-
     public InviteRequestManager getInviteRequestManager() {
         return this.inviteRequestManager;
     }
-
     public PartnerRequestManager getPartnerRequestManager() {
         return partnerRequestManager;
     }
-
     public DatabaseManager getDatabaseManager() {
         return this.databaseManager;
     }
-
     public FriendlyFireManager getFriendlyFireManager() {
         return this.friendlyFireManager;
     }
-
     public ClanChatLockManager getClanChatLockManager() {
         return this.clanChatLockManager;
     }
-
     public PVPScoreManager getPVPScoreManager() {
         return this.pvpScoreManager;
     }
-
+    public DisplayManager getDisplayManager() {
+        return displayManager;
+    }
     public PaginateUtil getPaginateUtil() {
         return this.paginateUtil;
     }
-
     public ColorTagUtil getColorTagUtil() {
         return this.colorTagUtil;
     }
-
     public FeatherClansConfig getFeatherClansConfig() {
         return this.config;
     }
-
     public FeatherClansMessages getFeatherClansMessages() {
         return this.messages;
     }
-
     public Handler getCommandHandler() {
         return this.handler;
     }
+
     private void registerCommands() {
 
         this.handler = new Handler(plugin);
@@ -171,6 +166,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("colortag",new ColorTagCommand(plugin));
         handler.register("lookup", new LookupCommand(plugin));
         handler.register("chatlock", new ChatLockCommand(plugin));
+        handler.register("displaysetup", new DisplaySetupCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 

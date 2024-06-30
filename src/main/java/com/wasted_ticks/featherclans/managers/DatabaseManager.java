@@ -152,6 +152,19 @@ public class DatabaseManager {
                 plugin.getLogger().severe("Unable to create `clan_kills` table. " + e.getMessage());
             }
         }
+        if (!this.existsTable("clan_displays")) {
+            plugin.getLogger().info("Creating `clan_displays` table.");
+            String query = "CREATE TABLE IF NOT EXISTS `clan_displays` ("
+                    + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
+                    + " `banner` TEXT NOT NULL, "
+                    + " `armorstand` TEXT NOT NULL, "
+                    + " `sign` TEXT NOT NULL);";
+            try(Connection connection = this.getConnection()) {
+                connection.createStatement().execute(query);
+            } catch(SQLException e) {
+                plugin.getLogger().severe("Unable to create `clan_displays` table. " + e.getMessage());
+            }
+        }
     }
 
     public Connection getConnection() throws SQLException {
