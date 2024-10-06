@@ -60,13 +60,13 @@ public class DemoteCommand implements CommandExecutor {
             return true;
         }
 
-        String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
-        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialDemotedOfficer, clan)) {
+        String clan = this.plugin.getMembershipManager().getClanByOfflinePlayer(originator);
+        if (!this.plugin.getMembershipManager().isOfflinePlayerInSpecificClan(potentialDemotedOfficer, clan)) {
             originator.sendMessage(messages.get("clan_demote_not_in_clan", null));
             return true;
         }
 
-        if (!this.plugin.getClanManager().isOfflinePlayerOfficer(potentialDemotedOfficer)) {
+        if (!this.plugin.getMembershipManager().isOfflinePlayerOfficer(potentialDemotedOfficer)) {
             originator.sendMessage(messages.get("clan_demote_not_officer", null));
             return true;
         }

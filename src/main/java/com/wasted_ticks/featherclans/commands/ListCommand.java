@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
+import com.wasted_ticks.featherclans.managers.MembershipManager;
 import com.wasted_ticks.featherclans.utilities.ChatUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -56,16 +57,17 @@ public class ListCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        ClanManager manager = plugin.getClanManager();
-        List<String> clans = manager.getClans();
+        ClanManager clanManager = plugin.getClanManager();
+        MembershipManager membershipManager = plugin.getMembershipManager();
+        List<String> clans = clanManager.getClans();
 
         if (clans.isEmpty()) {
             player.sendMessage(messages.get("clan_list_no_clans", null));
             return true;
         }
 
-        List<String> sortedClans = clans.stream().sorted(Comparator.comparingInt(clan -> manager.getOfflinePlayersByClan(clan).size())).collect(Collectors.toList());
-        sortedClans = sortedClans.stream().sorted(Comparator.comparingInt(clan -> (int) manager.getOfflinePlayersByClan(clan).stream().filter(OfflinePlayer::isOnline).count())).collect(Collectors.toList());
+        List<String> sortedClans = clans.stream().sorted(Comparator.comparingInt(clan -> membershipManager.getOfflinePlayersByClan(clan).size())).collect(Collectors.toList());
+        sortedClans = sortedClans.stream().sorted(Comparator.comparingInt(clan -> (int) membershipManager.getOfflinePlayersByClan(clan).stream().filter(OfflinePlayer::isOnline).count())).collect(Collectors.toList());
 
         Collections.reverse(sortedClans);
 
@@ -84,18 +86,18 @@ public class ListCommand implements CommandExecutor {
         clanLines.add(header);
 
         for (String tag : sortedClans) {
-            List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(tag);
+            List<OfflinePlayer> clanMembers = membershipManager.getOfflinePlayersByClan(tag);
             int lastSeenInt = clanMembers.stream().mapToInt(m -> (int) ((System.currentTimeMillis() - m.getLastLogin()) / 86400000)).min().getAsInt();
 
             String partnerTag = "-";
-            if (manager.hasPartner(tag)) partnerTag = manager.getPartner(tag);
+            if (clanManager.hasPartner(tag)) partnerTag = clanManager.getPartner(tag);
 
 
             Component clanTag = chatUtil.addSpacing(mm.deserialize(tag), 40);
-            Component leader = chatUtil.addSpacing(mm.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(manager.getLeader(tag)).getName()),100);
+            Component leader = chatUtil.addSpacing(mm.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(clanManager.getLeader(tag)).getName()),100);
             Component partner = chatUtil.addSpacing(mm.deserialize("<#949bd1>" + partnerTag),40);
             Component online = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count() + "/" + clanMembers.size()),42,true);
-            Component active = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + manager.getClanSize(tag,true) + "/" + manager.getClanSize(tag,false)),42,true);
+            Component active = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + clanManager.getClanSize(tag,true) + "/" + clanManager.getClanSize(tag,false)),42,true);
 
             Component lastSeen;
             if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>Today"),48,true);

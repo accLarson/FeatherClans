@@ -50,7 +50,7 @@ public class ColorTagCommand implements CommandExecutor {
         }
 
         String potentialTag = strings[1];
-        String originalTag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
+        String originalTag = this.plugin.getMembershipManager().getClanByOfflinePlayer(originator);
 
         if (!plugin.getColorTagUtil().isValid(potentialTag, originalTag)) {
             originator.sendMessage(messages.get("clan_colortag_invalid_tag", null));

@@ -57,14 +57,14 @@ public class HomeCommand implements CommandExecutor {
             else player.sendMessage(messages.get("clan_home_teleport_error_admin_no_clan",null));
         }
 
-        else if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
+        else if (plugin.getMembershipManager().isOfflinePlayerInClan(player)) {
 
             if (args.length != 1) {
                 sender.sendMessage(messages.get("clan_home_teleport_error_invalid_arg_length",null));
                 return true;
             }
 
-            String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
+            String tag = plugin.getMembershipManager().getClanByOfflinePlayer(player);
 
             if (plugin.getClanManager().hasClanHome(tag)) {
 

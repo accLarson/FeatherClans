@@ -42,7 +42,7 @@ public class SetHomeCommand implements CommandExecutor {
             return true;
         }
 
-        String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
+        String tag = plugin.getMembershipManager().getClanByOfflinePlayer(player);
         Location location = player.getLocation();
 
         boolean success = false;

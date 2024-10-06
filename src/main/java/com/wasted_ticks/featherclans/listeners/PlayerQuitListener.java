@@ -15,8 +15,8 @@ public class PlayerQuitListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (plugin.getClanManager().isOfflinePlayerInClan(event.getPlayer())) {
-            plugin.getClanManager().updateLastSeenDate(event.getPlayer());
+        if (plugin.getMembershipManager().isOfflinePlayerInClan(event.getPlayer())) {
+            plugin.getActivityManager().updateLastSeenDate(event.getPlayer());
         }
     }
 }

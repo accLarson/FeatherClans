@@ -32,7 +32,7 @@ public class FriendlyFireCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
+        if (plugin.getMembershipManager().isOfflinePlayerInClan(player)) {
 
             if (plugin.getFriendlyFireManager().isAllowingFriendlyFire(player)) {
                 plugin.getFriendlyFireManager().removePlayer(player);

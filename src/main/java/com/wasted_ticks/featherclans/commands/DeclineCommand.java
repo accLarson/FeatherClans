@@ -66,7 +66,7 @@ public class DeclineCommand implements CommandExecutor {
         Player originator = request.getOriginator();
         originator.sendMessage(messages.get("clan_partnership_decline_originator", Map.of(
                 "player", player.getName(),
-                "clan", plugin.getClanManager().getClanByOfflinePlayer(player)
+                "clan", plugin.getMembershipManager().getClanByOfflinePlayer(player)
         )));
     }
 }

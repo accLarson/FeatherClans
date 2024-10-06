@@ -2,6 +2,7 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.managers.ActivityManager;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.managers.RequestManager;
 import com.wasted_ticks.featherclans.utilities.RequestUtil;
@@ -20,11 +21,13 @@ public class PartnerCommand implements CommandExecutor {
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
     private final ClanManager manager;
+    private final ActivityManager activityManager;
 
     public PartnerCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
         this.manager = plugin.getClanManager();
+        this.activityManager = plugin.getActivityManager();
     }
 
     @Override
@@ -46,14 +49,14 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        String proposingClan = manager.getClanByOfflinePlayer(proposingLeader);
+        String proposingClan = plugin.getMembershipManager().getClanByOfflinePlayer(proposingLeader);
 
         if (manager.hasPartner(proposingClan)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_already_partnered", null));
             return true;
         }
 
-        if (!manager.isClanActiveStatus(proposingClan)) {
+        if (!activityManager.isClanActiveStatus(proposingClan)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_not_active_status", null));
             return true;
         }
@@ -86,7 +89,7 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        if (!manager.isClanActiveStatus(tag)) {
+        if (!activityManager.isClanActiveStatus(tag)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_not_active_status", null));
             return true;
         }

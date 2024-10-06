@@ -62,7 +62,7 @@ public class AcceptCommand implements CommandExecutor {
 
     private boolean handleClanInvite(Player player, RequestUtil request) {
 
-        boolean inClan = manager.isOfflinePlayerInClan(player);
+        boolean inClan = plugin.getMembershipManager().isOfflinePlayerInClan(player);
         if (inClan) {
             player.sendMessage(messages.get("clan_accept_in_clan", null));
             return true;
@@ -78,14 +78,14 @@ public class AcceptCommand implements CommandExecutor {
 
             if (economy.has(player, amount)) {
                 economy.withdrawPlayer(player, amount);
-                success = manager.addOfflinePlayerToClan(player, tag);
+                success = plugin.getMembershipManager().addOfflinePlayerToClan(player, tag);
             } else {
                 player.sendMessage(messages.get("clan_accept_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)
                 )));
                 return true;
             }
-        } else success = manager.addOfflinePlayerToClan(player, tag);
+        } else success = plugin.getMembershipManager().addOfflinePlayerToClan(player, tag);
 
         if(success) {
             plugin.getRequestManager().clearRequest(player);
@@ -102,7 +102,7 @@ public class AcceptCommand implements CommandExecutor {
     private boolean handlePartnershipRequest(Player acceptingPlayer, RequestUtil request) {
 
         boolean isLeader = manager.isOfflinePlayerLeader(acceptingPlayer);
-        String acceptingClan = manager.getClanByOfflinePlayer(acceptingPlayer);
+        String acceptingClan = plugin.getMembershipManager().getClanByOfflinePlayer(acceptingPlayer);
         if (!isLeader) {
             acceptingPlayer.sendMessage(messages.get("clan_accept_error_not_leader", null));
             return true;
@@ -117,7 +117,7 @@ public class AcceptCommand implements CommandExecutor {
             return true;
         }
 
-        if (!manager.isClanActiveStatus(acceptingClan) || !manager.isClanActiveStatus(tag)) {
+        if (!plugin.getActivityManager().isClanActiveStatus(acceptingClan) || !plugin.getActivityManager().isClanActiveStatus(tag)) {
             acceptingPlayer.sendMessage(messages.get("clan_partner_request_error_not_active_status", null));
             plugin.getRequestManager().clearRequest(acceptingPlayer);
             return true;

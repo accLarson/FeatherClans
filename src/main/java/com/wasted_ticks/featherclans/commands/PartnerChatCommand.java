@@ -37,12 +37,12 @@ public class PartnerChatCommand implements CommandExecutor {
         }
 
         Player originator = (Player) sender;
-        if (!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerInClan(originator)) {
             originator.sendMessage(messages.get("clan_partnerchat_no_clan", null));
             return true;
         }
 
-        String clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
+        String clan = plugin.getMembershipManager().getClanByOfflinePlayer(originator);
         if (!plugin.getClanManager().hasPartner(clan)) {
             originator.sendMessage(messages.get("clan_partnerchat_no_partner", null));
             return true;
@@ -57,8 +57,8 @@ public class PartnerChatCommand implements CommandExecutor {
         String partnerClan = plugin.getClanManager().getPartner(clan);
         String[] clans = new String[]{clan, partnerClan};
 
-        List<OfflinePlayer> clanPlayers = plugin.getClanManager().getOfflinePlayersByClan(clan);
-        List<OfflinePlayer> partnerPlayers = plugin.getClanManager().getOfflinePlayersByClan(partnerClan);
+        List<OfflinePlayer> clanPlayers = plugin.getMembershipManager().getOfflinePlayersByClan(clan);
+        List<OfflinePlayer> partnerPlayers = plugin.getMembershipManager().getOfflinePlayersByClan(partnerClan);
 
         for (OfflinePlayer player : clanPlayers) {
             if (player.isOnline()) {

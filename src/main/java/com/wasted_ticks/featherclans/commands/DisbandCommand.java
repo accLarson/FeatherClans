@@ -62,8 +62,8 @@ public class DisbandCommand implements CommandExecutor {
                 return true;
             }
 
-            String tag = manager.getClanByOfflinePlayer(player);
-            List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
+            String tag = plugin.getMembershipManager().getClanByOfflinePlayer(player);
+            List<OfflinePlayer> members = plugin.getMembershipManager().getOfflinePlayersByClan(tag);
             for (OfflinePlayer member : members) {
                 manager.resignOfflinePlayer(member);
             }

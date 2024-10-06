@@ -63,13 +63,13 @@ public class PromoteCommand implements CommandExecutor {
             return true;
         }
 
-        String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
-        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialOfficer, clan)) {
+        String clan = this.plugin.getMembershipManager().getClanByOfflinePlayer(originator);
+        if (!this.plugin.getMembershipManager().isOfflinePlayerInSpecificClan(potentialOfficer, clan)) {
             originator.sendMessage(messages.get("clan_promote_not_in_clan", null));
             return true;
         }
 
-        if (this.plugin.getClanManager().isOfflinePlayerOfficer(potentialOfficer)) {
+        if (this.plugin.getMembershipManager().isOfflinePlayerOfficer(potentialOfficer)) {
             originator.sendMessage(messages.get("clan_promote_already_officer", null));
             return true;
         }

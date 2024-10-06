@@ -87,7 +87,7 @@ public class CreateCommand implements CommandExecutor {
             return true;
         }
 
-        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(player);
+        boolean inClan = plugin.getMembershipManager().isOfflinePlayerInClan(player);
         if (inClan) {
             player.sendMessage(messages.get("clan_create_error_in_clan", null));
             return true;

@@ -3,7 +3,9 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.managers.ActivityManager;
 import com.wasted_ticks.featherclans.managers.ClanManager;
+import com.wasted_ticks.featherclans.managers.MembershipManager;
 import com.wasted_ticks.featherclans.utilities.ChatUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -56,11 +58,13 @@ public class RosterCommand implements CommandExecutor {
         }
 
         String tag = null;
-        ClanManager manager = plugin.getClanManager();
+        ClanManager clanManager = plugin.getClanManager();
+        MembershipManager membershipManager = plugin.getMembershipManager();
+        ActivityManager activityManager = plugin.getActivityManager();
 
         if (args.length == 1) {
-            if (manager.isOfflinePlayerInClan((OfflinePlayer) sender)) {
-                tag = manager.getClanByOfflinePlayer((OfflinePlayer) sender);
+            if (membershipManager.isOfflinePlayerInClan((OfflinePlayer) sender)) {
+                tag = membershipManager.getClanByOfflinePlayer((OfflinePlayer) sender);
                 String[] newArgs = Arrays.copyOf(args,args.length+1);
                 newArgs[args.length] = tag;
                 args = newArgs;
@@ -72,29 +76,29 @@ public class RosterCommand implements CommandExecutor {
 
         if (tag == null) tag = args[1];
 
-        if (manager.getClans().stream().noneMatch(tag::equalsIgnoreCase)) {
+        if (clanManager.getClans().stream().noneMatch(tag::equalsIgnoreCase)) {
             sender.sendMessage(messages.get("clan_roster_error_unresolved_clan", null));
             return true;
         }
 
-        List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(tag.toLowerCase());
+        List<OfflinePlayer> clanMembers = membershipManager.getOfflinePlayersByClan(tag.toLowerCase());
 
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
-        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerActive(m))).collect(Collectors.toList());
-        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerOfficer(m))).collect(Collectors.toList());
-        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !manager.isOfflinePlayerLeader(m))).collect(Collectors.toList());
+        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !activityManager.isOfflinePlayerActive(m))).collect(Collectors.toList());
+        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !membershipManager.isOfflinePlayerOfficer(m))).collect(Collectors.toList());
+        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !clanManager.isOfflinePlayerLeader(m))).collect(Collectors.toList());
 
         ChatUtil chatUtil = new ChatUtil(this.plugin);
         MiniMessage mm = MiniMessage.miniMessage();
 
         List<Component> clanMemberLines = new ArrayList<>();
         String partnerTag = "-";
-        if (manager.hasPartner(tag)) partnerTag = manager.getPartner(tag);
+        if (clanManager.hasPartner(tag)) partnerTag = clanManager.getPartner(tag);
 
 
         Component clanName = mm.deserialize("<gray>Clan: <#656b96>" + tag);
         Component partner = mm.deserialize("<gray>Partner: <#656b96>" + partnerTag);
-        Component activity = mm.deserialize("<gray>Active members: <#656b96>" + manager.getClanSize(tag,true) + "/" + manager.getClanSize(tag,false));
+        Component activity = mm.deserialize("<gray>Active members: <#656b96>" + clanManager.getClanSize(tag,true) + "/" + clanManager.getClanSize(tag,false));
 
         Component title = chatUtil.addSpacing(clanName, 70).append(chatUtil.addSpacing(partner,70)).append(chatUtil.addSpacing(activity,170,true));
 
@@ -128,7 +132,7 @@ public class RosterCommand implements CommandExecutor {
             String finalClanTag = tag;
             plugin.getPVPScoreManager().getKills(clanMember).forEach((killed, killCount) -> {
                 int killedCount = plugin.getPVPScoreManager().getKills(killed).getOrDefault(clanMember,0);
-                String killedClan = manager.getClanByOfflinePlayer(killed);
+                String killedClan = membershipManager.getClanByOfflinePlayer(killed);
                 int score = killCount > killedCount ? 1 : 0;
                 Component pvpScoreHoverLine = mm.deserialize("<br>")
                         .append(chatUtil.addSpacing(mm.deserialize("<white>" + finalClanTag + " <#656B96>" + clanMember.getName()  + " <gray>vs " + "<white>" + killedClan + " <#656B96>" + killed.getName()), 180))
@@ -145,7 +149,7 @@ public class RosterCommand implements CommandExecutor {
             if (clanMember.getName() != null) name = clanMember.getName();
 
             Component member;
-            if (!manager.isOfflinePlayerActive(clanMember)) {
+            if (!activityManager.isOfflinePlayerActive(clanMember)) {
                 member = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>" + name)
                         .hoverEvent(HoverEvent.showText(Component.text("This player is inactive and wont be be counted when calculating active membership count for active status."))),100);
             }
@@ -154,24 +158,24 @@ public class RosterCommand implements CommandExecutor {
             }
 
             Component role;
-            if (manager.isOfflinePlayerLeader(clanMember)) {
-                if (manager.isOfflinePlayerActive(clanMember)) role = chatUtil.addSpacing(mm.deserialize("<#656b96>Leader"), 48);
+            if (clanManager.isOfflinePlayerLeader(clanMember)) {
+                if (activityManager.isOfflinePlayerActive(clanMember)) role = chatUtil.addSpacing(mm.deserialize("<#656b96>Leader"), 48);
                 else role = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>Leader"), 48);
                 role = role.hoverEvent(HoverEvent.showText(Component.text("This player is the clan leader... dictator")));
 
             }
-            else if (manager.isOfflinePlayerOfficer(clanMember)) {
-                if (manager.isOfflinePlayerActive(clanMember)) role = chatUtil.addSpacing(mm.deserialize("<#656b96>Officer"), 48);
+            else if (membershipManager.isOfflinePlayerOfficer(clanMember)) {
+                if (activityManager.isOfflinePlayerActive(clanMember)) role = chatUtil.addSpacing(mm.deserialize("<#656b96>Officer"), 48);
                 else role = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>Officer"), 48);
                 role = role.hoverEvent(HoverEvent.showText(Component.text("This player is an officer in the clan. (most leader commands)")));
             }
             else {
-                if (manager.isOfflinePlayerActive(clanMember)) role = chatUtil.addSpacing(mm.deserialize("<#656b96>Member"), 48);
+                if (activityManager.isOfflinePlayerActive(clanMember)) role = chatUtil.addSpacing(mm.deserialize("<#656b96>Member"), 48);
                 else role = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>Member"), 48);
             }
 
             Component pvpScore;
-            if (!manager.isOfflinePlayerActive(clanMember)) {
+            if (!activityManager.isOfflinePlayerActive(clanMember)) {
                 pvpScore = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>" + pvpScoreInt),36,true)
                         .hoverEvent(HoverEvent.showText(pvpScoreBreakdownComponent));
             }
@@ -182,7 +186,7 @@ public class RosterCommand implements CommandExecutor {
 
             Component lastSeen;
             if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>Today"),106,true);
-            else if (!manager.isOfflinePlayerActive(clanMember)) lastSeen = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>" + lastSeenInt + " Day(s) Ago"),100,true);
+            else if (!activityManager.isOfflinePlayerActive(clanMember)) lastSeen = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>" + lastSeenInt + " Day(s) Ago"),100,true);
             else lastSeen = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + lastSeenInt + "d"),106,true);
 
             clanMemberLines.add(member.append(spacer).append(role).append(spacer).append(pvpScore).append(spacer).append(lastSeen));

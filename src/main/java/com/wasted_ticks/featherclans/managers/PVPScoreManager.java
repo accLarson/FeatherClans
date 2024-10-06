@@ -10,6 +10,7 @@ public class PVPScoreManager {
 
     private final FeatherClans plugin;
     private final ClanManager clanManager;
+    private final MembershipManager membershipManager;
 
     Map<OfflinePlayer,Map<OfflinePlayer,Integer>> killMap = new HashMap<>();
     Map<OfflinePlayer,Integer> scoreMap = new HashMap<>();
@@ -17,12 +18,13 @@ public class PVPScoreManager {
     public PVPScoreManager(FeatherClans plugin) {
         this.plugin = plugin;
         this.clanManager = plugin.getClanManager();
+        this.membershipManager = plugin.getMembershipManager();
         this.init();
         killMap.forEach((k,v) -> System.out.println(k + " " + v));
     }
 
     private void init() {
-        clanManager.getAllClanMembers().forEach(offlinePlayer -> killMap.put(offlinePlayer, clanManager.getClanMemberKillData(offlinePlayer)));
+        membershipManager.getAllClanMembers().forEach(offlinePlayer -> killMap.put(offlinePlayer, clanManager.getClanMemberKillData(offlinePlayer)));
         killMap.forEach((killer, kills) -> this.updateScore(killer));
     }
 
@@ -52,7 +54,7 @@ public class PVPScoreManager {
         return scoreMap.getOrDefault(offlinePlayer,0);
     }
     public int getScore(String tag){
-        return clanManager.getOfflinePlayersByClan(tag).stream().mapToInt(member -> scoreMap.getOrDefault(member, 0)).sum();
+        return membershipManager.getOfflinePlayersByClan(tag).stream().mapToInt(member -> scoreMap.getOrDefault(member, 0)).sum();
     }
 
     public Map<OfflinePlayer, Integer> getKills(OfflinePlayer offlinePlayer) {

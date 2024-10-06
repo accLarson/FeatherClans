@@ -15,8 +15,6 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (plugin.getClanManager().isOfflinePlayerInClan(event.getPlayer())) {
-            plugin.getClanManager().updateLastSeenDate(event.getPlayer());
-        }
+        plugin.getActivityManager().updatePlayerActivity(event.getPlayer());
     }
 }

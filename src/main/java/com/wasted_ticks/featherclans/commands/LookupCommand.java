@@ -43,12 +43,12 @@ public class LookupCommand implements CommandExecutor {
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
 
-        if (!plugin.getClanManager().isOfflinePlayerInClan(offlinePlayer)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerInClan(offlinePlayer)) {
             originator.sendMessage(messages.get("clan_lookup_not_in_clan", null));
             return true;
         }
 
-        String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
+        String clan = this.plugin.getMembershipManager().getClanByOfflinePlayer(originator);
 
         plugin.getLogger().info("Passing command to RosterCommand");
 

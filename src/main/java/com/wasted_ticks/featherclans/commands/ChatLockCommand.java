@@ -32,7 +32,7 @@ public class ChatLockCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (!plugin.getClanManager().isOfflinePlayerInClan(player)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerInClan(player)) {
             player.sendMessage(messages.get("clan_chatlock_error_not_in_clan", null));
             return true;
         }

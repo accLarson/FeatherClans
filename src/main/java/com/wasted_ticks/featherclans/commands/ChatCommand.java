@@ -39,7 +39,7 @@ public class ChatCommand implements CommandExecutor {
         }
 
         Player originator = (Player) sender;
-        if (!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerInClan(originator)) {
             originator.sendMessage(messages.get("clan_chat_no_clan", null));
             return true;
         }
@@ -50,9 +50,9 @@ public class ChatCommand implements CommandExecutor {
         }
 
         String message = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
-        String clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
+        String clan = plugin.getMembershipManager().getClanByOfflinePlayer(originator);
 
-        List<OfflinePlayer> players = plugin.getClanManager().getOfflinePlayersByClan(clan);
+        List<OfflinePlayer> players = plugin.getMembershipManager().getOfflinePlayersByClan(clan);
         for (OfflinePlayer player : players) {
             if (player.isOnline()) {
                 player.getPlayer().sendMessage(messages.get("clan_chat_message", Map.of(

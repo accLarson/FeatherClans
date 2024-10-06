@@ -31,12 +31,12 @@ public class PartnerChatLockCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (!plugin.getClanManager().isOfflinePlayerInClan(player)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerInClan(player)) {
             player.sendMessage(messages.get("clan_partnerchatlock_error_not_in_clan", null));
             return true;
         }
 
-        String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+        String clan = plugin.getMembershipManager().getClanByOfflinePlayer(player);
         if (!plugin.getClanManager().hasPartner(clan)) {
             player.sendMessage(messages.get("clan_partnerchat_no_partner", null));
             return true;

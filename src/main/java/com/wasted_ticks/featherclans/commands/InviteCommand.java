@@ -55,15 +55,15 @@ public class InviteCommand implements CommandExecutor {
             return true;
         }
 
-        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(invitee);
+        boolean inClan = plugin.getMembershipManager().isOfflinePlayerInClan(invitee);
         if (inClan) {
             originator.sendMessage(messages.get("clan_invite_error_already_in_clan", null));
             return true;
         }
 
-        String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
+        String tag = plugin.getMembershipManager().getClanByOfflinePlayer(originator);
         int max = this.plugin.getFeatherClansConfig().getClanMaxMembers();
-        List<OfflinePlayer> players = plugin.getClanManager().getOfflinePlayersByClan(tag);
+        List<OfflinePlayer> players = plugin.getMembershipManager().getOfflinePlayersByClan(tag);
         if(players.size() >= max) {
             originator.sendMessage(messages.get("clan_invite_error_max", Map.of(
                     "max", String.valueOf(max)

@@ -72,7 +72,7 @@ public class ManageCommand implements CommandExecutor {
 
                 String message = Arrays.stream(args).skip(3).collect(Collectors.joining(" "));
                 
-                for (OfflinePlayer player : manager.getOfflinePlayersByClan(tag)) {
+                for (OfflinePlayer player : plugin.getMembershipManager().getOfflinePlayersByClan(tag)) {
                     if (player.isOnline()) {
                         player.getPlayer().sendMessage(messages.get("clan_chat_message", Map.of(
                                 "tag", tag,
@@ -104,7 +104,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (!manager.isOfflinePlayerInSpecificClan(potentialLeader, tag)) {
+                if (!plugin.getMembershipManager().isOfflinePlayerInSpecificClan(potentialLeader, tag)) {
                     sender.sendMessage(messages.get("clan_manage_confer_not_in_clan", null));
                     break;
                 }
@@ -140,14 +140,14 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
                 
-                if (manager.isOfflinePlayerInClan(invitee)) {
+                if (plugin.getMembershipManager().isOfflinePlayerInClan(invitee)) {
                     sender.sendMessage(messages.get("clan_invite_error_already_in_clan", null));
                     break;
                 }
                 
                 int max = this.plugin.getFeatherClansConfig().getClanMaxMembers();
                 
-                if (manager.getOfflinePlayersByClan(tag).size() >= max) {
+                if (plugin.getMembershipManager().getOfflinePlayersByClan(tag).size() >= max) {
                     sender.sendMessage(messages.get("clan_manage_invite_error_max", Map.of(
                             "max", String.valueOf(max)
                     )));
@@ -171,7 +171,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (!manager.isOfflinePlayerInSpecificClan(kickee, tag)) {
+                if (!plugin.getMembershipManager().isOfflinePlayerInSpecificClan(kickee, tag)) {
                     sender.sendMessage(messages.get("clan_manage_kick_error_not_in_clan", Map.of(
                             "clan", tag
                     )));
@@ -218,14 +218,14 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (!manager.isOfflinePlayerInSpecificClan(potentialOfficer, tag)) {
+                if (!plugin.getMembershipManager().isOfflinePlayerInSpecificClan(potentialOfficer, tag)) {
                     sender.sendMessage(messages.get("clan_manage_promote_not_in_clan", Map.of(
                             "clan", tag
                     )));
                     break;
                 }
 
-                if (manager.isOfflinePlayerOfficer(potentialOfficer)) {
+                if (plugin.getMembershipManager().isOfflinePlayerOfficer(potentialOfficer)) {
                     sender.sendMessage(messages.get("clan_promote_already_officer", null));
                     break;
                 }
@@ -249,7 +249,7 @@ public class ManageCommand implements CommandExecutor {
 
             case "disband":
 
-                for (OfflinePlayer member : manager.getOfflinePlayersByClan(tag)) {
+                for (OfflinePlayer member : plugin.getMembershipManager().getOfflinePlayersByClan(tag)) {
                     manager.resignOfflinePlayer(member);
                 }
                 if (manager.deleteClan(tag)) {
