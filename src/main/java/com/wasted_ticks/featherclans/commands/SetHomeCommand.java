@@ -36,7 +36,7 @@ public class SetHomeCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
+        boolean leader = plugin.getMembershipManager().isOfflinePlayerLeader(player);
         if (!leader) {
             player.sendMessage(messages.get("clan_error_leader", null));
             return true;

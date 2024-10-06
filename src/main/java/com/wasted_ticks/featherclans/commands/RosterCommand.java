@@ -86,7 +86,7 @@ public class RosterCommand implements CommandExecutor {
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !activityManager.isOfflinePlayerActive(m))).collect(Collectors.toList());
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !membershipManager.isOfflinePlayerOfficer(m))).collect(Collectors.toList());
-        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !clanManager.isOfflinePlayerLeader(m))).collect(Collectors.toList());
+        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !membershipManager.isOfflinePlayerLeader(m))).collect(Collectors.toList());
 
         ChatUtil chatUtil = new ChatUtil(this.plugin);
         MiniMessage mm = MiniMessage.miniMessage();
@@ -158,7 +158,7 @@ public class RosterCommand implements CommandExecutor {
             }
 
             Component role;
-            if (clanManager.isOfflinePlayerLeader(clanMember)) {
+            if (membershipManager.isOfflinePlayerLeader(clanMember)) {
                 if (activityManager.isOfflinePlayerActive(clanMember)) role = chatUtil.addSpacing(mm.deserialize("<#656b96>Leader"), 48);
                 else role = chatUtil.addSpacing(mm.deserialize("<dark_gray><i>Leader"), 48);
                 role = role.hoverEvent(HoverEvent.showText(Component.text("This player is the clan leader... dictator")));

@@ -94,7 +94,7 @@ public class ListCommand implements CommandExecutor {
 
 
             Component clanTag = chatUtil.addSpacing(mm.deserialize(tag), 40);
-            Component leader = chatUtil.addSpacing(mm.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(clanManager.getLeader(tag)).getName()),100);
+            Component leader = chatUtil.addSpacing(mm.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getMembershipManager().getLeader(tag)).getName()),100);
             Component partner = chatUtil.addSpacing(mm.deserialize("<#949bd1>" + partnerTag),40);
             Component online = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count() + "/" + clanMembers.size()),42,true);
             Component active = chatUtil.addSpacing(mm.deserialize("<#949BD1>" + clanManager.getClanSize(tag,true) + "/" + clanManager.getClanSize(tag,false)),42,true);

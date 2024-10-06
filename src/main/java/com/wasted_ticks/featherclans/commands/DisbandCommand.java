@@ -40,7 +40,7 @@ public class DisbandCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        boolean isLeader = manager.isOfflinePlayerLeader(player);
+        boolean isLeader = plugin.getMembershipManager().isOfflinePlayerLeader(player);
         boolean successful = false;
         if (isLeader) {
             if (args.length == 1) {
@@ -65,7 +65,7 @@ public class DisbandCommand implements CommandExecutor {
             String tag = plugin.getMembershipManager().getClanByOfflinePlayer(player);
             List<OfflinePlayer> members = plugin.getMembershipManager().getOfflinePlayersByClan(tag);
             for (OfflinePlayer member : members) {
-                manager.resignOfflinePlayer(member);
+                plugin.getMembershipManager().resignOfflinePlayer(member);
             }
             successful = manager.deleteClan(tag);
             player.sendMessage(messages.get("clan_disband_success", Map.of(

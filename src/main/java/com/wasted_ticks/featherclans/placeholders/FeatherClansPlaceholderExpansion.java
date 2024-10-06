@@ -37,26 +37,26 @@ public class FeatherClansPlaceholderExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if(params.equalsIgnoreCase("is_clanmember")){
-            return plugin.getClanManager().isOfflinePlayerInClan(player) ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
+            return plugin.getMembershipManager().isOfflinePlayerInClan(player) ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
         }
 
         if(params.equalsIgnoreCase("clan_formatted")) {
-            String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
-            return (clan != null) ? plugin.getClanManager().getFormattedTag(clan) + " " : "";
+            String clan = plugin.getMembershipManager().getClanByOfflinePlayer(player);
+            return (clan != null) ? plugin.getClanManager().getFormattedTagById(plugin.getClanManager().getClanIdByClan(clan)) + " " : "";
         }
 
         if(params.equalsIgnoreCase("clan")) {
-            String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+            String clan = plugin.getMembershipManager().getClanByOfflinePlayer(player);
             return (clan != null) ? clan + " " : "";
         }
 
         if(params.equalsIgnoreCase("clan_parenthesis")) {
-            String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+            String clan = plugin.getMembershipManager().getClanByOfflinePlayer(player);
             return (clan != null) ? "(" + clan + ")" : "";
         }
 
         if(params.equalsIgnoreCase("clan_brackets")) {
-            String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+            String clan = plugin.getMembershipManager().getClanByOfflinePlayer(player);
             return (clan != null) ? "[" + clan + "]" : "";
         }
 

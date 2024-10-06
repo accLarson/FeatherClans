@@ -4,8 +4,8 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.utilities.SerializationUtil;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ClanManager {
 
@@ -74,10 +73,16 @@ public class ClanManager {
         {
             if(results != null) {
                 while (results.next()) {
-                    Sign sign = SerializationUtil.stringToSignBlock(results.getString("sign"));
+                    String bannerData = results.getString("banner");
+                    String armorStandData = results.getString("armorstand");
+                    String signData = results.getString("sign");
+
+                    Banner banner = SerializationUtil.stringToBannerBlock(bannerData);
+                    ArmorStand armorStand = SerializationUtil.stringToArmorStand(armorStandData);
+                    Sign sign = SerializationUtil.stringToSignBlock(signData);
 
                     if(sign != null) {
-                        plugin.getDisplayManager().storeDisplayInMemory(null, null, sign);
+                        plugin.getDisplayManager().storeDisplayInMemory(banner, armorStand, sign);
                     }
                 }
             }
@@ -88,6 +93,14 @@ public class ClanManager {
 
     public List<String> getClans() {
         return List.copyOf(clans.keySet());
+    }
+
+    public void updateLeader(String tag, UUID newLeaderUUID) {
+        clans.put(tag.toLowerCase(), newLeaderUUID);
+    }
+
+    public UUID getClanLeader(String tag) {
+        return clans.get(tag);
     }
 
     public Location getClanHome(String tag) {
@@ -107,10 +120,6 @@ public class ClanManager {
             plugin.getLogger().severe("Failed check clan home for: " + tag.toLowerCase());
         }
         return null;
-    }
-
-    public boolean isOfflinePlayerLeader(OfflinePlayer player) {
-        return clans.containsValue(player.getUniqueId());
     }
 
     public boolean hasClanHome(String tag) {
@@ -150,9 +159,21 @@ public class ClanManager {
     }
 
     public ItemStack getBanner(String tag) {
-        // Implement the logic to retrieve the clan banner
-        // This might involve querying the database or using cached data
-        // Return the ItemStack representing the clan banner
+        String query = "SELECT `banner` FROM clans WHERE lower(tag) = ?;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, tag.toLowerCase());
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                String bannerData = result.getString("banner");
+                if (bannerData != null) {
+                    return SerializationUtil.stringToStack(bannerData);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to retrieve banner for clan: " + tag);
+        }
+        return null;
     }
 
     public boolean createClan(OfflinePlayer player, ItemStack stack, String tag) {
@@ -210,27 +231,6 @@ public class ClanManager {
         return false;
     }
 
-    public boolean setClanLeader(String tag, OfflinePlayer player) {
-        String string = "UPDATE clans SET `leader_uuid` = ? WHERE lower(tag) = ?;";
-        try(Connection connection = database.getConnection();
-            PreparedStatement update = connection.prepareStatement(string))
-        {
-            update.setString(1, player.getUniqueId().toString());
-            update.setString(2, tag.toLowerCase());
-            if(update.executeUpdate() != 0) {
-                clans.put(tag.toLowerCase(), player.getUniqueId());
-                return true;
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to set clan leader for clan: " + tag + ", to:" + player.getName());
-        }
-        return false;
-    }
-
-    public UUID getLeader(String tag) {
-        return clans.get(tag.toLowerCase());
-    }
-
     public int getClanIdByClan(String tag) {
         String query = "SELECT `id` FROM clans WHERE lower(tag) = ?;";
         try (Connection connection = database.getConnection();
@@ -265,6 +265,24 @@ public class ClanManager {
         return null;
     }
 
+    public String getFormattedTagById(int id) {
+        String query = "SELECT `tag` FROM clans WHERE id = ?;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setInt(1, id);
+            ResultSet results = select.executeQuery();
+
+            if (results.next()) {
+                return results.getString("tag_color");
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to retrieve formatted clan tag for id: " + id);
+        }
+        return null;
+    }
+
+
     public boolean hasPartner(String tag) {
         return partnerships.containsKey(tag);
     }
@@ -298,14 +316,18 @@ public class ClanManager {
         return false;
     }
 
-    public boolean createDisplayRecord(Sign sign) {
+    public boolean createDisplayRecord(Banner banner, ArmorStand armorStand, Sign sign) {
+        String bannerString = SerializationUtil.bannerBlockToString(banner);
+        String armorStandString = SerializationUtil.armorStandToString(armorStand);
         String signString = SerializationUtil.signBlockToString(sign);
 
-        String string = "INSERT INTO clan_displays (`sign`) VALUES (?);";
+        String string = "INSERT INTO clan_displays (`banner`, `armorstand`, `sign`) VALUES (?,?,?);";
         try(Connection connection = database.getConnection();
             PreparedStatement insert = connection.prepareStatement(string))
         {
-            insert.setString(1, signString);
+            insert.setString(1, bannerString);
+            insert.setString(2, armorStandString);
+            insert.setString(3, signString);
 
             if(insert.executeUpdate() != 0) return true;
 
@@ -325,30 +347,6 @@ public class ClanManager {
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to delete displays");
         }
-        return false;
-    }
-
-    public Map<OfflinePlayer, Integer> getClanMemberKillData(OfflinePlayer player) {
-        // Implement logic to retrieve kill data for the player
-        return new HashMap<>(); // Placeholder implementation
-    }
-
-    public boolean resignOfflinePlayer(OfflinePlayer player) {
-        String tag = plugin.getMembershipManager().getClanByOfflinePlayer(player);
-        if (tag == null) {
-            return false;
-        }
-        
-        if (isOfflinePlayerLeader(player)) {
-            return false;
-        }
-        
-        boolean removed = plugin.getMembershipManager().removeOfflinePlayerFromClan(player);
-        if (removed) {
-            plugin.getActivityManager().updateClanActiveStatus(tag);
-            return true;
-        }
-        
         return false;
     }
 }

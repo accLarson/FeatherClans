@@ -38,7 +38,7 @@ public class ConferCommand implements CommandExecutor {
 
 
         Player originator = (Player) sender;
-        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerLeader(originator)) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
@@ -55,7 +55,7 @@ public class ConferCommand implements CommandExecutor {
             return true;
         }
 
-        if (plugin.getClanManager().isOfflinePlayerLeader(potentialLeader)) {
+        if (plugin.getMembershipManager().isOfflinePlayerLeader(potentialLeader)) {
             sender.sendMessage(messages.get("clan_confer_error_leader", null));
             return true;
         }
@@ -84,7 +84,7 @@ public class ConferCommand implements CommandExecutor {
             return true;
         }
 
-        boolean successful = this.plugin.getClanManager().setClanLeader(clan, potentialLeader);
+        boolean successful = this.plugin.getMembershipManager().setClanLeader(clan, potentialLeader);
         if (successful) {
             originator.sendMessage(messages.get("clan_confer_success_originator", Map.of(
                     "player", potentialLeader.getName()

@@ -108,12 +108,12 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (manager.isOfflinePlayerLeader(potentialLeader)) {
+                if (plugin.getMembershipManager().isOfflinePlayerLeader(potentialLeader)) {
                     sender.sendMessage(messages.get("clan_manage_confer_error_leader", null));
                     break;
                 }
 
-                if (manager.setClanLeader(tag, potentialLeader)) {
+                if (plugin.getMembershipManager().setClanLeader(tag, potentialLeader)) {
                     sender.sendMessage(messages.get("clan_manage_confer_success_originator", Map.of(
                             "player", potentialLeader.getName(),
                             "clan", tag
@@ -177,12 +177,12 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (manager.isOfflinePlayerLeader(kickee)) {
+                if (plugin.getMembershipManager().isOfflinePlayerLeader(kickee)) {
                     sender.sendMessage(messages.get("clan_manage_kick_error_leader", null));
                     break;
                 }
                 
-                if (!manager.resignOfflinePlayer(kickee)) {
+                if (!plugin.getMembershipManager().resignOfflinePlayer(kickee)) {
                     sender.sendMessage(messages.get("clan_kick_error", null));
                     break;
                 }
@@ -212,7 +212,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (manager.isOfflinePlayerLeader(potentialOfficer)) {
+                if (plugin.getMembershipManager().isOfflinePlayerLeader(potentialOfficer)) {
                     sender.sendMessage(messages.get("clan_manage_promote_error_leader", null));
                     break;
                 }
@@ -249,7 +249,7 @@ public class ManageCommand implements CommandExecutor {
             case "disband":
 
                 for (OfflinePlayer member : plugin.getMembershipManager().getOfflinePlayersByClan(tag)) {
-                    manager.resignOfflinePlayer(member);
+                    plugin.getMembershipManager().resignOfflinePlayer(member);
                 }
                 if (manager.deleteClan(tag)) {
                     sender.sendMessage(messages.get("clan_disband_success", Map.of(

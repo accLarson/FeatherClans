@@ -39,7 +39,7 @@ public class ColorTagCommand implements CommandExecutor {
 
         Player originator = (Player) commandSender;
 
-        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerLeader(originator)) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }

@@ -39,7 +39,7 @@ public class ResignCommand implements CommandExecutor {
             player.sendMessage(messages.get("clan_resign_error_no_clan", null));
             return true;
         }
-        if (plugin.getClanManager().isOfflinePlayerLeader(player)) {
+        if (plugin.getMembershipManager().isOfflinePlayerLeader(player)) {
             player.sendMessage(messages.get("clan_resign_error_leader", null));
             return true;
         }
@@ -63,7 +63,7 @@ public class ResignCommand implements CommandExecutor {
             return true;
         }
 
-        boolean deleted = plugin.getClanManager().resignOfflinePlayer(player);
+        boolean deleted = plugin.getMembershipManager().resignOfflinePlayer(player);
         if (!deleted) {
             player.sendMessage(messages.get("clan_resign_error_generic", null));
             return true;

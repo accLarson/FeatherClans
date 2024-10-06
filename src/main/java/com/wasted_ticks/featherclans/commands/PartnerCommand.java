@@ -44,7 +44,7 @@ public class PartnerCommand implements CommandExecutor {
         }
 
         Player proposingLeader = (Player) sender;
-        if (!manager.isOfflinePlayerLeader(proposingLeader)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerLeader(proposingLeader)) {
             proposingLeader.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
@@ -82,8 +82,8 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        OfflinePlayer receivingLeader = Bukkit.getOfflinePlayer(manager.getLeader(tag));
-        boolean isLeaderOnline = Bukkit.getOfflinePlayer(manager.getLeader(tag)).isOnline();
+        OfflinePlayer receivingLeader = Bukkit.getOfflinePlayer(plugin.getMembershipManager().getLeader(tag));
+        boolean isLeaderOnline = Bukkit.getOfflinePlayer(plugin.getMembershipManager().getLeader(tag)).isOnline();
         if (!isLeaderOnline) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_leader_offline", null));
             return true;

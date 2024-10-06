@@ -22,18 +22,16 @@ public class DisplayManager {
     private final Map<Player,Integer> setupModePlayers = new HashMap<>();
 
     private Banner banner;
-
     private ArmorStand armorStand;
     private Sign sign;
+
     public DisplayManager(FeatherClans plugin) {
         this.plugin = plugin;
     }
 
-
     public void addSetUpPlayer(Player player) {
         setupModePlayers.put(player,0);
     }
-
 
     public void nextStep(Player player) {
         int newStep = setupModePlayers.get(player) + 1;
@@ -48,7 +46,6 @@ public class DisplayManager {
         return setupModePlayers.containsKey(player);
     }
 
-
     public void createDisplay() {
         Display display = new Display(this.banner,this.armorStand,this.sign);
         if (plugin.getClanManager().createDisplayRecord(banner, armorStand, sign)) this.displays.add(display);
@@ -56,7 +53,6 @@ public class DisplayManager {
         this.banner = null;
         this.armorStand = null;
         this.sign = null;
-
     }
 
     public void resetDisplays() {
@@ -68,10 +64,10 @@ public class DisplayManager {
         displays.add(new Display(banner, armorStand, sign));
     }
 
-
     public boolean isSettingBanner(Player player) {
         return setupModePlayers.get(player).equals(0);
     }
+
     public boolean isSettingArmorStand(Player player) {
         return setupModePlayers.get(player).equals(1);
     }
@@ -83,6 +79,7 @@ public class DisplayManager {
     public void setBanner(Banner banner) {
         this.banner = banner;
     }
+
     public void setArmorStand(ArmorStand armorStand) {
         this.armorStand = armorStand;
     }

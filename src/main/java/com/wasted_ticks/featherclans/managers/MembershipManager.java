@@ -139,4 +139,49 @@ public class MembershipManager {
         }
         return false;
     }
+
+    public boolean isOfflinePlayerLeader(OfflinePlayer player) {
+        return plugin.getClanManager().getClans().stream()
+                .anyMatch(clan -> this.getLeader(clan).equals(player.getUniqueId()));
+    }
+
+    public boolean setClanLeader(String tag, OfflinePlayer player) {
+        String string = "UPDATE clans SET `leader_uuid` = ? WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(string))
+        {
+            update.setString(1, player.getUniqueId().toString());
+            update.setString(2, tag.toLowerCase());
+            if(update.executeUpdate() != 0) {
+                plugin.getClanManager().updateLeader(tag, player.getUniqueId());
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to set clan leader for clan: " + tag + ", to:" + player.getName());
+        }
+        return false;
+    }
+
+    public UUID getLeader(String tag) {
+        return plugin.getClanManager().getClanLeader(tag.toLowerCase());
+    }
+
+    public boolean resignOfflinePlayer(OfflinePlayer player) {
+        String tag = getClanByOfflinePlayer(player);
+        if (tag == null) {
+            return false;
+        }
+        
+        if (isOfflinePlayerLeader(player)) {
+            return false;
+        }
+        
+        boolean removed = removeOfflinePlayerFromClan(player);
+        if (removed) {
+            plugin.getActivityManager().updateClanActiveStatus(tag);
+            return true;
+        }
+        
+        return false;
+    }
 }

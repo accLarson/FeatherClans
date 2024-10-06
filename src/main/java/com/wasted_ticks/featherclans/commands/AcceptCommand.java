@@ -101,7 +101,7 @@ public class AcceptCommand implements CommandExecutor {
 
     private boolean handlePartnershipRequest(Player acceptingPlayer, RequestUtil request) {
 
-        boolean isLeader = manager.isOfflinePlayerLeader(acceptingPlayer);
+        boolean isLeader = plugin.getMembershipManager().isOfflinePlayerLeader(acceptingPlayer);
         String acceptingClan = plugin.getMembershipManager().getClanByOfflinePlayer(acceptingPlayer);
         if (!isLeader) {
             acceptingPlayer.sendMessage(messages.get("clan_accept_error_not_leader", null));

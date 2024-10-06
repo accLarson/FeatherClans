@@ -41,7 +41,7 @@ public class PromoteCommand implements CommandExecutor {
 
 
         Player originator = (Player) sender;
-        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerLeader(originator)) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }

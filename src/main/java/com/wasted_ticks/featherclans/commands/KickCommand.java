@@ -38,7 +38,7 @@ public class KickCommand implements CommandExecutor {
 
         Player originator = (Player) sender;
 
-        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerLeader(originator)) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
@@ -61,7 +61,7 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
-        if (this.plugin.getClanManager().isOfflinePlayerLeader(offlinePlayer)) {
+        if (this.plugin.getMembershipManager().isOfflinePlayerLeader(offlinePlayer)) {
             originator.sendMessage(messages.get("clan_kick_error_leader", null));
             return true;
         }
@@ -85,7 +85,7 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
-        boolean successful = this.plugin.getClanManager().resignOfflinePlayer(offlinePlayer);
+        boolean successful = this.plugin.getMembershipManager().resignOfflinePlayer(offlinePlayer);
         if (!successful) {
             originator.sendMessage(messages.get("clan_kick_error", null));
             return true;

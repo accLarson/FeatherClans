@@ -35,18 +35,18 @@ public class AsyncChatListener implements Listener {
         boolean inClanChat = chatLockManager.isInClanChatLock(player);
         boolean inPartnerChat = chatLockManager.isInPartnerChatLock(player);
 
-        if (!clanManager.isOfflinePlayerInClan(player)) {
+        if (!plugin.getMembershipManager().isOfflinePlayerInClan(player)) {
             return;
         }
 
-        String clan = clanManager.getClanByOfflinePlayer(player);
+        String clan = plugin.getMembershipManager().getClanByOfflinePlayer(player);
         String partnerClan = clanManager.getPartner(clan);
         String[] clans = new String[]{clan, partnerClan};
         String messageType = inClanChat ? "clan_chat_message" : "clan_partnerchat_message";
 
         if (inClanChat || inPartnerChat) {
             event.setCancelled(true);
-            List<OfflinePlayer> players = clanManager.getOfflinePlayersByClan(clan);
+            List<OfflinePlayer> players = plugin.getMembershipManager().getOfflinePlayersByClan(clan);
             for (OfflinePlayer clanPlayer : players) {
                 if (clanPlayer.isOnline()) {
                     String targetClan = inClanChat ? clan : clans[0];
@@ -60,7 +60,7 @@ public class AsyncChatListener implements Listener {
             }
 
             if (inPartnerChat) {
-                List<OfflinePlayer> partnerPlayers = clanManager.getOfflinePlayersByClan(partnerClan);
+                List<OfflinePlayer> partnerPlayers = plugin.getMembershipManager().getOfflinePlayersByClan(partnerClan);
 
                 for (OfflinePlayer partnerPlayer : partnerPlayers) {
                     if (partnerPlayer.isOnline()) {
