@@ -2,7 +2,8 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.managers.InviteRequestManager;
+import com.wasted_ticks.featherclans.managers.RequestManager;
+import com.wasted_ticks.featherclans.utilities.RequestUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -70,8 +71,8 @@ public class InviteCommand implements CommandExecutor {
             return true;
         }
 
-        InviteRequestManager manager = plugin.getInviteRequestManager();
-        manager.invite(invitee, tag, originator);
+        RequestManager manager = plugin.getRequestManager();
+        manager.createRequest(invitee, tag, originator, RequestUtil.RequestType.CLAN_INVITE);
         return true;
     }
 }

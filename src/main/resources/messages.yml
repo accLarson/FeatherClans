@@ -68,6 +68,13 @@ clan_chat_no_clan: "<#949BD1>Error<#656B96>: You are not currently a member of a
 clan_chat_no_message: "<#949BD1>Error<#656B96>: This command requires a message argument."
 clan_chat_message: "<#846d91>[<#ffffff><tag><#846d91>] <#846d91><player><#c0a1d1>: <message>"
 clan_chat_spy_message: "<dark_gray>[<tag>] <player>: <message>"
+
+clan_partnerchat_no_partner: "<#949BD1>Error<#656B96>: Your clan does not have a partner clan."
+clan_partnerchat_message: "<#996588>[<#ffffff><clan1> <gray>| <#ffffff><clan2><#996588>] <#996588><player><#A8819B>: <message>"
+clan_partnerchat_spy_message: "<dark_gray>[<clan1> | <clan2>] <player>: <message>"
+clan_partnerchatlock_enabled: "<green>Partner chat lock enabled. Your messages will now go to partner chat by default."
+clan_partnerchatlock_disabled: "<green>Partner chat lock disabled. Your messages will now go to public chat by default."
+
 clan_accept_success_originator: "<#846d91>Your clan invitation to <#c0a1d1><player><#846d91> has been accepted."
 clan_accept_success_player: "<#656B96>You've joined <#949BD1><clan><#656B96>, welcome."
 clan_accept_partnership_success_originator: "<#846d91>Your partnership request to <#c0a1d1><clan><#846d91> has been accepted."
@@ -131,7 +138,6 @@ clan_partner_request_text_economy: "<#846d91>Accepting this request will cost yo
 clan_partner_request_text_sent: "<#656B96>Clan partnership request sent to <#949BD1><player><#656B96>."
 clan_partner_request_expired: "<#656B96>Clan partnership request from <#949BD1><player> <#656B96>has expired."
 
-
 clan_kick_error_no_player_specified: "<#949BD1>Error<#656B96>: No player specified to kick."
 clan_kick_error_unresolved_player: "<#949BD1>Error<#656B96>: Unable to resolve player name."
 clan_kick_error_not_in_clan: "<#949BD1>Error<#656B96>: Player must be in your clan."
@@ -174,4 +180,3 @@ clan_managepromote_not_in_clan: "<#949BD1>Error<#656B96>: Player must be in <cla
 clan_displaysetup_not_banner: "<#949BD1>Clan Display Setup<#656B96>: place a banner."
 clan_displaysetup_not_armorstand: "<#949BD1>Clan Display Setup<#656B96>: place an armorstand."
 clan_displaysetup_not_sign: "<#949BD1>Clan Display Setup<#656B96>: place a sign."
-

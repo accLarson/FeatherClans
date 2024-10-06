@@ -20,8 +20,7 @@ public final class FeatherClans extends JavaPlugin {
     private FeatherClans plugin;
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
-    private InviteRequestManager inviteRequestManager;
-    private PartnerRequestManager partnerRequestManager;
+    private RequestManager requestManager;
     private FriendlyFireManager friendlyFireManager;
     private ClanChatLockManager clanChatLockManager;
     private PVPScoreManager pvpScoreManager;
@@ -46,8 +45,7 @@ public final class FeatherClans extends JavaPlugin {
         this.friendlyFireManager = new FriendlyFireManager();
         this.clanChatLockManager = new ClanChatLockManager(plugin);
         this.pvpScoreManager = new PVPScoreManager(plugin);
-        this.inviteRequestManager = new InviteRequestManager(plugin);
-        this.partnerRequestManager = new PartnerRequestManager(plugin);
+        this.requestManager = new RequestManager(plugin);
         this.displayManager = new DisplayManager(plugin);
         this.paginateUtil = new PaginateUtil(plugin);
         this.colorTagUtil = new ColorTagUtil(plugin);
@@ -100,11 +98,8 @@ public final class FeatherClans extends JavaPlugin {
     public ClanManager getClanManager() {
         return this.clanManager;
     }
-    public InviteRequestManager getInviteRequestManager() {
-        return this.inviteRequestManager;
-    }
-    public PartnerRequestManager getPartnerRequestManager() {
-        return partnerRequestManager;
+    public RequestManager getRequestManager() {
+        return this.requestManager;
     }
     public DatabaseManager getDatabaseManager() {
         return this.databaseManager;
@@ -167,6 +162,8 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("lookup", new LookupCommand(plugin));
         handler.register("chatlock", new ChatLockCommand(plugin));
         handler.register("displaysetup", new DisplaySetupCommand(plugin));
+        handler.register("partnerchat", new PartnerChatCommand(plugin));
+        handler.register("partnerchatlock", new PartnerChatLockCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 

@@ -7,7 +7,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +31,8 @@ public class ClanTabCompleter implements TabCompleter {
     private static final List<String> MEMBER_COMMANDS = Arrays.asList(
             "chat",
             "chatlock",
+            "partnerchat",
+            "partnerchatlock",
             "elect",
             "friendlyfire",
             "help",
@@ -43,6 +44,8 @@ public class ClanTabCompleter implements TabCompleter {
     private static final List<String> OFFICER_COMMANDS = Arrays.asList(
             "chat",
             "chatlock",
+            "partnerchat",
+            "partnerchatlock",
             "colortag",
             "friendlyfire",
             "help",
@@ -58,6 +61,8 @@ public class ClanTabCompleter implements TabCompleter {
     private static final List<String> LEADER_COMMANDS = Arrays.asList(
             "chat",
             "chatlock",
+            "partnerchat",
+            "partnerchatlock",
             "colortag",
             "confer",
             "demote",
@@ -68,7 +73,9 @@ public class ClanTabCompleter implements TabCompleter {
             "invite",
             "kick",
             "list",
+            "partner",
             "promote",
+            "demote",
             "resign",
             "roster",
             "sethome"
@@ -112,8 +119,10 @@ public class ClanTabCompleter implements TabCompleter {
                     case "partner":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             StringUtil.copyPartialMatches(args[1], manager.getClans().stream()
-                                    .filter(c -> !Bukkit.getOfflinePlayer(manager.getLeader(c)).isOnline())
                                     .filter(c -> !c.equals(manager.getClanByOfflinePlayer((OfflinePlayer) sender)))
+                                    .filter(c -> manager.isClanActiveStatus(c))
+                                    .filter(c -> !manager.hasPartner(c))
+                                    .filter(c -> Bukkit.getOfflinePlayer(manager.getLeader(c)).isOnline())
                                     .collect(Collectors.toList()), completions);
                         }
                         break;
@@ -201,7 +210,7 @@ public class ClanTabCompleter implements TabCompleter {
                 // clan manage test sethome
 
                 if (sender.hasPermission("feather.clans.manage") && args[0].equalsIgnoreCase("manage")) {
-                    StringUtil.copyPartialMatches(args[2], List.of("confer","kick","invite","sethome","disband","chat"), completions);
+                    StringUtil.copyPartialMatches(args[2], List.of("confer","kick","invite","sethome","disband","chat","partnerchat"), completions);
                 }
                 break;
 

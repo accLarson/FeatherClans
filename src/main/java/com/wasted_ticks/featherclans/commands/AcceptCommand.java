@@ -3,8 +3,11 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
+import com.wasted_ticks.featherclans.managers.RequestManager;
 import com.wasted_ticks.featherclans.utilities.RequestUtil;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -40,7 +43,7 @@ public class AcceptCommand implements CommandExecutor {
         }
 
         Player acceptingPlayer = (Player) sender;
-        RequestUtil request = this.plugin.getInviteRequestManager().getRequest(acceptingPlayer);
+        RequestUtil request = this.plugin.getRequestManager().getRequest(acceptingPlayer);
 
         if (request == null) {
             acceptingPlayer.sendMessage(messages.get("clan_accept_no_request", null));
@@ -85,7 +88,7 @@ public class AcceptCommand implements CommandExecutor {
         } else success = manager.addOfflinePlayerToClan(player, tag);
 
         if(success) {
-            plugin.getInviteRequestManager().clearRequest(player);
+            plugin.getRequestManager().clearRequest(player);
             player.sendMessage(messages.get("clan_accept_success_player", Map.of(
                     "clan", tag
             )));
@@ -99,6 +102,7 @@ public class AcceptCommand implements CommandExecutor {
     private boolean handlePartnershipRequest(Player acceptingPlayer, RequestUtil request) {
 
         boolean isLeader = manager.isOfflinePlayerLeader(acceptingPlayer);
+        String acceptingClan = manager.getClanByOfflinePlayer(acceptingPlayer);
         if (!isLeader) {
             acceptingPlayer.sendMessage(messages.get("clan_accept_error_not_leader", null));
             return true;
@@ -106,6 +110,18 @@ public class AcceptCommand implements CommandExecutor {
 
         String tag = request.getClan();
         Player originator = request.getOriginator();
+
+        if (manager.hasPartner(acceptingClan) || manager.hasPartner(tag)) {
+            acceptingPlayer.sendMessage(messages.get("clan_partner_request_error_already_partnered", null));
+            plugin.getRequestManager().clearRequest(acceptingPlayer);
+            return true;
+        }
+
+        if (!manager.isClanActiveStatus(acceptingClan) || !manager.isClanActiveStatus(tag)) {
+            acceptingPlayer.sendMessage(messages.get("clan_partner_request_error_not_active_status", null));
+            plugin.getRequestManager().clearRequest(acceptingPlayer);
+            return true;
+        }
 
         boolean success;
         if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
@@ -115,22 +131,22 @@ public class AcceptCommand implements CommandExecutor {
             if (economy.has(acceptingPlayer, amount) && economy.has(request.getOriginator(), amount)) {
                 economy.withdrawPlayer(acceptingPlayer, amount);
                 economy.withdrawPlayer(request.getOriginator(), amount);
-                success = manager.setPartnership(tag, manager.getClanByOfflinePlayer(acceptingPlayer));
+                success = manager.setPartnership(tag, acceptingClan);
             } else {
                 acceptingPlayer.sendMessage(messages.get("clan_partner_request_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)
                 )));
                 return true;
             }
-        } else success = manager.setPartnership(tag, manager.getClanByOfflinePlayer(acceptingPlayer));
+        } else success = manager.setPartnership(tag, acceptingClan);
 
         if(success) {
-            plugin.getPartnerRequestManager().clearRequest(acceptingPlayer);
+            plugin.getRequestManager().clearRequest(acceptingPlayer);
             acceptingPlayer.sendMessage(messages.get("clan_accept_partnership_success_player", Map.of(
                     "clan", tag
             )));
             originator.sendMessage(messages.get("clan_accept_partnership_success_originator", Map.of(
-                    "clan", manager.getClanByOfflinePlayer(acceptingPlayer)
+                    "clan", acceptingClan
             )));
         }
         return true;

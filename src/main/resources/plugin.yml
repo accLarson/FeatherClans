@@ -1,8 +1,10 @@
 name: FeatherClans
 version: ${project.version}
 main: com.wasted_ticks.featherclans.FeatherClans
-api-version: 1.19
-authors: [ Wasted_Ticks ]
+api-version: 1.21
+authors:
+  - Wasted_Ticks
+  - Zerek
 softdepend:
   - Vault
   - PlaceholderAPI

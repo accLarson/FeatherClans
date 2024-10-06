@@ -23,8 +23,8 @@ public class ClanManager {
     private static final HashMap<UUID, String> players = new HashMap<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
     private static final List<UUID> officers = new ArrayList<>();
-
     private static final Map<String, String> partnerships = new HashMap<>();
+
     private static final Set<UUID> activeMembers = new HashSet<>();
     private static final List<String> activeStatusClans = new ArrayList<>();
 
@@ -67,8 +67,6 @@ public class ClanManager {
             plugin.getLogger().severe("Failed to parse UUID into player cache.");
         }
     }
-
-
 
     private void loadClans() {
         String string = "SELECT `tag`, `leader_uuid`, partner_id FROM clans;";
@@ -440,7 +438,7 @@ public class ClanManager {
      * @return boolean
      */
     public boolean setClanLeader(String tag, OfflinePlayer player) {
-        String string = "UPDATE clans SET `leader_uuid` = ? WHERE lower(tag) = ?;";
+        String string = "UPDATE cl ans SET `leader_uuid` = ? WHERE lower(tag) = ?;";
         try(Connection connection = database.getConnection();
             PreparedStatement update = connection.prepareStatement(string))
         {
@@ -696,17 +694,17 @@ public class ClanManager {
         try(Connection connection = database.getConnection();
             PreparedStatement update = connection.prepareStatement(string))
         {
-            update.setString(1, tag2);
-            update.setString(2, tag1);
+            update.setInt(1, getClanIdByClan(tag2));
+            update.setString(2, tag1.toLowerCase());
             if(update.executeUpdate() != 0) {
                 partnerships.put(tag1.toLowerCase(), tag2.toLowerCase());
             }
-            update.setString(1, tag1);
-            update.setString(2, tag2);
+            update.setInt(1, getClanIdByClan(tag1));
+            update.setString(2, tag2.toLowerCase());
             if(update.executeUpdate() != 0) {
                 partnerships.put(tag2.toLowerCase(), tag1.toLowerCase());
+                return true;
             }
-
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to setup partnership: " + tag1 + ", and " + tag2);
         }

@@ -10,14 +10,14 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PartnerRequestManager {
+public class RequestManager {
 
     private final FeatherClansMessages messages;
     private final FeatherClans plugin;
     private final HashMap<String, RequestUtil> requests = new HashMap<>();
     private final FeatherClansConfig config;
 
-    public PartnerRequestManager(FeatherClans plugin) {
+    public RequestManager(FeatherClans plugin) {
         this.plugin = plugin;
         this.config = plugin.getFeatherClansConfig();
         this.messages = plugin.getFeatherClansMessages();
@@ -31,50 +31,39 @@ public class PartnerRequestManager {
         this.requests.remove(player.getName());
     }
 
-    public boolean requestPartnership(Player invitee, String tag, Player originator) {
-
+    public boolean createRequest(Player invitee, String tag, Player originator, RequestUtil.RequestType type) {
         if (requests.containsKey(invitee.getName())) {
-            originator.sendMessage(messages.get("clan_partner_request_error_already_have_request", null));
             return false;
         }
 
-        for (RequestUtil ru : requests.values()) {
-            if (ru.getOriginator().equals(originator)) {
-                originator.sendMessage(messages.get("clan_partner_request_error_already_sent_request", null));
-                return false;
-            }
-        }
+        requests.put(invitee.getName(), new RequestUtil(tag, originator, type));
 
-
-        requests.put(invitee.getName(), new RequestUtil(tag, originator, RequestUtil.RequestType.PARTNERSHIP_INVITE));
-
-        invitee.sendMessage(messages.get("clan_partner_request_text", Map.of(
+        String messageKey = type == RequestUtil.RequestType.CLAN_INVITE ? "clan_invite_text" : "clan_partner_request_text";
+        invitee.sendMessage(messages.get(messageKey, Map.of(
                 "player", originator.getName(),
                 "clan", tag
         )));
-        invitee.sendMessage(messages.get("clan_partner_request_text_response", null));
-
+        invitee.sendMessage(messages.get(type == RequestUtil.RequestType.CLAN_INVITE ? "clan_invite_text_response" : "clan_partner_request_text_response", null));
 
         if (config.isEconomyEnabled()) {
-            double amount = config.getEconomyPartnershipPrice();
-            invitee.sendMessage(messages.get("clan_partner_request_text_economy", Map.of(
+            double amount = type == RequestUtil.RequestType.CLAN_INVITE ? config.getEconomyInvitePrice() : config.getEconomyPartnershipPrice();
+            invitee.sendMessage(messages.get(type == RequestUtil.RequestType.CLAN_INVITE ? "clan_invite_text_economy" : "clan_partner_request_text_economy", Map.of(
                     "amount", String.valueOf((int) amount)
             )));
         }
 
-        originator.sendMessage(messages.get("clan_partner_request_text_sent", Map.of(
+        originator.sendMessage(messages.get(type == RequestUtil.RequestType.CLAN_INVITE ? "clan_invite_text_sent" : "clan_partner_request_text_sent", Map.of(
                 "player", invitee.getName()
         )));
 
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             RequestUtil request = requests.remove(invitee.getName());
             if (request != null) {
-                invitee.sendMessage(messages.get("clan_partner_request_expired", Map.of(
+                invitee.sendMessage(messages.get(type == RequestUtil.RequestType.CLAN_INVITE ? "clan_invite_expired" : "clan_partner_request_expired", Map.of(
                         "player", originator.getName()
                 )));
             }
         }, config.getClanInviteTimeout() * 20L);
         return true;
     }
-
 }

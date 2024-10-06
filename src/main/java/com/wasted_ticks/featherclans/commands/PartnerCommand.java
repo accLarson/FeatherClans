@@ -3,8 +3,8 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
-import com.wasted_ticks.featherclans.managers.InviteRequestManager;
-import com.wasted_ticks.featherclans.managers.PartnerRequestManager;
+import com.wasted_ticks.featherclans.managers.RequestManager;
+import com.wasted_ticks.featherclans.utilities.RequestUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -13,7 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 
 public class PartnerCommand implements CommandExecutor {
@@ -47,12 +46,14 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        if (manager.hasPartner(manager.getClanByOfflinePlayer(proposingLeader))) {
+        String proposingClan = manager.getClanByOfflinePlayer(proposingLeader);
+
+        if (manager.hasPartner(proposingClan)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_already_partnered", null));
             return true;
         }
 
-        if (!manager.isClanActiveStatus(manager.getClanByOfflinePlayer(proposingLeader))) {
+        if (!manager.isClanActiveStatus(proposingClan)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_not_active_status", null));
             return true;
         }
@@ -65,6 +66,11 @@ public class PartnerCommand implements CommandExecutor {
         String tag = args[1].toLowerCase();
         if (!manager.getClans().contains(tag)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_unresolved_clan", null));
+            return true;
+        }
+
+        if (tag.equalsIgnoreCase(proposingClan)) {
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_clan", null));
             return true;
         }
 
@@ -91,10 +97,9 @@ public class PartnerCommand implements CommandExecutor {
                     "amount", String.valueOf((int) amount)
             )));
             return true;
-
         }
 
-        plugin.getPartnerRequestManager().requestPartnership((Player) receivingLeader, manager.getClanByOfflinePlayer(proposingLeader), proposingLeader);
+        plugin.getRequestManager().createRequest(receivingLeader.getPlayer(), proposingClan, proposingLeader, RequestUtil.RequestType.PARTNERSHIP_INVITE);
         return true;
     }
 }
