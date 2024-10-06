@@ -93,7 +93,7 @@ public class PromoteCommand implements CommandExecutor {
             return true;
         }
 
-        boolean successful = this.plugin.getClanManager().promoteOfficer(potentialOfficer);
+        boolean successful = this.plugin.getMembershipManager().promoteOfficer(potentialOfficer);
         if (successful) {
             originator.sendMessage(messages.get("clan_promote_success_originator", Map.of(
                     "player", potentialOfficer.getName()

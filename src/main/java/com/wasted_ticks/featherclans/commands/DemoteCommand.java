@@ -90,7 +90,7 @@ public class DemoteCommand implements CommandExecutor {
             return true;
         }
 
-        boolean successful = this.plugin.getClanManager().demoteOfficer(potentialDemotedOfficer);
+        boolean successful = this.plugin.getMembershipManager().demoteOfficer(potentialDemotedOfficer);
         if (successful) {
             originator.sendMessage(messages.get("clan_demote_success_originator", Map.of(
                     "player", potentialDemotedOfficer.getName()

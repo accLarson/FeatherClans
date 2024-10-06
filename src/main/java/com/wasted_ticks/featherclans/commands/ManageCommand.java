@@ -33,7 +33,6 @@ public class ManageCommand implements CommandExecutor {
     // clan manage test kick    <clan-member>
     // clan manage test invite  <player>
     //TODO: clan manage test partner <clan>
-    //TODO: clan manage test promote <player>
     //TODO: clan manage test demote <player>
 
     // clan manage test disband
@@ -230,7 +229,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                boolean successful = this.plugin.getClanManager().promoteOfficer(potentialOfficer);
+                boolean successful = this.plugin.getMembershipManager().promoteOfficer(potentialOfficer);
 
                 if (successful) {
                     sender.sendMessage(messages.get("clan_promote_success_originator", Map.of(

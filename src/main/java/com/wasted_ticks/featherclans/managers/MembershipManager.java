@@ -113,4 +113,30 @@ public class MembershipManager {
     public List<OfflinePlayer> getAllClanMembers() {
         return players.keySet().stream().map(Bukkit::getOfflinePlayer).collect(Collectors.toList());
     }
+
+    public boolean promoteOfficer(OfflinePlayer player) {
+        String query = "UPDATE clan_members SET is_officer = true WHERE mojang_uuid = ?;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, player.getUniqueId().toString());
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to promote player to officer: " + player.getName());
+        }
+        return false;
+    }
+
+    public boolean demoteOfficer(OfflinePlayer player) {
+        String query = "UPDATE clan_members SET is_officer = false WHERE mojang_uuid = ?;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, player.getUniqueId().toString());
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to demote player from officer: " + player.getName());
+        }
+        return false;
+    }
 }
