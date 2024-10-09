@@ -7,37 +7,61 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ActivityManager {
 
     private final FeatherClans plugin;
     private final DatabaseManager database;
+    private final Map<UUID, Boolean> memberActivityStatus;
 
     public ActivityManager(FeatherClans plugin) {
         this.plugin = plugin;
         this.database = plugin.getDatabaseManager();
+        this.memberActivityStatus = new HashMap<>();
+        initializeMemberActivityStatus();
+    }
+
+    private void initializeMemberActivityStatus() {
+        String query = "SELECT mojang_uuid, is_active FROM clan_members;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet result = statement.executeQuery()) {
+            while (result.next()) {
+                UUID uuid = UUID.fromString(result.getString("mojang_uuid"));
+                boolean isActive = result.getBoolean("is_active");
+                memberActivityStatus.put(uuid, isActive);
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to initialize member activity status: " + e.getMessage());
+        }
     }
 
     public void updatePlayerActivity(OfflinePlayer player) {
         updateLastSeenDate(player);
         boolean isActive = (System.currentTimeMillis() - player.getLastPlayed()) / 86400000 < plugin.getFeatherClansConfig().getInactiveDays();
         setOfflinePlayerActive(player, isActive);
-        updateClanActiveStatus(plugin.getMembershipManager().getClanByOfflinePlayer(player));
     }
 
-    public void updateClanActiveStatus(String clan) {
+    public boolean calculateClanActiveStatus(String clan) {
+        if (clan == null || clan.isEmpty()) {
+            plugin.getLogger().warning("Attempted to calculate active status for null or empty clan tag");
+            return false;
+        }
         int activeCount = (int) plugin.getMembershipManager().getOfflinePlayersByClan(clan).stream()
                 .filter(this::isOfflinePlayerActive).count();
-        boolean isActive = activeCount >= plugin.getFeatherClansConfig().getClanActiveStatusCount();
-        String query = "UPDATE clans SET is_active = ? WHERE tag = ?;";
-        try (Connection connection = database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setBoolean(1, isActive);
-            statement.setString(2, clan);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to update active status for clan: " + clan);
-        }
+        return activeCount >= plugin.getFeatherClansConfig().getClanActiveStatusCount();
+    }
+
+    public boolean isClanActive(String clan) {
+        return calculateClanActiveStatus(clan);
+    }
+
+    public int getActiveMemberCount(String clan) {
+        return (int) plugin.getMembershipManager().getOfflinePlayersByClan(clan).stream()
+                .filter(this::isOfflinePlayerActive).count();
     }
 
     public void updateLastSeenDate(OfflinePlayer offlinePlayer) {

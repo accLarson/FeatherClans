@@ -98,9 +98,9 @@ public class RosterCommand implements CommandExecutor {
 
         Component clanName = mm.deserialize("<gray>Clan: <#656b96>" + tag);
         Component partner = mm.deserialize("<gray>Partner: <#656b96>" + partnerTag);
-        Component activity = mm.deserialize("<gray>Active members: <#656b96>" + clanManager.getClanSize(tag,true) + "/" + clanManager.getClanSize(tag,false));
+        Component activity = mm.deserialize("<gray>Active members: <#656b96>" + plugin.getActivityManager().getActiveMemberCount(tag) + "/" + clanMembers.size());
 
-        Component title = chatUtil.addSpacing(clanName, 70).append(chatUtil.addSpacing(partner,70)).append(chatUtil.addSpacing(activity,170,true));
+        Component title = chatUtil.addSpacing(clanName, 70).append(chatUtil.addSpacing(partner,70)).append(chatUtil.addSpacing(activity,174, true));
 
         clanMemberLines.add(title);
         clanMemberLines.add(messages.get("clan_line",null));

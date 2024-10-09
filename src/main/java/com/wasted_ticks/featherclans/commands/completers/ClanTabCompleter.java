@@ -96,21 +96,32 @@ public class ClanTabCompleter implements TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
 
+        if (!(sender instanceof Player)) {
+            return completions;
+        }
+
+        Player player = (Player) sender;
 
         switch (args.length) {
             case 1:
-                if (membershipManager.isOfflinePlayerLeader((OfflinePlayer) sender)) StringUtil.copyPartialMatches(args[0], LEADER_COMMANDS, completions);
+                if (membershipManager.isOfflinePlayerLeader(player)) {
+                    StringUtil.copyPartialMatches(args[0], LEADER_COMMANDS, completions);
+                } else if (membershipManager.isOfflinePlayerInClan(player)) {
+                    StringUtil.copyPartialMatches(args[0], MEMBER_COMMANDS, completions);
+                } else {
+                    StringUtil.copyPartialMatches(args[0], EVERYONE_COMMANDS, completions);
+                }
 
-                else if (membershipManager.isOfflinePlayerInClan((OfflinePlayer) sender)) StringUtil.copyPartialMatches(args[0], MEMBER_COMMANDS, completions);
-
-                else StringUtil.copyPartialMatches(args[0], EVERYONE_COMMANDS, completions);
-
-                if(sender.isOp()) StringUtil.copyPartialMatches(args[0], List.of("banner","manage"), completions);
-
+                if (sender.isOp()) {
+                    StringUtil.copyPartialMatches(args[0], List.of("banner", "manage"), completions);
+                }
                 break;
 
             case 2:
-                switch (args[0]) {
+                if (args[0] == null) {
+                    return completions;
+                }
+                switch (args[0].toLowerCase()) {
                     case "invite":
                         if (membershipManager.isOfflinePlayerLeader((Player) sender)) {
                             StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream()

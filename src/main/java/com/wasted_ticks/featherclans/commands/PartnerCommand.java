@@ -32,24 +32,28 @@ public class PartnerCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-
         if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
             return true;
         }
 
+        Player proposingLeader = (Player) sender;
+
         if (!sender.hasPermission("feather.clans.partner")) {
-            sender.sendMessage(messages.get("clan_error_permission", null));
+            proposingLeader.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
-        Player proposingLeader = (Player) sender;
         if (!plugin.getMembershipManager().isOfflinePlayerLeader(proposingLeader)) {
             proposingLeader.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
 
         String proposingClan = plugin.getMembershipManager().getClanByOfflinePlayer(proposingLeader);
+        if (proposingClan == null) {
+            proposingLeader.sendMessage(messages.get("clan_error_not_in_clan", null));
+            return true;
+        }
 
         if (manager.hasPartner(proposingClan)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_already_partnered", null));
@@ -67,6 +71,10 @@ public class PartnerCommand implements CommandExecutor {
         }
 
         String tag = args[1].toLowerCase();
+        if (tag == null || tag.isEmpty()) {
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_invalid_clan", null));
+            return true;
+        }
         if (!manager.getClans().contains(tag)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_unresolved_clan", null));
             return true;
