@@ -4,7 +4,6 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ActivityManager;
 import com.wasted_ticks.featherclans.managers.ClanManager;
-import com.wasted_ticks.featherclans.managers.RequestManager;
 import com.wasted_ticks.featherclans.utilities.RequestUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -44,14 +43,41 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        if (!plugin.getMembershipManager().isOfflinePlayerLeader(proposingLeader)) {
-            proposingLeader.sendMessage(messages.get("clan_error_leader", null));
+        if (args.length < 2 || args.length > 3) {
+            proposingLeader.sendMessage(messages.get("clan_partner_request_error_no_clan_specified", null));
             return true;
         }
 
+        String tag = args[1].toLowerCase();
+
+        if (args.length == 2 || !args[2].equalsIgnoreCase("confirm")) {
+            sendConfirmationMessage(proposingLeader, tag);
+            return true;
+        }
+
+        return handlePartnershipRequest(proposingLeader, tag);
+    }
+
+    private void sendConfirmationMessage(Player player, String targetClan) {
+        double amount = this.plugin.getFeatherClansConfig().getEconomyPartnershipPrice();
+        player.sendMessage(messages.get("clan_confirm_notice", Map.of(
+                "label", "clan partner",
+                "args", targetClan
+        )));
+        player.sendMessage(messages.get("clan_partner_request_text_economy", Map.of(
+                "amount", String.valueOf((int) amount)
+        )));
+    }
+
+    private boolean handlePartnershipRequest(Player proposingLeader, String tag) {
         String proposingClan = plugin.getMembershipManager().getClanByOfflinePlayer(proposingLeader);
         if (proposingClan == null) {
             proposingLeader.sendMessage(messages.get("clan_error_not_in_clan", null));
+            return true;
+        }
+
+        if (!plugin.getMembershipManager().isOfflinePlayerLeader(proposingLeader)) {
+            proposingLeader.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
 
@@ -60,22 +86,12 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        if (!activityManager.isClanActiveStatus(proposingClan)) {
+        if (!activityManager.isClanActive(proposingClan)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_self_not_active_status", null));
             return true;
         }
 
-        if (args.length != 2) {
-            proposingLeader.sendMessage(messages.get("clan_partner_request_error_no_clan_specified", null));
-            return true;
-        }
-
-        String tag = args[1].toLowerCase();
-        if (tag == null || tag.isEmpty()) {
-            proposingLeader.sendMessage(messages.get("clan_partner_request_error_invalid_clan", null));
-            return true;
-        }
-        if (!manager.getClans().contains(tag)) {
+        if (tag == null || tag.isEmpty() || !manager.getClans().contains(tag)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_unresolved_clan", null));
             return true;
         }
@@ -91,13 +107,12 @@ public class PartnerCommand implements CommandExecutor {
         }
 
         OfflinePlayer receivingLeader = Bukkit.getOfflinePlayer(plugin.getMembershipManager().getLeader(tag));
-        boolean isLeaderOnline = Bukkit.getOfflinePlayer(plugin.getMembershipManager().getLeader(tag)).isOnline();
-        if (!isLeaderOnline) {
+        if (!receivingLeader.isOnline()) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_leader_offline", null));
             return true;
         }
 
-        if (!activityManager.isClanActiveStatus(tag)) {
+        if (!activityManager.isClanActive(tag)) {
             proposingLeader.sendMessage(messages.get("clan_partner_request_error_not_active_status", null));
             return true;
         }
@@ -110,7 +125,8 @@ public class PartnerCommand implements CommandExecutor {
             return true;
         }
 
-        plugin.getRequestManager().createRequest(receivingLeader.getPlayer(), proposingClan, proposingLeader, RequestUtil.RequestType.PARTNERSHIP_INVITE);
+        boolean requestSent = plugin.getRequestManager().createRequest(receivingLeader.getPlayer(), proposingClan, proposingLeader, RequestUtil.RequestType.PARTNERSHIP_INVITE);
+        if (!requestSent) proposingLeader.sendMessage(messages.get("clan_partner_request_error_already_sent_request", null));
         return true;
     }
 }

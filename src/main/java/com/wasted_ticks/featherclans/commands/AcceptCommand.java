@@ -117,7 +117,7 @@ public class AcceptCommand implements CommandExecutor {
             return true;
         }
 
-        if (!plugin.getActivityManager().isClanActiveStatus(acceptingClan) || !plugin.getActivityManager().isClanActiveStatus(tag)) {
+        if (!plugin.getActivityManager().isClanActive(acceptingClan) || !plugin.getActivityManager().isClanActive(tag)) {
             acceptingPlayer.sendMessage(messages.get("clan_partner_request_error_not_active_status", null));
             plugin.getRequestManager().clearRequest(acceptingPlayer);
             return true;

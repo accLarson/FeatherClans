@@ -79,7 +79,8 @@ public class ClanTabCompleter implements TabCompleter {
             "demote",
             "resign",
             "roster",
-            "sethome"
+            "sethome",
+            "seperate"
     );
     private final FeatherClans plugin;
     private final ClanManager manager;
@@ -134,7 +135,7 @@ public class ClanTabCompleter implements TabCompleter {
                         if (membershipManager.isOfflinePlayerLeader((Player) sender)) {
                             StringUtil.copyPartialMatches(args[1], manager.getClans().stream()
                                     .filter(c -> !c.equals(membershipManager.getClanByOfflinePlayer((OfflinePlayer) sender)))
-                                    .filter(c -> plugin.getActivityManager().isClanActiveStatus(c))
+                                    .filter(c -> plugin.getActivityManager().isClanActive(c))
                                     .filter(c -> !manager.hasPartner(c))
                                     .filter(c -> Bukkit.getOfflinePlayer(membershipManager.getLeader(c)).isOnline())
                                     .collect(Collectors.toList()), completions);

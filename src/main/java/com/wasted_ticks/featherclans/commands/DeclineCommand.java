@@ -35,38 +35,8 @@ public class DeclineCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        RequestUtil request = this.plugin.getRequestManager().getRequest(player);
-        if (request == null) {
-            player.sendMessage(messages.get("clan_decline_no_request", null));
-            return true;
-        }
-
-        switch (request.getType()) {
-            case CLAN_INVITE:
-                handleClanInviteDecline(player, request);
-                break;
-            case PARTNERSHIP_INVITE:
-                handlePartnershipDecline(player, request);
-                break;
-        }
-
-        plugin.getRequestManager().clearRequest(player);
+        plugin.getRequestManager().declineRequest(player);
 
         return true;
-    }
-
-    private void handleClanInviteDecline(Player player, RequestUtil request) {
-        String tag = request.getClan();
-        player.sendMessage(messages.get("clan_decline_success", Map.of("clan", tag)));
-    }
-
-    private void handlePartnershipDecline(Player player, RequestUtil request) {
-        String tag = request.getClan();
-        player.sendMessage(messages.get("clan_partnership_decline_success", Map.of("clan", tag)));
-        Player originator = request.getOriginator();
-        originator.sendMessage(messages.get("clan_partnership_decline_originator", Map.of(
-                "player", player.getName(),
-                "clan", plugin.getMembershipManager().getClanByOfflinePlayer(player)
-        )));
     }
 }

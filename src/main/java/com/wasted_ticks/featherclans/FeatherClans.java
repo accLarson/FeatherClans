@@ -182,6 +182,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("displaysetup", new DisplaySetupCommand(plugin));
         handler.register("partnerchat", new PartnerChatCommand(plugin));
         handler.register("partnerchatlock", new PartnerChatLockCommand(plugin));
+        handler.register("seperate", new SeperateCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 

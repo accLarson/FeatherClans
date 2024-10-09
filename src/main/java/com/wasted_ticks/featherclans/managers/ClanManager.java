@@ -316,6 +316,25 @@ public class ClanManager {
         return false;
     }
 
+    public boolean removePartnership(String tag1, String tag2) {
+        partnerships.remove(tag1.toLowerCase());
+        partnerships.remove(tag2.toLowerCase());
+
+        String string = "UPDATE clans SET `partner_id` = -1 WHERE lower(tag) = ? OR lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(string))
+        {
+            update.setString(1, tag1.toLowerCase());
+            update.setString(2, tag2.toLowerCase());
+            if(update.executeUpdate() != 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to remove partnership: " + tag1 + ", and " + tag2);
+        }
+        return false;
+    }
+
     public boolean createDisplayRecord(Banner banner, ArmorStand armorStand, Sign sign) {
         String bannerString = SerializationUtil.bannerBlockToString(banner);
         String armorStandString = SerializationUtil.armorStandToString(armorStand);

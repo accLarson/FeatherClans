@@ -178,7 +178,7 @@ public class MembershipManager {
         
         boolean removed = removeOfflinePlayerFromClan(player);
         if (removed) {
-            plugin.getActivityManager().calculateClanActiveStatus(tag);
+            plugin.getActivityManager().isClanActive(tag);
             return true;
         }
         

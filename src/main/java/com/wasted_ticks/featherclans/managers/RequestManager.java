@@ -62,8 +62,32 @@ public class RequestManager {
                 invitee.sendMessage(messages.get(type == RequestUtil.RequestType.CLAN_INVITE ? "clan_invite_expired" : "clan_partner_request_expired", Map.of(
                         "player", originator.getName()
                 )));
+                originator.sendMessage(messages.get(type == RequestUtil.RequestType.CLAN_INVITE ? "clan_invite_expired_sender" : "clan_partner_request_expired_sender", Map.of(
+                        "player", invitee.getName()
+                )));
             }
         }, config.getClanInviteTimeout() * 20L);
         return true;
+    }
+
+    public void declineRequest(Player player) {
+        RequestUtil request = getRequest(player);
+        if (request != null) {
+            Player originator = request.getOriginator();
+            String messageKey = request.getType() == RequestUtil.RequestType.CLAN_INVITE ? "clan_decline_originator" : "clan_partner_request_decline_originator";
+            originator.sendMessage(messages.get(messageKey, Map.of(
+                    "player", player.getName(),
+                    "clan", request.getClan()
+            )));
+
+            messageKey = request.getType() == RequestUtil.RequestType.CLAN_INVITE ? "clan_decline_success" : "clan_partner_request_decline_success";
+            player.sendMessage(messages.get(messageKey, Map.of(
+                    "clan", request.getClan()
+            )));
+
+            clearRequest(player);
+        } else {
+            player.sendMessage(messages.get("clan_decline_no_invitation", null));
+        }
     }
 }

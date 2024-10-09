@@ -45,7 +45,7 @@ public class ActivityManager {
         setOfflinePlayerActive(player, isActive);
     }
 
-    public boolean calculateClanActiveStatus(String clan) {
+    public boolean isClanActive(String clan) {
         if (clan == null || clan.isEmpty()) {
             plugin.getLogger().warning("Attempted to calculate active status for null or empty clan tag");
             return false;
@@ -53,10 +53,6 @@ public class ActivityManager {
         int activeCount = (int) plugin.getMembershipManager().getOfflinePlayersByClan(clan).stream()
                 .filter(this::isOfflinePlayerActive).count();
         return activeCount >= plugin.getFeatherClansConfig().getClanActiveStatusCount();
-    }
-
-    public boolean isClanActive(String clan) {
-        return calculateClanActiveStatus(clan);
     }
 
     public int getActiveMemberCount(String clan) {
@@ -100,18 +96,5 @@ public class ActivityManager {
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to update player activity status: " + e.getMessage());
         }
-    }
-
-    public boolean isClanActiveStatus(String clan) {
-        String query = "SELECT is_active FROM clans WHERE tag = ?;";
-        try (Connection connection = database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, clan);
-            ResultSet result = statement.executeQuery();
-            return result.next() && result.getBoolean("is_active");
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to check active status for clan: " + clan);
-        }
-        return false;
     }
 }
