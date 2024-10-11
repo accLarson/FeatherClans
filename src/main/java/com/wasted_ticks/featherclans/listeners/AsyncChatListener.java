@@ -49,7 +49,6 @@ public class AsyncChatListener implements Listener {
             List<OfflinePlayer> players = plugin.getMembershipManager().getOfflinePlayersByClan(clan);
             for (OfflinePlayer clanPlayer : players) {
                 if (clanPlayer.isOnline()) {
-                    String targetClan = inClanChat ? clan : clans[0];
                     Player onlinePlayer = clanPlayer.getPlayer();
                     onlinePlayer.sendMessage(messages.get(messageType, Map.of(
                             "tag", clan,

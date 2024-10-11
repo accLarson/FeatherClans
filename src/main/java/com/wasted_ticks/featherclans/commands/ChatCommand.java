@@ -19,7 +19,6 @@ public class ChatCommand implements CommandExecutor {
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
 
-
     public ChatCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
@@ -62,8 +61,10 @@ public class ChatCommand implements CommandExecutor {
                 )));
             }
         }
+
+        // Send spy messages to operators who are not in the clan
         for (OfflinePlayer operator : plugin.getServer().getOperators()) {
-            if (operator.isOnline()) {
+            if (operator.isOnline() && !players.contains(operator)) {
                 operator.getPlayer().sendMessage(messages.get("clan_chat_spy_message", Map.of(
                         "tag", clan,
                         "player", originator.getName(),

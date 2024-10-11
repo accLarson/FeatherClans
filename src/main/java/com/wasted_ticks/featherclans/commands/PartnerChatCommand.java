@@ -55,15 +55,13 @@ public class PartnerChatCommand implements CommandExecutor {
 
         String message = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
         String partnerClan = plugin.getClanManager().getPartner(clan);
-        String[] clans = new String[]{clan, partnerClan};
 
+        // Send messages to clan members
         List<OfflinePlayer> clanPlayers = plugin.getMembershipManager().getOfflinePlayersByClan(clan);
-        List<OfflinePlayer> partnerPlayers = plugin.getMembershipManager().getOfflinePlayersByClan(partnerClan);
-
         for (OfflinePlayer player : clanPlayers) {
             if (player.isOnline()) {
-                player.getPlayer().sendMessage(messages.get("clan_partnerchat_message_partner", Map.of(
-                        "tag", clan,
+                player.getPlayer().sendMessage(messages.get("clan_partnerchat_message", Map.of(
+                        "clan1", clan,
                         "clan2", partnerClan,
                         "player", originator.getName(),
                         "message", message
@@ -71,10 +69,12 @@ public class PartnerChatCommand implements CommandExecutor {
             }
         }
 
+        // Send messages to partner clan members
+        List<OfflinePlayer> partnerPlayers = plugin.getMembershipManager().getOfflinePlayersByClan(partnerClan);
         for (OfflinePlayer player : partnerPlayers) {
             if (player.isOnline()) {
                 player.getPlayer().sendMessage(messages.get("clan_partnerchat_message", Map.of(
-                        "tag", partnerClan,
+                        "clan1", partnerClan,
                         "clan2", clan,
                         "player", originator.getName(),
                         "message", message
@@ -82,8 +82,11 @@ public class PartnerChatCommand implements CommandExecutor {
             }
         }
 
+        // Send spy messages to operators who are not in either clan
+        List<OfflinePlayer> allClanPlayers = clanPlayers;
+        allClanPlayers.addAll(partnerPlayers);
         for (OfflinePlayer operator : plugin.getServer().getOperators()) {
-            if (operator.isOnline()) {
+            if (operator.isOnline() && !allClanPlayers.contains(operator)) {
                 operator.getPlayer().sendMessage(messages.get("clan_partnerchat_spy_message", Map.of(
                         "clan1", clan,
                         "clan2", partnerClan,
