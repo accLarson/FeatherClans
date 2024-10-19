@@ -74,8 +74,6 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(plugin),this);
         this.getServer().getPluginManager().registerEvents(new AsyncChatListener(plugin),this);
-        this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(plugin),this);
-        this.getServer().getPluginManager().registerEvents(new EntityPlaceListener(plugin),this);
         this.updateOnlinePlayersActivity();
     }
 
@@ -179,7 +177,6 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("colortag",new ColorTagCommand(plugin));
         handler.register("lookup", new LookupCommand(plugin));
         handler.register("chatlock", new ChatLockCommand(plugin));
-        handler.register("displaysetup", new DisplaySetupCommand(plugin));
         handler.register("partnerchat", new PartnerChatCommand(plugin));
         handler.register("partnerchatlock", new PartnerChatLockCommand(plugin));
         handler.register("seperate", new SeperateCommand(plugin));

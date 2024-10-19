@@ -34,7 +34,6 @@ public class ClanManager {
 
     private void load() {
         loadClans();
-        loadDisplays();
     }
 
     private void loadClans() {
@@ -62,32 +61,6 @@ public class ClanManager {
             plugin.getLogger().info("Failed to load clans.");
         } catch(IllegalArgumentException e) {
             plugin.getLogger().severe("Failed to parse UUID into clan cache.");
-        }
-    }
-
-    private void loadDisplays() {
-        String string = "SELECT `banner`, `armorstand`, `sign` FROM clan_displays;";
-        try(Connection connection = database.getConnection();
-            PreparedStatement statement = connection.prepareStatement(string);
-            ResultSet results = statement.executeQuery())
-        {
-            if(results != null) {
-                while (results.next()) {
-                    String bannerData = results.getString("banner");
-                    String armorStandData = results.getString("armorstand");
-                    String signData = results.getString("sign");
-
-                    Banner banner = SerializationUtil.stringToBannerBlock(bannerData);
-                    ArmorStand armorStand = SerializationUtil.stringToArmorStand(armorStandData);
-                    Sign sign = SerializationUtil.stringToSignBlock(signData);
-
-                    if(sign != null) {
-                        plugin.getDisplayManager().storeDisplayInMemory(banner, armorStand, sign);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().info("Failed to load displays.");
         }
     }
 

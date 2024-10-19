@@ -19,7 +19,6 @@ public class DisplayManager {
 
     private final FeatherClans plugin;
     private final List<Display> displays = new ArrayList<>();
-    private final Map<Player,Integer> setupModePlayers = new HashMap<>();
 
     private Banner banner;
     private ArmorStand armorStand;
@@ -27,23 +26,6 @@ public class DisplayManager {
 
     public DisplayManager(FeatherClans plugin) {
         this.plugin = plugin;
-    }
-
-    public void addSetUpPlayer(Player player) {
-        setupModePlayers.put(player,0);
-    }
-
-    public void nextStep(Player player) {
-        int newStep = setupModePlayers.get(player) + 1;
-        if (newStep <= 2) setupModePlayers.put(player, newStep);
-        else {
-            setupModePlayers.remove(player);
-            this.createDisplay();
-        }
-    }
-
-    public boolean isPlayerSettingDisplay(Player player) {
-        return setupModePlayers.containsKey(player);
     }
 
     public void createDisplay() {
@@ -55,36 +37,7 @@ public class DisplayManager {
         this.sign = null;
     }
 
-    public void resetDisplays() {
-        this.displays.clear();
-        plugin.getClanManager().deleteDisplays();
-    }
-
     public void storeDisplayInMemory(Banner banner, ArmorStand armorStand, Sign sign) {
         displays.add(new Display(banner, armorStand, sign));
-    }
-
-    public boolean isSettingBanner(Player player) {
-        return setupModePlayers.get(player).equals(0);
-    }
-
-    public boolean isSettingArmorStand(Player player) {
-        return setupModePlayers.get(player).equals(1);
-    }
-
-    public boolean isSettingSign(Player player) {
-        return setupModePlayers.get(player).equals(2);
-    }
-
-    public void setBanner(Banner banner) {
-        this.banner = banner;
-    }
-
-    public void setArmorStand(ArmorStand armorStand) {
-        this.armorStand = armorStand;
-    }
-
-    public void setSign(Sign sign) {
-        this.sign = sign;
     }
 }

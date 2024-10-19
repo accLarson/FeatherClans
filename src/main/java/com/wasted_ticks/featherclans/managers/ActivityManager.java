@@ -43,6 +43,7 @@ public class ActivityManager {
         updateLastSeenDate(player);
         boolean isActive = (System.currentTimeMillis() - player.getLastPlayed()) / 86400000 < plugin.getFeatherClansConfig().getInactiveDays();
         setOfflinePlayerActive(player, isActive);
+        memberActivityStatus.put(player.getUniqueId(), isActive);
     }
 
     public boolean isClanActive(String clan) {
@@ -72,18 +73,7 @@ public class ActivityManager {
     }
 
     public boolean isOfflinePlayerActive(OfflinePlayer offlinePlayer) {
-        String query = "SELECT is_active FROM clan_members WHERE mojang_uuid = ?;";
-        try (Connection connection = database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, offlinePlayer.getUniqueId().toString());
-            ResultSet result = statement.executeQuery();
-            if (result.next()) {
-                return result.getBoolean("is_active");
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to check activity status for player: " + offlinePlayer.getName());
-        }
-        return false;
+        return memberActivityStatus.getOrDefault(offlinePlayer.getUniqueId(), false);
     }
 
     private void setOfflinePlayerActive(OfflinePlayer player, boolean isActive) {
@@ -93,6 +83,7 @@ public class ActivityManager {
             statement.setBoolean(1, isActive);
             statement.setString(2, player.getUniqueId().toString());
             statement.executeUpdate();
+            memberActivityStatus.put(player.getUniqueId(), isActive);
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to update player activity status: " + e.getMessage());
         }
