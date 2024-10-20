@@ -91,6 +91,7 @@ public final class FeatherClans extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.displayManager.removeDisplaysInWorld();
         this.databaseManager.close();
     }
 
@@ -101,6 +102,7 @@ public final class FeatherClans extends JavaPlugin {
     }
 
     public void reload() {
+        this.displayManager.removeDisplaysInWorld();
         this.config = new FeatherClansConfig(plugin);
         this.messages = new FeatherClansMessages(plugin);
     }
@@ -164,6 +166,9 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("resign", new ResignCommand(plugin));
         handler.register("roster", new RosterCommand(plugin));
         handler.register("chat", new ChatCommand(plugin));
+        handler.register("chatlock", new ChatLockCommand(plugin));
+        handler.register("partnerchat", new PartnerChatCommand(plugin));
+        handler.register("partnerchatlock", new PartnerChatLockCommand(plugin));
         handler.register("list", new ListCommand(plugin));
         handler.register("leaderboard", new LeaderboardCommand(plugin));
         handler.register("help", new HelpCommand(plugin));
@@ -176,9 +181,6 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("demote", new DemoteCommand(plugin));
         handler.register("colortag",new ColorTagCommand(plugin));
         handler.register("lookup", new LookupCommand(plugin));
-        handler.register("chatlock", new ChatLockCommand(plugin));
-        handler.register("partnerchat", new PartnerChatCommand(plugin));
-        handler.register("partnerchatlock", new PartnerChatLockCommand(plugin));
         handler.register("seperate", new SeperateCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
@@ -191,9 +193,5 @@ public final class FeatherClans extends JavaPlugin {
 
     public Economy getEconomy() {
         return economy;
-    }
-
-    public void disable() {
-
     }
 }

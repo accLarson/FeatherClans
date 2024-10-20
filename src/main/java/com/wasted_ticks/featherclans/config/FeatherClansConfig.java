@@ -1,9 +1,12 @@
 package com.wasted_ticks.featherclans.config;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
+import java.util.Locale;
 
 public class FeatherClansConfig {
 
@@ -37,6 +40,12 @@ public class FeatherClansConfig {
     private int linesPerPage;
     private int pvpScoreRelevantDays;
     private String pvpScoreCalculationExplained;
+    private boolean displayEnabled;
+    private List<Integer> displayOriginSignLocation;
+    private String displayFacing;
+    private int displayIncrement;
+    private int displayCount;
+
 
     public FeatherClansConfig(FeatherClans plugin) {
         this.plugin = plugin;
@@ -46,7 +55,6 @@ public class FeatherClansConfig {
     }
 
     private void loadConfig() {
-
         this.economyEnabled = config.getBoolean("settings.economy.enabled");
         this.economyCreationPrice = config.getDouble("settings.economy.creation_price");
         this.economyInvitePrice = config.getDouble("settings.economy.invite_price");
@@ -69,13 +77,15 @@ public class FeatherClansConfig {
         this.mysqlPort = config.getInt("settings.mysql.port");
         this.mysqlPassword = config.getString("settings.mysql.password");
         this.mysqlDatabase = config.getString("settings.mysql.database");
-
         this.denyTags = config.getStringList("settings.deny_tags");
-
         this.linesPerPage = config.getInt("settings.page-formats.lines-per-page");
-
         this.pvpScoreRelevantDays = config.getInt("settings.pvp-score.relevant-days");
         this.pvpScoreCalculationExplained = config.getString("settings.pvp-score.calculation-explained");
+        this.displayEnabled = config.getBoolean("settings.display.enabled");
+        this.displayOriginSignLocation = config.getIntegerList("settings.display.origin-sign-location");
+        this.displayFacing = config.getString("settings.display.facing").toUpperCase();
+        this.displayIncrement = config.getInt("settings.display.increment", 1);
+        this.displayCount = config.getInt("settings.display.count", 20);
     }
 
     public boolean isEconomyEnabled() {
@@ -159,4 +169,20 @@ public class FeatherClansConfig {
     public String getPVPScoreCalculationExplained() {
         return pvpScoreCalculationExplained;
     }
+    public boolean isDisplayEnabled() {
+        return displayEnabled;
+    }
+    public List<Integer> getDisplayOriginSignLocation() {
+        return displayOriginSignLocation;
+    }
+    public String getDisplayFacing() {
+        return displayFacing;
+    }
+    public int getDisplayIncrement() {
+        return displayIncrement;
+    }
+    public int getDisplayCount() {
+        return displayCount;
+    }
+
 }

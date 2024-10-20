@@ -70,7 +70,9 @@ settings:
     calculation-explained: "1 point for every clan player you've killed more than they've killed you.
                         <br>Only the kills within the last <days> days count."
   display:
-    origin-sign-location: [ 0,0,0 ]
-    facing: NORTH
+    # Only enable this once all display settings are correctly set.
+    enabled: false
+    origin-sign-location: [ 0,72,0 ]
+    facing: "NORTH"
     increment: 1
-    count: 20
+    count: 10

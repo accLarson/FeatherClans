@@ -140,6 +140,22 @@ public class MembershipManager {
         return false;
     }
 
+    public int getClanSize(String tag) {
+        String query = "SELECT COUNT(*) FROM clan_members cm JOIN clans c ON cm.clan_id = c.id WHERE c.tag = ?;";
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, tag);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to get clan size for: " + tag);
+        }
+        return 0;
+    }
+
+
     public boolean isOfflinePlayerLeader(OfflinePlayer player) {
         return plugin.getClanManager().getClans().stream()
                 .anyMatch(clan -> this.getLeader(clan).equals(player.getUniqueId()));

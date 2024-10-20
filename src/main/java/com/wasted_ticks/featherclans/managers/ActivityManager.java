@@ -7,9 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ActivityManager {
 
@@ -87,5 +86,24 @@ public class ActivityManager {
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to update player activity status: " + e.getMessage());
         }
+    }
+
+    public List<String> getActiveClans() {
+        Map<String, Integer> activeClansMap = new HashMap<>();
+        Map<String, Integer> totalMembersMap = new HashMap<>();
+
+        for (Map.Entry<UUID, Boolean> member : memberActivityStatus.entrySet()) {
+            String clan = plugin.getMembershipManager().getClanByOfflinePlayer(plugin.getServer().getOfflinePlayer(member.getKey()));
+            totalMembersMap.merge(clan, 1, Integer::sum);
+            if (member.getValue()) activeClansMap.merge(clan, 1, Integer::sum);
+        }
+
+        int requiredActiveMembers = plugin.getFeatherClansConfig().getClanActiveStatusCount();
+        return activeClansMap.entrySet().stream()
+                .filter(entry -> entry.getValue() >= requiredActiveMembers)
+                .sorted(Comparator.comparingInt((Map.Entry<String, Integer> e) -> e.getValue()).reversed()
+                        .thenComparingInt(e -> totalMembersMap.get(e.getKey())).reversed())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 }

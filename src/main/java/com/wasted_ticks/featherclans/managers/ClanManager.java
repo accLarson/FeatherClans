@@ -114,23 +114,6 @@ public class ClanManager {
         return false;
     }
 
-    public int getClanSize(String tag, boolean activeOnly) {
-        String query = activeOnly ?
-                "SELECT COUNT(*) FROM clan_members cm JOIN clans c ON cm.clan_id = c.id WHERE c.tag = ? AND cm.is_active = true;" :
-                "SELECT COUNT(*) FROM clan_members cm JOIN clans c ON cm.clan_id = c.id WHERE c.tag = ?;";
-        try (Connection connection = database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, tag);
-            ResultSet result = statement.executeQuery();
-            if (result.next()) {
-                return result.getInt(1);
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to get clan size for: " + tag);
-        }
-        return 0;
-    }
-
     public ItemStack getBanner(String tag) {
         String query = "SELECT `banner` FROM clans WHERE lower(tag) = ?;";
         try (Connection connection = database.getConnection();
