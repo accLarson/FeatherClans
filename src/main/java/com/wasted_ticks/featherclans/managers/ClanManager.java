@@ -147,6 +147,7 @@ public class ClanManager {
             insert.setString(3, uuid.toString());
             if(insert.executeUpdate() != 0) {
                 clans.put(tag.toLowerCase(), uuid);
+                return true;
             }
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to create clan: " + tag);

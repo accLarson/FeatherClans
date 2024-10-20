@@ -10,6 +10,8 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +43,7 @@ public class DisplayManager {
                     plugin.getFeatherClansConfig().getDisplayOriginSignLocation().get(2));
             this.facing = BlockFace.valueOf(plugin.getFeatherClansConfig().getDisplayFacing());
             generateDisplays();
+            updateDisplays();
         }
     }
 
@@ -179,26 +182,24 @@ public class DisplayManager {
             Display display = displays.get(i);
             if (i < activeClans.size()) {
                 String clanTag = activeClans.get(i);
+                int clanSize = plugin.getMembershipManager().getClanSize(clanTag);
+                int activeMemberCount = plugin.getActivityManager().getActiveMemberCount(clanTag);
+                String leaderName = Bukkit.getOfflinePlayer(plugin.getClanManager().getClanLeader(clanTag)).getName();
 
                 // Update sign
-                String[] signLines = {
-                        activeClans.get(i),
-                        "Active: " + plugin.getMembershipManager().getClanSize(clanTag) + "/" + plugin.getActivityManager().getActiveMemberCount(clanTag),
-                        "",
-                        Bukkit.getOfflinePlayer(plugin.getClanManager().getClanLeader(activeClans.get(i))).getName()
-                };
-                display.updateSign(signLines);
+                display.updateSign(clanTag, clanSize, activeMemberCount, leaderName != null ? leaderName : "");
 
                 // Update armor stand
-//                display.updateArmorStand(leaderName != null ? leaderName : "");
+                display.updateArmorStand(plugin.getClanManager().getClanLeader(clanTag));
 
                 // Update banner
-                display.updateBanner(clanTag);
+                display.updateBanner(clanTag, plugin.getClanManager());
+
             } else {
                 // Clear display if no clan data
-                display.updateSign(new String[]{"", "", "", ""});
-//                display.updateArmorStand("");
-                display.updateBanner(null);
+                display.clearSign();
+                display.clearStand();
+                display.clearBanner();
             }
         }
     }
