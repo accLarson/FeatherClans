@@ -89,6 +89,7 @@ public class AcceptCommand implements CommandExecutor {
 
         if(success) {
             plugin.getRequestManager().clearRequest(player);
+
             player.sendMessage(messages.get("clan_accept_success_player", Map.of(
                     "clan", tag
             )));

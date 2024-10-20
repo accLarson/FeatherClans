@@ -147,6 +147,8 @@ public class ClanManager {
             insert.setString(3, uuid.toString());
             if(insert.executeUpdate() != 0) {
                 clans.put(tag.toLowerCase(), uuid);
+                // Add the leader to the clan
+                plugin.getMembershipManager().addOfflinePlayerToClan(player, tag);
                 return true;
             }
         } catch (SQLException e) {
@@ -288,40 +290,6 @@ public class ClanManager {
             }
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to remove partnership: " + tag1 + ", and " + tag2);
-        }
-        return false;
-    }
-
-    public boolean createDisplayRecord(Banner banner, ArmorStand armorStand, Sign sign) {
-        String bannerString = SerializationUtil.bannerBlockToString(banner);
-        String armorStandString = SerializationUtil.armorStandToString(armorStand);
-        String signString = SerializationUtil.signBlockToString(sign);
-
-        String string = "INSERT INTO clan_displays (`banner`, `armorstand`, `sign`) VALUES (?,?,?);";
-        try(Connection connection = database.getConnection();
-            PreparedStatement insert = connection.prepareStatement(string))
-        {
-            insert.setString(1, bannerString);
-            insert.setString(2, armorStandString);
-            insert.setString(3, signString);
-
-            if(insert.executeUpdate() != 0) return true;
-
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to add display");
-        }
-        return false;
-    }
-
-    public boolean deleteDisplays() {
-        String string = "DELETE FROM clan_displays;";
-        try(Connection connection = database.getConnection();
-            PreparedStatement delete = connection.prepareStatement(string))
-        {
-            if(delete.executeUpdate() != 0) return true;
-
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to delete displays");
         }
         return false;
     }
