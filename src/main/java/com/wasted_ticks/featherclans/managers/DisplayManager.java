@@ -10,13 +10,10 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class DisplayManager {
 
@@ -179,6 +176,7 @@ public class DisplayManager {
         List<String> activeClans = plugin.getActivityManager().getActiveClans();
 
         for (int i = 0; i < displays.size(); i++) {
+            final int index = i;
             Display display = displays.get(i);
             if (i < activeClans.size()) {
                 String clanTag = activeClans.get(i);
@@ -195,6 +193,12 @@ public class DisplayManager {
                 // Update banner
                 display.updateBanner(clanTag, plugin.getClanManager());
 
+                // Add a small delay before the next update
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    if (index < displays.size() - 1) {
+                        updateDisplays();
+                    }
+                }, 5L); // 5 tick delay (0.25 seconds)
             } else {
                 // Clear display if no clan data
                 display.clearSign();

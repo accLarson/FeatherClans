@@ -1,29 +1,24 @@
 package com.wasted_ticks.featherclans.data;
 
 import com.wasted_ticks.featherclans.FeatherClans;
-import com.wasted_ticks.featherclans.managers.ActivityManager;
 import com.wasted_ticks.featherclans.managers.ClanManager;
-import com.wasted_ticks.featherclans.managers.MembershipManager;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.Banner;
-import org.bukkit.block.Sign;
+import org.bukkit.block.*;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.Color;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.profile.PlayerProfile;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class Display {
 
@@ -63,33 +58,40 @@ public class Display {
     }
 
     public void updateArmorStand(UUID leaderUUID) {
-        ItemStack leaderHead = createPlayerHead(leaderUUID);
-        
-        armorStand.setCustomNameVisible(true);
-        
-        // Set grey dyed leather armor
+
         ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
         ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS);
         ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
-        
+
         LeatherArmorMeta meta = (LeatherArmorMeta) chestplate.getItemMeta();
+
         meta.setColor(Color.GRAY);
         chestplate.setItemMeta(meta);
         leggings.setItemMeta(meta);
         boots.setItemMeta(meta);
-        
+
         armorStand.getEquipment().setChestplate(chestplate);
         armorStand.getEquipment().setLeggings(leggings);
         armorStand.getEquipment().setBoots(boots);
-        armorStand.getEquipment().setHelmet(leaderHead);
+
+        createPlayerHead(leaderUUID, leaderHead -> {
+            armorStand.getEquipment().setHelmet(leaderHead);
+        });
+
+
+
     }
 
     public void updateBanner(String clanTag, ClanManager clanManager) {
         ItemStack bannerItem = clanManager.getBanner(clanTag);
         BannerMeta bannerMeta = (BannerMeta) bannerItem.getItemMeta();
 
+        BlockData originalBlockData = banner.getBlockData();
+
         banner.setType(bannerItem.getType());
         banner.setPatterns(bannerMeta.getPatterns());
+
+        banner.setBlockData(originalBlockData);
 
         banner.update(true, false);
     }
@@ -102,9 +104,6 @@ public class Display {
     }
 
     public void clearStand() {
-        armorStand.setCustomName(null);
-        armorStand.setCustomNameVisible(false);
-        
         // Set white dyed leather armor, no helmet
         ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
         ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS);
@@ -128,17 +127,26 @@ public class Display {
         banner.update(true, false);
     }
 
-    private ItemStack createPlayerHead(UUID playerUUID) {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) head.getItemMeta();
-        
-        PlayerProfile profile = Bukkit.createPlayerProfile(playerUUID);
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-        profile.update();
-        
-        meta.setOwnerProfile(profile);
-        head.setItemMeta(meta);
-        
-        return head;
+    private void createPlayerHead(UUID playerUUID, Consumer<ItemStack> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(FeatherClans.getPlugin(FeatherClans.class), () -> {
+            ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+            SkullMeta meta = (SkullMeta) head.getItemMeta();
+            
+            com.destroystokyo.paper.profile.PlayerProfile profile = Bukkit.createProfile(playerUUID);
+            boolean completed = profile.complete(true);
+            
+            if (completed) {
+                meta.setPlayerProfile(profile);
+                head.setItemMeta(meta);
+                Bukkit.getScheduler().runTask(FeatherClans.getPlugin(FeatherClans.class), () -> callback.accept(head));
+            } else {
+                Bukkit.getLogger().warning("Failed to complete profile for UUID: " + playerUUID);
+                Bukkit.getScheduler().runTask(FeatherClans.getPlugin(FeatherClans.class), () -> callback.accept(createDefaultHead()));
+            }
+        });
+    }
+
+    private ItemStack createDefaultHead() {
+        return new ItemStack(Material.PLAYER_HEAD);
     }
 }

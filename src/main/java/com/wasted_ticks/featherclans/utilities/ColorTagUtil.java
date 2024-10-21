@@ -14,14 +14,19 @@ public class ColorTagUtil {
 
      {
         colorMap = new HashMap<>();
-        colorMap.put("&s", "<#888888>");
-        colorMap.put("&t", "<#DA9696>");
-        colorMap.put("&u", "<#E6BE99>");
-        colorMap.put("&v", "<#E6E2A3>");
-        colorMap.put("&w", "<#A8CC94>");
-        colorMap.put("&x", "<#A0CAD5>");
-        colorMap.put("&y", "<#97AFD5>");
-        colorMap.put("&z", "<#C29ACA>");
+         colorMap.put("&g", "<#CCCCCC>");
+         colorMap.put("&h", "<#757575>");
+         colorMap.put("&i", "<#9F9F9F>");
+         colorMap.put("&j", "<#A18870>");
+         colorMap.put("&s", "<#DA9696>");
+         colorMap.put("&t", "<#E6BE99>");
+         colorMap.put("&u", "<#E6E2A3>");
+         colorMap.put("&v", "<#A8CC94>");
+         colorMap.put("&w", "<#A0CAD5>");
+         colorMap.put("&x", "<#97AFD5>");
+         colorMap.put("&y", "<#C29ACA>");
+         colorMap.put("&z", "<#E2A5C3>");
+
     }
 
     public ColorTagUtil(FeatherClans plugin) {
