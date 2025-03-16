@@ -2,7 +2,7 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.util.RequestUtil;
+import com.wasted_ticks.featherclans.utilities.RequestUtility;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,7 +35,7 @@ public class DeclineCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        RequestUtil request = this.plugin.getInviteManager().getRequest(player);
+        RequestUtility request = this.plugin.getInviteManager().getRequest(player);
         if (request == null) {
             player.sendMessage(messages.get("clan_decline_no_invitation", null));
             return true;

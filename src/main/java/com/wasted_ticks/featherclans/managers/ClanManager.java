@@ -1,7 +1,7 @@
 package com.wasted_ticks.featherclans.managers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
-import com.wasted_ticks.featherclans.util.SerializationUtil;
+import com.wasted_ticks.featherclans.utilities.SerializationUtility;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -130,7 +130,7 @@ public class ClanManager {
             if(results != null && results.next()) {
                 String home = results.getString("home");
                 if(home != null) {
-                    return SerializationUtil.stringToLocation(home);
+                    return SerializationUtility.stringToLocation(home);
                 }
             }
         } catch (SQLException e) {
@@ -201,7 +201,7 @@ public class ClanManager {
 
         ItemStack clone = stack.clone();
         clone.setAmount(1);
-        String data = SerializationUtil.stackToString(clone);
+        String data = SerializationUtility.stackToString(clone);
         UUID uuid = player.getUniqueId();
 
         String string = "INSERT INTO clans (`banner`, `tag`, `leader_uuid`) VALUES (?,?,?);";
@@ -280,7 +280,7 @@ public class ClanManager {
         try(Connection connection = database.getConnection();
             PreparedStatement update = connection.prepareStatement(string))
         {
-            update.setString(1, SerializationUtil.locationToString(location));
+            update.setString(1, SerializationUtility.locationToString(location));
             update.setString(2, tag.toLowerCase());
             if(update.executeUpdate() != 0) {
                 return true;
@@ -375,7 +375,7 @@ public class ClanManager {
             if(results != null && results.next()) {
                 String banner = results.getString("banner");
                 if(banner != null) {
-                    return SerializationUtil.stringToStack(banner);
+                    return SerializationUtility.stringToStack(banner);
                 }
             }
         } catch (SQLException e) {

@@ -1,4 +1,4 @@
-package com.wasted_ticks.featherclans.util;
+package com.wasted_ticks.featherclans.utilities;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import org.bukkit.Bukkit;
@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class TeleportTimerUtil implements Runnable {
+public class TeleportTimerUtility implements Runnable {
 
     private final int seconds;
     private final Runnable before;
     private final Runnable after;
-    private final Consumer<TeleportTimerUtil> during;
+    private final Consumer<TeleportTimerUtility> during;
     private final FeatherClans plugin;
     private int taskID;
     private int remaining;
@@ -26,7 +26,7 @@ public class TeleportTimerUtil implements Runnable {
      * @param after
      * @param during
      */
-    public TeleportTimerUtil(@NotNull FeatherClans plugin, int seconds, @Nullable Runnable before, @Nullable Runnable after, @NotNull Consumer<TeleportTimerUtil> during, @NotNull Location location) {
+    public TeleportTimerUtility(@NotNull FeatherClans plugin, int seconds, @Nullable Runnable before, @Nullable Runnable after, @NotNull Consumer<TeleportTimerUtility> during, @NotNull Location location) {
         this.plugin = plugin;
         this.seconds = seconds;
         this.before = before;

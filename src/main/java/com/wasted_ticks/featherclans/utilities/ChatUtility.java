@@ -1,4 +1,4 @@
-package com.wasted_ticks.featherclans.util;
+package com.wasted_ticks.featherclans.utilities;
 
 
 import com.wasted_ticks.featherclans.FeatherClans;
@@ -12,12 +12,12 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChatUtil {
+public class ChatUtility {
 
     private final FeatherClans plugin;
     private final Map<String, Integer> dictionary = new HashMap<String, Integer>();
 
-    public ChatUtil(FeatherClans plugin) {
+    public ChatUtility(FeatherClans plugin) {
         this.plugin = plugin;
         this.init();
     }

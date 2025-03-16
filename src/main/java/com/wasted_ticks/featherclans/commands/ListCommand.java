@@ -2,19 +2,15 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.util.ChatUtil;
+import com.wasted_ticks.featherclans.utilities.ChatUtility;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -68,15 +64,15 @@ public class ListCommand implements CommandExecutor {
 
         Collections.reverse(sortedClans);
 
-        ChatUtil chatUtil = new ChatUtil(this.plugin);
+        ChatUtility chatUtility = new ChatUtility(this.plugin);
         MiniMessage parser = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.color()).resolver(StandardTags.reset()).build()).build();
 
         List<Component> clanLines = new ArrayList<>();
 
-        Component header = chatUtil.addSpacing(parser.deserialize("<gray>Clan"),45)
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Leader"),100))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Online"), 50, true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Login"),115,true));
+        Component header = chatUtility.addSpacing(parser.deserialize("<gray>Clan"),45)
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Leader"),100))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Online"), 50, true))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Last Login"),115,true));
 
         clanLines.add(header);
 
@@ -84,12 +80,12 @@ public class ListCommand implements CommandExecutor {
             List<OfflinePlayer> clanMembers = plugin.getClanManager().getOfflinePlayersByClan(clan);
             int lastSeenInt = clanMembers.stream().mapToInt(m -> (int) ((System.currentTimeMillis() - m.getLastLogin()) / 86400000)).min().getAsInt();
 
-            Component tag = chatUtil.addSpacing(parser.deserialize(clan), 45);
-            Component leader = chatUtil.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()),100);
-            Component online = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count() + "/" + clanMembers.size()),50,true);
+            Component tag = chatUtility.addSpacing(parser.deserialize(clan), 45);
+            Component leader = chatUtility.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()),100);
+            Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count() + "/" + clanMembers.size()),50,true);
             Component lastSeen;
-            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),115,true);
-            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),115,true);
+            if (lastSeenInt == 0) lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>Today"),115,true);
+            else lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),115,true);
 
             clanLines.add(tag.append(leader).append(online).append(lastSeen)
                     .hoverEvent(HoverEvent.showText(parser.deserialize("<#6C719D>Click to view <white>" + clan + " <#6C719D>clan roster")))

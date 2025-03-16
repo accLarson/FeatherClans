@@ -11,7 +11,7 @@ import com.wasted_ticks.featherclans.managers.DatabaseManager;
 import com.wasted_ticks.featherclans.managers.FriendlyFireManager;
 import com.wasted_ticks.featherclans.managers.InviteManager;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
-import com.wasted_ticks.featherclans.util.PaginateUtil;
+import com.wasted_ticks.featherclans.utilities.PaginateUtility;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -28,7 +28,7 @@ public final class FeatherClans extends JavaPlugin {
     private ClanManager clanManager;
     private InviteManager inviteManager;
     private FriendlyFireManager friendlyFireManager;
-    private PaginateUtil paginateUtil;
+    private PaginateUtility paginateUtility;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
 
@@ -46,7 +46,7 @@ public final class FeatherClans extends JavaPlugin {
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
         this.inviteManager = new InviteManager(plugin);
-        this.paginateUtil = new PaginateUtil(plugin);
+        this.paginateUtility = new PaginateUtility(plugin);
 
         if (this.config.isEconomyEnabled()) {
             if (!setupEconomy()) {
@@ -107,8 +107,8 @@ public final class FeatherClans extends JavaPlugin {
         return this.friendlyFireManager;
     }
 
-    public PaginateUtil getPaginateUtil() {
-        return this.paginateUtil;
+    public PaginateUtility getPaginateUtil() {
+        return this.paginateUtility;
     }
 
     public FeatherClansConfig getFeatherClansConfig() {

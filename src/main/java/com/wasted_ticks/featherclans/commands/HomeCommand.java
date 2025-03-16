@@ -2,7 +2,7 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.util.TeleportTimerUtil;
+import com.wasted_ticks.featherclans.utilities.TeleportTimerUtility;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -76,7 +76,7 @@ public class HomeCommand implements CommandExecutor {
 
                 Location clanHomeLocation = plugin.getClanManager().getClanHome(tag);
 
-                TeleportTimerUtil timer = new TeleportTimerUtil(this.plugin, delay, null, () -> {
+                TeleportTimerUtility timer = new TeleportTimerUtility(this.plugin, delay, null, () -> {
                     player.sendMessage(messages.get("clan_home_teleport_success", Map.of(
                             "clan", tag
                     )));

@@ -1,4 +1,4 @@
-package com.wasted_ticks.featherclans.util;
+package com.wasted_ticks.featherclans.utilities;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
@@ -10,14 +10,14 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 
-public class PaginateUtil {
+public class PaginateUtility {
 
     private final FeatherClans plugin;
     private FeatherClansMessages messages;
     private FeatherClansConfig config;
 
 
-    public PaginateUtil(FeatherClans plugin) {
+    public PaginateUtility(FeatherClans plugin) {
         this.plugin = plugin;
         this.init();
     }

@@ -1,13 +1,13 @@
-package com.wasted_ticks.featherclans.util;
+package com.wasted_ticks.featherclans.utilities;
 
 import org.bukkit.entity.Player;
 
-public class RequestUtil {
+public class RequestUtility {
 
     private String tag;
     private Player originator;
 
-    public RequestUtil(String tag, Player originator) {
+    public RequestUtility(String tag, Player originator) {
         this.tag = tag;
         this.originator = originator;
     }

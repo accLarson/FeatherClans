@@ -2,7 +2,7 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.util.RequestUtil;
+import com.wasted_ticks.featherclans.utilities.RequestUtility;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,7 +42,7 @@ public class AcceptCommand implements CommandExecutor {
             return false;
         }
 
-        RequestUtil request = this.plugin.getInviteManager().getRequest(player);
+        RequestUtility request = this.plugin.getInviteManager().getRequest(player);
         if (request == null) {
             player.sendMessage(messages.get("clan_accept_no_request", null));
             return false;

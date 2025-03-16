@@ -3,8 +3,7 @@ package com.wasted_ticks.featherclans.managers;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.util.RequestUtil;
-import net.milkbowl.vault.economy.Economy;
+import com.wasted_ticks.featherclans.utilities.RequestUtility;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -15,7 +14,7 @@ public class InviteManager {
 
     private final FeatherClansMessages messages;
     private final FeatherClans plugin;
-    private final HashMap<String, RequestUtil> requests = new HashMap<>();
+    private final HashMap<String, RequestUtility> requests = new HashMap<>();
     private final FeatherClansConfig config;
 
     public InviteManager(FeatherClans plugin) {
@@ -24,7 +23,7 @@ public class InviteManager {
         this.messages = plugin.getFeatherClansMessages();
     }
 
-    public RequestUtil getRequest(Player player) {
+    public RequestUtility getRequest(Player player) {
         return this.requests.get(player.getName());
     }
 
@@ -51,7 +50,7 @@ public class InviteManager {
 //                return true;
 //            }
 //        } else {
-        requests.put(invitee.getName(), new RequestUtil(tag, originator));
+        requests.put(invitee.getName(), new RequestUtility(tag, originator));
 //        }
 
         invitee.sendMessage(messages.get("clan_invite_text", Map.of(
@@ -76,7 +75,7 @@ public class InviteManager {
         Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
             @Override
             public void run() {
-                RequestUtil request = requests.remove(invitee.getName());
+                RequestUtility request = requests.remove(invitee.getName());
                 if (request != null) {
                     invitee.sendMessage(messages.get("clan_invite_expired", Map.of(
                             "player", originator.getName()

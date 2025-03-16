@@ -1,4 +1,4 @@
-package com.wasted_ticks.featherclans.util;
+package com.wasted_ticks.featherclans.utilities;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class SerializationUtil {
+public class SerializationUtility {
 
     public static String stackToString(ItemStack stack) {
 

@@ -3,7 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
-import com.wasted_ticks.featherclans.util.ChatUtil;
+import com.wasted_ticks.featherclans.utilities.ChatUtility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -79,15 +79,15 @@ public class RosterCommand implements CommandExecutor {
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !plugin.getClanManager().isOfflinePlayerLeader(m))).collect(Collectors.toList());
 
         DecimalFormat df = new DecimalFormat("0.00");
-        ChatUtil chatUtil = new ChatUtil(this.plugin);
+        ChatUtility chatUtility = new ChatUtility(this.plugin);
         MiniMessage parser = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.color()).resolver(StandardTags.reset()).build()).build();
 
         List<Component> clanMemberLines = new ArrayList<>();
 
-        Component header = chatUtil.addSpacing(parser.deserialize("<gray>Member"),100)
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>KDR"),55,true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Hours"),55,true))
-                .append(chatUtil.addSpacing(parser.deserialize("<gray>Last Seen"),100,true));
+        Component header = chatUtility.addSpacing(parser.deserialize("<gray>Member"),100)
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>KDR"),55,true))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Hours"),55,true))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Last Seen"),100,true));
 
         clanMemberLines.add(header);
 
@@ -98,20 +98,20 @@ public class RosterCommand implements CommandExecutor {
             if (clanMember.getName() != null) name = clanMember.getName();
 
             Component member;
-            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtil.addSpacing(parser.deserialize(name + " <dark_gray>L"), 100);
-            else member = chatUtil.addSpacing(parser.deserialize(name), 100);
+            if (manager.isOfflinePlayerLeader(clanMember)) member = chatUtility.addSpacing(parser.deserialize(name + " <dark_gray>L"), 100);
+            else member = chatUtility.addSpacing(parser.deserialize(name), 100);
 
             Component KDR;
-            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) KDR = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + df.format(kdr)),55,true);
-            else KDR = chatUtil.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
+            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) KDR = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + df.format(kdr)),55,true);
+            else KDR = chatUtility.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
 
             Component hours;
-            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) hours = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + clanMember.getStatistic(Statistic.PLAY_ONE_MINUTE)/20/60/60),55,true);
-            else hours = chatUtil.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
+            if (clanMember.isOnline() && !this.isVanished(clanMember.getPlayer())) hours = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + clanMember.getStatistic(Statistic.PLAY_ONE_MINUTE)/20/60/60),55,true);
+            else hours = chatUtility.addSpacing(parser.deserialize("<#6C719D>Offline"),55,true);
 
             Component lastSeen;
-            if (lastSeenInt == 0) lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>Today"),100,true);
-            else lastSeen = chatUtil.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),100,true);
+            if (lastSeenInt == 0) lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>Today"),100,true);
+            else lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),100,true);
 
             clanMemberLines.add(member.append(KDR).append(hours).append(lastSeen));
         }
