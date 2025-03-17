@@ -28,7 +28,7 @@ public class PaginateUtility {
     }
 
     public void displayPage(String[] args, Player player, List<Component> lines){
-        if (lines.size() > 0){
+        if (!lines.isEmpty()){
             int page = 1;
             boolean argsHasPageNumber = args.length > 0 && args[args.length - 1].chars().allMatch(Character::isDigit);
             if (argsHasPageNumber) page = Integer.parseInt(args[args.length-1]);
