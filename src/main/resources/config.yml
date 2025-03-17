@@ -33,6 +33,10 @@ settings:
     archive_days: 30
     delete_days: 45
   clan:
+    # The amount of days a player who doesn't log in would be considered inactive.
+    inactive_days_threshold: 4
+    # The amount of active members a clan must have to be considered itself active.
+    active_members_requirement: 4
     invite_timeout: 30
     teleport_delay_seconds: 4
     min_tag_size: 3

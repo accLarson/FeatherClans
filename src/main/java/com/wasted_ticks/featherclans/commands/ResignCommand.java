@@ -43,6 +43,7 @@ public class ResignCommand implements CommandExecutor {
             return true;
         }
 
+        String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
         boolean deleted = plugin.getClanManager().resignOfflinePlayer(player);
         if (!deleted) {
             player.sendMessage(messages.get("clan_resign_error_generic", null));
@@ -50,6 +51,9 @@ public class ResignCommand implements CommandExecutor {
         }
 
         player.sendMessage(messages.get("clan_resign_success", null));
+        if (plugin.getActiveManager().isActive(tag) && !plugin.getActiveManager().assessActiveStatus(tag)) {
+            plugin.getActiveManager().removeActiveClan(tag);
+        }
         return true;
 
     }

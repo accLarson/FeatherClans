@@ -20,6 +20,8 @@ public class FeatherClansConfig {
     private int cleanupArchiveDays;
     private int cleanupDeleteDays;
 
+    private int clanActiveMembersRequirement;
+    private int clanInactiveDaysThreshold;
     private int clanInviteTimeout;
     private int clanTeleportDelaySeconds;
     private int clanMinTagSize;
@@ -55,6 +57,8 @@ public class FeatherClansConfig {
         this.cleanupArchiveDays = config.getInt("settings.clean_up.archive_days");
         this.cleanupDeleteDays = config.getInt("settings.clean_up.delete_days");
 
+        this.clanActiveMembersRequirement = config.getInt("settings.clan.active_members_requirement");
+        this.clanInactiveDaysThreshold = config.getInt("settings.clan.inactive_days_threshold");
         this.clanInviteTimeout = config.getInt("settings.clan.invite_timeout");
         this.clanTeleportDelaySeconds = config.getInt("settings.clan.teleport_delay_seconds");
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
@@ -103,6 +107,14 @@ public class FeatherClansConfig {
 
     public int getCleanupDeleteDays() {
         return cleanupDeleteDays;
+    }
+
+    public int getClanActiveMembersRequirement() {
+        return clanActiveMembersRequirement;
+    }
+
+    public int getClanInactiveDaysThreshold() {
+        return clanInactiveDaysThreshold;
     }
 
     public int getClanInviteTimeout() {

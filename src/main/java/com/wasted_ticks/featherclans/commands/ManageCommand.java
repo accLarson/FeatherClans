@@ -188,7 +188,7 @@ public class ManageCommand implements CommandExecutor {
                     sender.sendMessage(messages.get("clan_manage_kick_error_leader", null));
                     break;
                 }
-                
+
                 if (!manager.resignOfflinePlayer(kickee)) {
                     sender.sendMessage(messages.get("clan_kick_error", null));
                     break;
@@ -203,6 +203,9 @@ public class ManageCommand implements CommandExecutor {
                             "clan", tag
                     )));
                 }
+                if (plugin.getActiveManager().isActive(tag) && !plugin.getActiveManager().assessActiveStatus(tag)) {
+                    plugin.getActiveManager().removeActiveClan(tag);
+                }
                 break;
 
             case "disband":
@@ -211,12 +214,11 @@ public class ManageCommand implements CommandExecutor {
                     manager.resignOfflinePlayer(member);
                 }
                 if (manager.deleteClan(tag)) {
-                    sender.sendMessage(messages.get("clan_disband_success", Map.of(
-                            "clan", tag
-                    )));
-                    plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of(
-                            "clan", tag.toLowerCase()
-                    ))));
+                    sender.sendMessage(messages.get("clan_disband_success", Map.of("clan", tag)));
+                    plugin.getServer()
+                            .getOnlinePlayers()
+                            .forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of("clan", tag.toLowerCase()))));
+                    plugin.getActiveManager().removeActiveClan(tag.toLowerCase());
                 }
                 else sender.sendMessage(messages.get("clan_disband_error_generic", null));
                 break;

@@ -77,6 +77,9 @@ public class AcceptCommand implements CommandExecutor {
             originator.sendMessage(messages.get("clan_accept_success_originator", Map.of(
                     "player", player.getName()
             )));
+            if (!plugin.getActiveManager().isActive(tag) && plugin.getActiveManager().assessActiveStatus(tag)) {
+                plugin.getActiveManager().addActiveClan(tag);
+            }
         }
 
 
