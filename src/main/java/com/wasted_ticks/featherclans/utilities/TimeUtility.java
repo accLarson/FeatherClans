@@ -11,27 +11,18 @@ public class TimeUtility {
         long currentTime = System.currentTimeMillis();
         long timeDifference = currentTime - timestamp;
         
-        // Convert to appropriate units
-        long minutes = timeDifference / 60000;
-        long hours = minutes / 60;
+        // Check if within 24 hours
+        long hours = timeDifference / (60 * 60 * 1000);
+        if (hours < 24) return "today";
+
+        // Convert to days and larger units
         long days = hours / 24;
-        long weeks = days / 7;
         long months = days / 30;
         long years = days / 365;
         
         // Format based on the most appropriate time unit
-        if (minutes < 60) {
-            return minutes + " min" + (minutes == 1 ? "" : "s");
-        } else if (hours < 24) {
-            return hours + " hr" + (hours == 1 ? "" : "s");
-        } else if (days < 7) {
-            return days + " day" + (days == 1 ? "" : "s");
-        } else if (days < 30) {
-            return weeks + " wk" + (weeks == 1 ? "" : "s");
-        } else if (days < 365) {
-            return months + " mon" + (months == 1 ? "" : "s");
-        } else {
-            return years + " yr" + (years == 1 ? "" : "s");
-        }
+        if (days < 30) return days + " dy" + (days == 1 ? "" : "s");
+        else if (months < 12) return months + " mo" + (months == 1 ? "" : "s");
+        else return years + " yr" + (years == 1 ? "" : "s");
     }
 }
