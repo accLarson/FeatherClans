@@ -199,7 +199,7 @@ public class ManageCommand implements CommandExecutor {
                             "clan", tag
                     )));
                 }
-                plugin.getActiveManager().assessActiveStatus(tag);
+                plugin.getActiveManager().updateActiveStatus(kickee, tag);
 
                 break;
 

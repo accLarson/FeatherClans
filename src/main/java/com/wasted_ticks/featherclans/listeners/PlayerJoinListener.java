@@ -21,10 +21,9 @@ public class PlayerJoinListener implements Listener {
 
         String clanTag = plugin.getClanManager().getClanByOfflinePlayer(event.getPlayer());
 
-        // If players clan is already active, return
-        if (plugin.getActiveManager().isActive(clanTag)) return;
+        // If player is already active, return
+        if (plugin.getActiveManager().isActive(event.getPlayer())) return;
 
-        // Check if their clan is now active, if yes, add them to activeClanList
-        if (plugin.getActiveManager().assessActiveStatus(clanTag)) plugin.getActiveManager().addActiveClan(clanTag);
+        this.plugin.getActiveManager().updateActiveStatus(event.getPlayer(), clanTag);
     }
 }

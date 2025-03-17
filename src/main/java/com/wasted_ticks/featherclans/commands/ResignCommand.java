@@ -52,7 +52,7 @@ public class ResignCommand implements CommandExecutor {
 
         player.sendMessage(messages.get("clan_resign_success", null));
 
-        plugin.getActiveManager().assessActiveStatus(tag);
+        plugin.getActiveManager().updateActiveStatus(player, tag);
 
         return true;
 

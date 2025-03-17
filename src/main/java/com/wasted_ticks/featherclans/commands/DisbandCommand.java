@@ -53,7 +53,7 @@ public class DisbandCommand implements CommandExecutor {
                     .getOnlinePlayers()
                     .forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of("clan", tag.toLowerCase()))));
 
-            plugin.getActiveManager().removeClan(tag);
+            plugin.getActiveManager().removeClan(tag.toLowerCase());
 
         } else {
             player.sendMessage(messages.get("clan_error_leader", null));

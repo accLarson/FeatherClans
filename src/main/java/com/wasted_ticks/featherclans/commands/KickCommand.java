@@ -81,7 +81,7 @@ public class KickCommand implements CommandExecutor {
             )));
         }
 
-        plugin.getActiveManager().assessActiveStatus(tag);
+        plugin.getActiveManager().updateActiveStatus(offlinePlayer, tag);
 
         return true;
     }

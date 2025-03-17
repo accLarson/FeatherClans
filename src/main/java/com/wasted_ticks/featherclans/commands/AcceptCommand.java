@@ -78,7 +78,7 @@ public class AcceptCommand implements CommandExecutor {
                     "player", player.getName()
             )));
 
-            plugin.getActiveManager().assessActiveStatus(tag);
+            plugin.getActiveManager().updateActiveStatus(player, tag);
         }
         return true;
     }
