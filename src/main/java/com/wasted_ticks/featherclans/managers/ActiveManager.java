@@ -54,7 +54,7 @@ public class ActiveManager {
     }
 
     public int getActiveCount(String clanTag) {
-        return activeClans.get(clanTag.toLowerCase());
+        return activeClans.getOrDefault(clanTag.toLowerCase(), 0);
     }
 
     public void updateActiveStatus(OfflinePlayer offlinePlayer, String clanTag) {
