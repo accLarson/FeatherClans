@@ -6,42 +6,40 @@ import org.bukkit.OfflinePlayer;
 import java.util.*;
 
 public class ActiveManager {
-    private final Set<String> activeClans = new HashSet<>();
+    private final Map<String, Integer> activeClans = new HashMap<>();
     private final FeatherClans plugin;
+    private int activeMembersRequirement;
+    private int inactiveDaysThreshold;
+
 
     public ActiveManager(FeatherClans plugin) {
         this.plugin = plugin;
         this.init();
+
     }
 
     private void init() {
-        plugin.getClanManager().getClans().forEach(clan -> {
-            if (this.assessActiveStatus(clan)) addActiveClan(clan);
-        });
+        this.activeMembersRequirement = this.plugin.getFeatherClansConfig().getClanActiveMembersRequirement();
+        this.inactiveDaysThreshold = this.plugin.getFeatherClansConfig().getClanInactiveDaysThreshold();
+
+        plugin.getClanManager().getClans().forEach(this::assessActiveStatus);
     }
 
-    public void addActiveClan(String clanTag) {
-        activeClans.add(clanTag.toLowerCase());
-        // Probably initiate clan display update
-    }
-
-    public void removeActiveClan(String clanTag) {
-        activeClans.remove(clanTag.toLowerCase());
-        // Probably initiate clan display update
+    public void removeClan(String clanName) {
+        this.activeClans.remove(clanName.toLowerCase());
     }
 
     public boolean isActive(String clanTag) {
-        return activeClans.contains(clanTag.toLowerCase());
+        return activeClans.containsKey(clanTag.toLowerCase());
     }
 
     public Set<String> getActiveClans() {
-        return activeClans;
+        return activeClans.keySet();
     }
 
     public int getActiveMemberCount(List<OfflinePlayer> clanMembers) {
         int count = 0;
         for (OfflinePlayer clanMember : clanMembers) {
-            int inactiveDaysThreshold = plugin.getFeatherClansConfig().getClanInactiveDaysThreshold();
             long lastLogin = clanMember.getLastSeen();
             long thresholdTime = System.currentTimeMillis() - (inactiveDaysThreshold * 24L * 60L * 60L * 1000L);
             if (lastLogin > thresholdTime) count++;
@@ -49,10 +47,15 @@ public class ActiveManager {
         return count;
     }
 
-    public boolean assessActiveStatus(String clanTag) {
-        int activeMembersRequirement = plugin.getFeatherClansConfig().getClanActiveMembersRequirement();
+    public void assessActiveStatus(String clanTag) {
         int count = this.getActiveMemberCount(plugin.getClanManager().getOfflinePlayersByClan(clanTag));
-        return count >= activeMembersRequirement;
+
+        if (count >= activeMembersRequirement) {
+            activeClans.put(clanTag.toLowerCase(), count);
+        }
+        else {
+            activeClans.remove(clanTag.toLowerCase());
+        }
     }
 
 }

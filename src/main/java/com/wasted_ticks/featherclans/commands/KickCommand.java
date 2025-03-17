@@ -80,9 +80,8 @@ public class KickCommand implements CommandExecutor {
                     "clan", tag
             )));
         }
-        if (plugin.getActiveManager().isActive(tag) && !plugin.getActiveManager().assessActiveStatus(tag)) {
-            plugin.getActiveManager().removeActiveClan(tag);
-        }
+
+        plugin.getActiveManager().assessActiveStatus(tag);
 
         return true;
     }

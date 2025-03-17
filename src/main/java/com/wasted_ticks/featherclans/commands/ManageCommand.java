@@ -3,10 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
-import com.wasted_ticks.featherclans.managers.InviteManager;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -203,9 +199,8 @@ public class ManageCommand implements CommandExecutor {
                             "clan", tag
                     )));
                 }
-                if (plugin.getActiveManager().isActive(tag) && !plugin.getActiveManager().assessActiveStatus(tag)) {
-                    plugin.getActiveManager().removeActiveClan(tag);
-                }
+                plugin.getActiveManager().assessActiveStatus(tag);
+
                 break;
 
             case "disband":
@@ -218,7 +213,8 @@ public class ManageCommand implements CommandExecutor {
                     plugin.getServer()
                             .getOnlinePlayers()
                             .forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of("clan", tag.toLowerCase()))));
-                    plugin.getActiveManager().removeActiveClan(tag.toLowerCase());
+
+                    plugin.getActiveManager().removeClan(tag.toLowerCase());
                 }
                 else sender.sendMessage(messages.get("clan_disband_error_generic", null));
                 break;
