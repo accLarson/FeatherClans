@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.utilities.ChatUtility;
+import com.wasted_ticks.featherclans.utilities.TimeUtility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -69,25 +70,29 @@ public class ListCommand implements CommandExecutor {
 
         List<Component> clanLines = new ArrayList<>();
 
-        Component header = chatUtility.addSpacing(parser.deserialize("<gray>Clan"),45)
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Leader"),100))
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Online"), 50, true))
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Last Login"),115,true));
+        Component header = chatUtility.addSpacing(parser.deserialize("<gray>Clan"), 40)
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Leader"), 105))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Partner"), 50))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Online"), 40))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Active"), 30))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Seen"), 50, true));
 
         clanLines.add(header);
+        clanLines.add(messages.get("clan_line", null));
 
         for (String clan : sortedClans) {
             List<OfflinePlayer> clanMembers = plugin.getClanManager().getOfflinePlayersByClan(clan);
-            int lastSeenInt = clanMembers.stream().mapToInt(m -> (int) ((System.currentTimeMillis() - m.getLastLogin()) / 86400000)).min().getAsInt();
+            // Get the most recent login time from clan members
+            long mostRecentLogin = clanMembers.stream().mapToLong(OfflinePlayer::getLastLogin).max().orElse(0);
 
-            Component tag = chatUtility.addSpacing(parser.deserialize(clan), 45);
-            Component leader = chatUtility.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()),100);
-            Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count() + "/" + clanMembers.size()),50,true);
-            Component lastSeen;
-            if (lastSeenInt == 0) lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>Today"),115,true);
-            else lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + lastSeenInt + " Day(s) Ago"),115,true);
+            Component tag = chatUtility.addSpacing(parser.deserialize(clan), 40);
+            Component leader = chatUtility.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()), 105);
+            Component partner = chatUtility.addSpacing(parser.deserialize("<#949bd1>soon"), 50);
+            Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished((Player) member))).count() + "/" + clanMembers.size()), 40);
+            Component active = chatUtility.addSpacing(parser.deserialize("<#6C719D>x"), 30);
+            Component seen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + TimeUtility.formatTimeSince(mostRecentLogin)), 50, true);
 
-            clanLines.add(tag.append(leader).append(online).append(lastSeen)
+            clanLines.add(tag.append(leader).append(partner).append(online).append(active).append(seen)
                     .hoverEvent(HoverEvent.showText(parser.deserialize("<#6C719D>Click to view <white>" + clan + " <#6C719D>clan roster")))
                     .clickEvent(ClickEvent.runCommand("/clan roster " + clan)));
         }
