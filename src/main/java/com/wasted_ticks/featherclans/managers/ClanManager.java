@@ -293,6 +293,30 @@ public class ClanManager {
     }
 
     /**
+     * Sets the clan armor for a given clan.
+     *
+     * @param tag clan tag
+     * @param chestplate chestplate item
+     * @param leggings leggings item
+     * @param boots boots item
+     * @return boolean indicating success
+     */
+    public boolean setClanArmor(String tag, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
+        String query = "UPDATE clans SET chestplate = ?, leggings = ?, boots = ? WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(query)) {
+            update.setString(1, SerializationUtility.stackToString(chestplate));
+            update.setString(2, SerializationUtility.stackToString(leggings));
+            update.setString(3, SerializationUtility.stackToString(boots));
+            update.setString(4, tag.toLowerCase());
+            return update.executeUpdate() != 0;
+        } catch (SQLException e) {
+            plugin.getLog().severe("[FeatherClans] Failed to set clan armor for clan: " + tag);
+        }
+        return false;
+    }
+
+    /**
      * Adds an offline player to a clan.
      *
      * @param player

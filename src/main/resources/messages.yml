@@ -121,3 +121,7 @@ clan_manage_kick_error_not_in_clan: "<#949BD1>Error<#656B96>: Player must be in 
 clan_manage_kick_error_leader: "<#949BD1>Error<#656B96>: Can't kick the clan leader."
 clan_manage_kick_success: "<#656B96>You've kicked <#949BD1><player> <#656B96>from your clan."
 clan_manage_sethome_success: "<#656B96>You've set <clan> clan home to your current location."
+clan_setarmor_error_missing: "<#949BD1>Error<#656B96>: You must be wearing a chestplate, leggings, and boots."
+clan_setarmor_error_generic: "<#949BD1>Error<#656B96>: Unable to set clan armor."
+clan_setarmor_error_economy: "<#949BD1>Error<#656B96>: Setting clan armor costs <#949BD1><amount> Lapis<#656B96>."
+clan_setarmor_success: "<#656B96>You've set your clan armor to your currently equipped armor."

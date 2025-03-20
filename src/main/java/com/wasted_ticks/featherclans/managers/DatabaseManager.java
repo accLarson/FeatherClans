@@ -110,6 +110,9 @@ public class DatabaseManager {
         addColumnIfNotExists("clans", "banner", "TEXT NOT NULL");
         addColumnIfNotExists("clans", "tag", "VARCHAR(255) NOT NULL");
         addColumnIfNotExists("clans", "home", "TEXT NULL");
+        addColumnIfNotExists("clans", "chestplate", "TEXT NULL");
+        addColumnIfNotExists("clans", "leggings", "TEXT NULL");
+        addColumnIfNotExists("clans", "boots", "TEXT NULL");
         addColumnIfNotExists("clans", "leader_uuid", "VARCHAR(255) NOT NULL");
         addColumnIfNotExists("clans", "last_activity_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
         addColumnIfNotExists("clans", "created_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
