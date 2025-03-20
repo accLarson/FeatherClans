@@ -1,6 +1,7 @@
 package com.wasted_ticks.featherclans.managers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.BlockFace;
@@ -110,7 +111,7 @@ public class DisplayManager {
             ItemStack head = armorStand.getItem(EquipmentSlot.HEAD);
             SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
             skullMeta.setOwningPlayer(leader);
-//            skullMeta.displayName(Component.text(leader.getName()));
+            skullMeta.displayName(Component.text(String.valueOf(leader.getUniqueId())));
             head.setItemMeta(skullMeta);
 
             // Get clan armor with fallbacks for null items
