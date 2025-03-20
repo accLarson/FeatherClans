@@ -17,12 +17,6 @@ public class TimeUtility {
 
         // Convert to days and larger units
         long days = hours / 24;
-        long months = days / 30;
-        long years = days / 365;
-        
-        // Format based on the most appropriate time unit
-        if (days < 30) return days + " dy" + (days == 1 ? "" : "s");
-        else if (months < 12) return months + " mo" + (months == 1 ? "" : "s");
-        else return years + " yr" + (years == 1 ? "" : "s");
+        return days + " d";
     }
 }

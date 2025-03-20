@@ -60,22 +60,39 @@ public class ListCommand implements CommandExecutor {
             return true;
         }
 
-        List<String> sortedClans = clans.stream().sorted(Comparator.comparingInt(clan -> plugin.getClanManager().getOfflinePlayersByClan(clan).size())).collect(Collectors.toList());
-        sortedClans = sortedClans.stream().sorted(Comparator.comparingInt(clan -> (int) plugin.getClanManager().getOfflinePlayersByClan(clan).stream().filter(OfflinePlayer::isOnline).count())).collect(Collectors.toList());
-
-        Collections.reverse(sortedClans);
+        // Sort clans by active member count first, then online count, then most recent login time, then total member count
+        List<String> sortedClans = clans.stream()
+                .sorted(
+                    Comparator
+                        // First by active count
+                        .comparingInt((String clan) -> plugin.getActiveManager().getActiveCount(clan))
+                        // Then by online count
+                        .thenComparingInt(clan -> (int) plugin.getClanManager().getOfflinePlayersByClan(clan).stream()
+                                .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer())).count())
+                        // Finally by clan size
+                        .thenComparingInt(clan -> plugin.getClanManager().getOfflinePlayersByClan(clan).size())
+                        .reversed()
+                )
+                .collect(Collectors.toList());
 
         ChatUtility chatUtility = new ChatUtility(this.plugin);
         MiniMessage parser = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.color()).resolver(StandardTags.reset()).build()).build();
 
         List<Component> clanLines = new ArrayList<>();
 
-        Component header = chatUtility.addSpacing(parser.deserialize("<gray>Clan"), 40)
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Leader"), 105))
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Partner"), 50))
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Online"), 40))
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Active"), 30))
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Seen"), 50, true));
+        // Active header hoverable text
+        Component activeHeader = parser.deserialize("<gray>Active");
+        int memberReq = plugin.getFeatherClansConfig().getClanActiveMembersRequirement();
+        int dayReq = plugin.getFeatherClansConfig().getClanInactiveDaysThreshold();
+        String hoverText = "<#7FD47F>Active clan status <#6C719D>requirement:\n" + "<white>" + memberReq + "+ <#6C719D>members seen within <white>" + dayReq + " <#6C719D>days";
+        activeHeader = activeHeader.hoverEvent(HoverEvent.showText(parser.deserialize(hoverText)));
+
+        Component header = chatUtility.addSpacing(parser.deserialize("<gray>Clan"), 45)
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Leader"), 102))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Ally"), 42))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Online"), 44, true))
+                .append(chatUtility.addSpacing(activeHeader, 44, true))
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Seen"), 40, true));
 
         clanLines.add(header);
         clanLines.add(messages.get("clan_line", null));
@@ -85,18 +102,28 @@ public class ListCommand implements CommandExecutor {
             // Get the most recent login time from clan members
             long mostRecentLogin = clanMembers.stream().mapToLong(OfflinePlayer::getLastLogin).max().orElse(0);
 
-            Component tag = chatUtility.addSpacing(parser.deserialize(clan), 40);
-            Component leader = chatUtility.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()), 105);
-            Component partner = chatUtility.addSpacing(parser.deserialize("<#949bd1>soon"), 50);
-            Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished((Player) member))).count() + "/" + clanMembers.size()), 40);
-            
             // Use ActiveManager to get active member count
             String activeCount = String.valueOf(plugin.getActiveManager().getActiveCount(clan));
-            
-            Component active = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + activeCount), 30);
-            Component seen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + TimeUtility.formatTimeSince(mostRecentLogin)), 50, true);
 
-            clanLines.add(tag.append(leader).append(partner).append(online).append(active).append(seen)
+            // Check if clan is active and use pastel green color if it is
+            String activeValueColor = "<gray>";
+            if (activeCount.equals("0")) activeValueColor = "<dark_gray>";
+            else if (plugin.getActiveManager().isActive(clan)) activeValueColor = "<#7FD47F>"; // Pastel green color
+
+            Component activeComponent = parser.deserialize(activeValueColor + activeCount);
+
+            // variable for online count
+            long onlineCount = clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count();
+
+
+            Component tag = chatUtility.addSpacing(parser.deserialize(clan), 45);
+            Component leader = chatUtility.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()), 102);
+            Component ally = chatUtility.addSpacing(parser.deserialize("<#949bd1>-"), 42);
+            Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + onlineCount + "/" + clanMembers.size()), 44,true);
+            Component active = chatUtility.addSpacing(activeComponent, 44, true);
+            Component seen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + TimeUtility.formatTimeSince(mostRecentLogin)), 40, true);
+
+            clanLines.add(tag.append(leader).append(ally).append(online).append(active).append(seen)
                     .hoverEvent(HoverEvent.showText(parser.deserialize("<#6C719D>Click to view <white>" + clan + " <#6C719D>clan roster")))
                     .clickEvent(ClickEvent.runCommand("/clan roster " + clan)));
         }

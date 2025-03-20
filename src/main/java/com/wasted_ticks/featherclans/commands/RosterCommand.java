@@ -5,6 +5,7 @@ import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import com.wasted_ticks.featherclans.utilities.ChatUtility;
 import com.wasted_ticks.featherclans.utilities.TimeUtility;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -79,7 +80,7 @@ public class RosterCommand implements CommandExecutor {
         int onlineCount = (int) clanMembers.stream().filter(member -> member.isOnline() && !isVanished(member.getPlayer())).count();
 
         // Use ActiveManager to get active member count
-        String activeMembers = String.valueOf(plugin.getActiveManager().getActiveCount(clanTag));
+        String activeCount = String.valueOf(plugin.getActiveManager().getActiveCount(clanTag));
 
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !plugin.getClanManager().isOfflinePlayerLeader(m))).collect(Collectors.toList());
@@ -91,15 +92,28 @@ public class RosterCommand implements CommandExecutor {
 
         Component clanInfoLine = parser.deserialize("<gray>Clan: <#949BD1>" + clanTag);
         clanInfoLine = chatUtility.addSpacing(clanInfoLine, 72);
-        clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Partner: <#949BD1>soon"), 72));
+        clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Ally: <#949BD1>-"), 72));
         clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Online: <#949BD1>" + onlineCount + "/" + clanMembers.size()), 96, true));
-        clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Active: <#949BD1>" + activeMembers), 70, true));
+
+        // Create hover text for active members count
+        int memberReq = plugin.getFeatherClansConfig().getClanActiveMembersRequirement();
+        int dayReq = plugin.getFeatherClansConfig().getClanInactiveDaysThreshold();
+        String hoverText = "<#7FD47F>Active clan status <#6C719D>requirement:\n" + "<white>" + memberReq + "+ <#6C719D>members seen within <white>" + dayReq + " <#6C719D>days";
+
+
+        // Apply conditional coloring based on active status
+        String activeValueColor = "<gray>";
+        if (activeCount.equals("0")) activeValueColor = "<dark_gray>";
+        else if (plugin.getActiveManager().isActive(clanTag)) activeValueColor = "<#7FD47F>"; // Pastel green color
+        Component activeComponent = parser.deserialize("<gray>Active: " + activeValueColor + activeCount).hoverEvent(HoverEvent.showText(parser.deserialize(hoverText)));
+
+        clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(activeComponent, 70, true));
         rosterOutputLines.add(clanInfoLine);
         rosterOutputLines.add(messages.get("clan_line", null));
 
         Component header = chatUtility.addSpacing(parser.deserialize("<gray>Member"), 120)
                 .append(chatUtility.addSpacing(parser.deserialize("<gray>Role"), 80))
-                .append(chatUtility.addSpacing(parser.deserialize("<gray>Last Seen"), 110, true));
+                .append(chatUtility.addSpacing(parser.deserialize("<gray>Seen"), 110, true));
 
         rosterOutputLines.add(header);
 

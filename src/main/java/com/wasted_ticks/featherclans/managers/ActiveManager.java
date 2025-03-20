@@ -35,14 +35,8 @@ public class ActiveManager {
     }
 
     public void removeClan(String clanTag) {
-        // Remove the clan from activeClans map
         this.activeClans.remove(clanTag);
-
-        // Create a list of players to remove
-        List<OfflinePlayer> playersToRemove = this.activeMembers.entrySet().stream()
-                .filter(entry -> entry.getValue().equalsIgnoreCase(clanTag))
-                .map(Map.Entry::getKey).collect(Collectors.toList());
-        playersToRemove.forEach(this.activeMembers::remove);
+        this.getMembersInClan(clanTag).map(Map.Entry::getKey).collect(Collectors.toList()).forEach(this.activeMembers::remove);
     }
 
     public boolean isActive(String clanTag) {
@@ -54,7 +48,8 @@ public class ActiveManager {
     }
 
     public int getActiveCount(String clanTag) {
-        return activeClans.getOrDefault(clanTag.toLowerCase(), 0);
+        // Count all active members belonging to this clan regardless of whether the clan is "active"
+        return (int) this.getMembersInClan(clanTag).count();
     }
 
     public void updateActiveStatus(OfflinePlayer offlinePlayer, String clanTag) {
@@ -62,10 +57,20 @@ public class ActiveManager {
         this.assessActiveClanStatus(clanTag);
     }
 
+    /**
+     * Helper method to get a stream of active members in a specific clan
+     * @param clanTag The clan tag to filter by
+     * @return Stream of Map.Entry objects containing active members in the specified clan
+     */
+    private java.util.stream.Stream<Map.Entry<OfflinePlayer, String>> getMembersInClan(String clanTag) {
+        return activeMembers.entrySet().stream().filter(entry -> entry.getValue().equalsIgnoreCase(clanTag));
+    }
+
     private void assessActiveMemberStatus(OfflinePlayer clanMember, String clanTag) {
         long lastLogin = clanMember.getLastSeen();
         long thresholdTime = System.currentTimeMillis() - (inactiveDaysThreshold * 24L * 60L * 60L * 1000L);
-        if (lastLogin > thresholdTime && plugin.getClanManager().isOfflinePlayerInClan(clanMember)) activeMembers.put(clanMember, clanTag);
+        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(clanMember);
+        if (lastLogin > thresholdTime && inClan) activeMembers.put(clanMember, clanTag);
         else activeMembers.remove(clanMember);
 
     }
