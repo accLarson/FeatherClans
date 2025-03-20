@@ -124,4 +124,6 @@ clan_manage_sethome_success: "<#656B96>You've set <clan> clan home to your curre
 clan_setarmor_error_missing: "<#949BD1>Error<#656B96>: You must be wearing a chestplate, leggings, and boots."
 clan_setarmor_error_generic: "<#949BD1>Error<#656B96>: Unable to set clan armor."
 clan_setarmor_error_economy: "<#949BD1>Error<#656B96>: Setting clan armor costs <#949BD1><amount> Lapis<#656B96>."
-clan_setarmor_success: "<#656B96>You've set your clan armor to your currently equipped armor."
+clan_setarmor_success: "<#656B96>Clan display armor set to your currently equipped armor."
+clan_setarmor_success_economy: "<#656B96>Setting a clan armor cost you <#949BD1><amount> Lapis<#656B96>."
+

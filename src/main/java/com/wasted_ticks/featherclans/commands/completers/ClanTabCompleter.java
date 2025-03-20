@@ -51,7 +51,8 @@ public class ClanTabCompleter implements TabCompleter {
             "list",
             "resign",
             "roster",
-            "sethome"
+            "sethome",
+            "setarmor"
     );
     private final FeatherClans plugin;
     private final ClanManager manager;

@@ -47,15 +47,14 @@ settings:
     location: [0, 0, 0]
     facing: NORTH
     count: 11
-
   mysql:
     enabled: true
-    username: 'feather_clans'
+    username: ''
     # set for pterodactyl usage
-    host: '172.17.0.1'
+    host: ''
     port: 3306
     password: ''
-    database: 'clans'
+    database: ''
   deny_tags:
     - "admin"
     - "zerek"
