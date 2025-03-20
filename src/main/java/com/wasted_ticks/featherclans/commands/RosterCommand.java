@@ -80,7 +80,7 @@ public class RosterCommand implements CommandExecutor {
         int onlineCount = (int) clanMembers.stream().filter(member -> member.isOnline() && !isVanished(member.getPlayer())).count();
 
         // Use ActiveManager to get active member count
-        String activeCount = String.valueOf(plugin.getActiveManager().getActiveCount(clanTag));
+        String activeCount = String.valueOf(plugin.getActiveManager().getActiveMemberCount(clanTag));
 
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
         sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !plugin.getClanManager().isOfflinePlayerLeader(m))).collect(Collectors.toList());

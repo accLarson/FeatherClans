@@ -317,6 +317,84 @@ public class ClanManager {
     }
 
     /**
+     * Gets the chestplate for a given clan.
+     *
+     * @param tag
+     * @return ItemStack representing the clan's chestplate, or null if not found
+     */
+    public ItemStack getChestplate(String tag) {
+        String query = "SELECT `chestplate` FROM clans WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setString(1, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+
+            if(results != null && results.next()) {
+                String chestplate = results.getString("chestplate");
+                if(chestplate != null) {
+                    return SerializationUtility.stringToStack(chestplate);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLog().severe("[FeatherClans] Failed to get chestplate for clan: " + tag);
+        }
+        return null;
+    }
+
+    /**
+     * Gets the leggings for a given clan.
+     *
+     * @param tag
+     * @return ItemStack representing the clan's leggings, or null if not found
+     */
+    public ItemStack getLeggings(String tag) {
+        String query = "SELECT `leggings` FROM clans WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setString(1, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+
+            if(results != null && results.next()) {
+                String leggings = results.getString("leggings");
+                if(leggings != null) {
+                    return SerializationUtility.stringToStack(leggings);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLog().severe("[FeatherClans] Failed to get leggings for clan: " + tag);
+        }
+        return null;
+    }
+
+    /**
+     * Gets the boots for a given clan.
+     *
+     * @param tag
+     * @return ItemStack representing the clan's boots, or null if not found
+     */
+    public ItemStack getBoots(String tag) {
+        String query = "SELECT `boots` FROM clans WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setString(1, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+
+            if(results != null && results.next()) {
+                String boots = results.getString("boots");
+                if(boots != null) {
+                    return SerializationUtility.stringToStack(boots);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLog().severe("[FeatherClans] Failed to get boots for clan: " + tag);
+        }
+        return null;
+    }
+
+    /**
      * Adds an offline player to a clan.
      *
      * @param player
@@ -403,7 +481,7 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed check clan home for: " + tag);
+            plugin.getLog().severe("[FeatherClans] Failed to get banner for: " + tag);
         }
         return null;
     }

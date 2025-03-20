@@ -46,7 +46,7 @@ settings:
   display:
     location: [0, 0, 0]
     facing: NORTH
-    count: 11
+    count: 10
   mysql:
     enabled: true
     username: ''

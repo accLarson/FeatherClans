@@ -22,15 +22,15 @@ public final class FeatherClans extends JavaPlugin {
 
     private static final Logger logger = Logger.getLogger("Minecraft");
     private FeatherClans plugin;
+    private FeatherClansConfig config;
+    private FeatherClansMessages messages;
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
-    private InviteManager inviteManager;
     private FriendlyFireManager friendlyFireManager;
     private ActiveManager activeManager;
     private DisplayManager displayManager;
+    private InviteManager inviteManager;
     private PaginateUtility paginateUtility;
-    private FeatherClansConfig config;
-    private FeatherClansMessages messages;
 
     private Economy economy;
 

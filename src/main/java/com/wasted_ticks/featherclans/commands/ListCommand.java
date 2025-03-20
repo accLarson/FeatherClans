@@ -65,7 +65,7 @@ public class ListCommand implements CommandExecutor {
                 .sorted(
                     Comparator
                         // First by active count
-                        .comparingInt((String clan) -> plugin.getActiveManager().getActiveCount(clan))
+                        .comparingInt((String clan) -> plugin.getActiveManager().getActiveMemberCount(clan))
                         // Then by online count
                         .thenComparingInt(clan -> (int) plugin.getClanManager().getOfflinePlayersByClan(clan).stream()
                                 .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer())).count())
@@ -103,7 +103,7 @@ public class ListCommand implements CommandExecutor {
             long mostRecentLogin = clanMembers.stream().mapToLong(OfflinePlayer::getLastLogin).max().orElse(0);
 
             // Use ActiveManager to get active member count
-            String activeCount = String.valueOf(plugin.getActiveManager().getActiveCount(clan));
+            String activeCount = String.valueOf(plugin.getActiveManager().getActiveMemberCount(clan));
 
             // Check if clan is active and use pastel green color if it is
             String activeValueColor = "<gray>";

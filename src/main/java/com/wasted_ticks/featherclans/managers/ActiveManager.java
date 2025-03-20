@@ -5,6 +5,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ActiveManager {
     private final Map<String, Integer> activeClans = new HashMap<>();
@@ -47,9 +48,17 @@ public class ActiveManager {
         return activeMembers.containsKey(offlinePlayer);
     }
 
-    public int getActiveCount(String clanTag) {
+    public int getActiveMemberCount(String clanTag) {
         // Count all active members belonging to this clan regardless of whether the clan is "active"
         return (int) this.getMembersInClan(clanTag).count();
+    }
+    
+    public List<String> getActiveClansOrdered() {
+        return activeClans.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     public void updateActiveStatus(OfflinePlayer offlinePlayer, String clanTag) {
@@ -62,7 +71,7 @@ public class ActiveManager {
      * @param clanTag The clan tag to filter by
      * @return Stream of Map.Entry objects containing active members in the specified clan
      */
-    private java.util.stream.Stream<Map.Entry<OfflinePlayer, String>> getMembersInClan(String clanTag) {
+    private Stream<Map.Entry<OfflinePlayer, String>> getMembersInClan(String clanTag) {
         return activeMembers.entrySet().stream().filter(entry -> entry.getValue().equalsIgnoreCase(clanTag));
     }
 
