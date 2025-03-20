@@ -27,6 +27,7 @@ public final class FeatherClans extends JavaPlugin {
     private InviteManager inviteManager;
     private FriendlyFireManager friendlyFireManager;
     private ActiveManager activeManager;
+    private DisplayManager displayManager;
     private PaginateUtility paginateUtility;
     private FeatherClansConfig config;
     private FeatherClansMessages messages;
@@ -44,6 +45,7 @@ public final class FeatherClans extends JavaPlugin {
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
         this.activeManager = new ActiveManager(plugin);
+        this.displayManager = new DisplayManager(plugin);
         this.inviteManager = new InviteManager(plugin);
         this.paginateUtility = new PaginateUtility(plugin);
 
@@ -109,6 +111,10 @@ public final class FeatherClans extends JavaPlugin {
 
     public ActiveManager getActiveManager() {
         return this.activeManager;
+    }
+
+    public DisplayManager getDisplayManager() {
+        return this.displayManager;
     }
 
     public PaginateUtility getPaginateUtil() {

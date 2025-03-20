@@ -42,6 +42,11 @@ settings:
     min_tag_size: 3
     max_tag_size: 5
     max_members: 30
+  display:
+    location: [0, 0, 0]
+    facing: NORTH
+    count: 11
+
   mysql:
     enabled: true
     username: 'feather_clans'

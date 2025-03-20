@@ -1,6 +1,9 @@
 package com.wasted_ticks.featherclans.config;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
@@ -9,6 +12,9 @@ public class FeatherClansConfig {
 
     private final FeatherClans plugin;
     private FileConfiguration config;
+    private Location displayLocation;
+    private String displayFacing;
+    private int displayCount;
 
     /* SETTINGS */
     private boolean economyEnabled;
@@ -71,6 +77,12 @@ public class FeatherClansConfig {
         this.mysqlPort = config.getInt("settings.mysql.port");
         this.mysqlPassword = config.getString("settings.mysql.password");
         this.mysqlDatabase = config.getString("settings.mysql.database");
+
+        List<Double> coords = config.getDoubleList("settings.display.location");
+        World world = Bukkit.getWorlds().get(0);
+        this.displayLocation = new Location(world, coords.get(0), coords.get(1), coords.get(2));
+        this.displayFacing = config.getString("settings.display.facing");
+        this.displayCount = config.getInt("settings.display.count");
 
         this.denyTags = config.getStringList("settings.deny_tags");
 
@@ -167,5 +179,17 @@ public class FeatherClansConfig {
 
     public int getLinesPerPage() {
         return linesPerPage;
+    }
+
+    public Location getDisplayLocation() {
+        return displayLocation;
+    }
+
+    public String getDisplayFacing() {
+        return displayFacing;
+    }
+
+    public int getDisplayCount() {
+        return displayCount;
     }
 }

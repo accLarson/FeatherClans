@@ -17,40 +17,24 @@ public class DatabaseManager {
         source = new HikariDataSource();
         this.isUseMySQL = this.plugin.getFeatherClansConfig().isMysqlEnabled();
         this.initConnection();
-        this.initTables();
+        this.initMySQLTables();
     }
 
     public void close() {
-        if(!source.isClosed()) {
-            source.close();
-        }
+        if(!source.isClosed()) source.close();
     }
 
     private void initConnection() {
         if (this.isUseMySQL) {
             this.initMySQLConnection();
         } else {
-            this.initSQLiteConnection();
+            plugin.getLogger().warning("MySQL database is not configured - plugin disabled. Configure values and restart.");
+            plugin.disable();
         }
     }
 
-    private void initSQLiteConnection() {
-        File folder = this.plugin.getDataFolder();
-        if (!folder.exists()) {
-            boolean created = folder.mkdir();
-            if (!created) {
-                plugin.getLog().severe("[FeatherClans] Unable to create plugin data folder.");
-            }
-        }
-        File file = new File(folder.getAbsolutePath() + File.separator + "FeatherClans.db");
-        String url = "jdbc:sqlite:" + file.getAbsolutePath();
-        source.setJdbcUrl(url);
-
-        try(Connection connection = this.getConnection()) {
-            plugin.getLog().info("[FeatherClans] Initialized connection to local SQLite database.");
-        } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Unable to initialize SQLite connection.");
-        }
+    public Connection getConnection() throws SQLException {
+        return source.getConnection();
     }
 
     private void initMySQLConnection() {
@@ -67,10 +51,10 @@ public class DatabaseManager {
         source.setPassword(password);
 
         try(Connection connection = this.getConnection()) {
-            plugin.getLog().info("[FeatherClans] Initialized connection to MySQL database.");
+            plugin.getLogger().info("Initialized connection to MySQL database.");
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Unable to initialize MySQL connection.");
-            plugin.getLog().severe("[FeatherClans] Ensure connection can be made with provided mysql strings.");
+            plugin.getLogger().severe("Unable to initialize MySQL connection.");
+            plugin.getLogger().severe("Ensure connection can be made with provided mysql strings.");
         }
     }
 
@@ -79,87 +63,64 @@ public class DatabaseManager {
             ResultSet set = connection.getMetaData().getTables(null, null, table, null);
             return set.next();
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Unable to query table metadata.");
+            plugin.getLogger().severe("Unable to query table metadata.");
             return false;
         }
     }
 
-    private void initTables() {
-        if (this.isUseMySQL) {
-            this.initMySQLTables();
-        } else {
-            this.initSQLiteTables();
+    private boolean columnExists(String table, String column) {
+        try (Connection connection = this.getConnection()) {
+            DatabaseMetaData md = connection.getMetaData();
+            ResultSet rs = md.getColumns(null, null, table, column);
+            return rs.next();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Unable to check if column exists: " + column);
+            return false;
         }
     }
 
-    private void initSQLiteTables() {
-        if (!this.existsTable("clans")) {
-            plugin.getLog().info("[FeatherClans] Creating `clans` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `clans` ("
-                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + " `banner` VARCHAR(255) NOT NULL, "
-                    + " `tag` VARCHAR(255) NOT NULL, "
-                    + " `home` VARCHAR(255) NULL, "
-                    + " `leader_uuid` VARCHAR(255) NOT NULL, "
-                    + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-                    + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+    private void createTableIfNotExists(String table, String primaryColumn, String primaryColumnDefinition) {
+        if (!existsTable(table)) {
+            String query = String.format("CREATE TABLE IF NOT EXISTS `%s` (`%s` %s)", table, primaryColumn, primaryColumnDefinition);
             try(Connection connection = this.getConnection()) {
                 connection.createStatement().execute(query);
+                plugin.getLog().info(String.format("Created table '%s' with primary key '%s'", table, primaryColumn));
             } catch(SQLException e) {
-                plugin.getLog().severe("[FeatherClans] Unable to create `clans` table.");
+                plugin.getLog().severe(String.format("Failed to create base `%s` table.", table));
             }
         }
-        if (!this.existsTable("clan_members")) {
-            plugin.getLog().info("[FeatherClans] Creating `clan_members` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `clan_members` ("
-                    + " `id` INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + " `mojang_uuid` VARCHAR(255) NOT NULL, "
-                    + " `clan_id` INTEGER NOT NULL, "
-                    + " `last_seen_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-                    + " `join_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-            try(Connection connection = this.getConnection()) {
+    }
+
+    private void addColumnIfNotExists(String table, String column, String columnDefinition) {
+        if (!columnExists(table, column)) {
+            try (Connection connection = this.getConnection()) {
+                String query = String.format("ALTER TABLE `%s` ADD COLUMN `%s` %s", table, column, columnDefinition);
                 connection.createStatement().execute(query);
-            } catch(SQLException e) {
-                plugin.getLog().severe("[FeatherClans] Unable to create `clan_members` table.");
+                plugin.getLog().info(String.format("Added column '%s' to table '%s'", column, table));
+            } catch (SQLException e) {
+                plugin.getLog().severe(String.format("Failed to add column '%s' to table '%s'", column, table));
             }
         }
     }
 
     private void initMySQLTables() {
-        if (!this.existsTable("clans")) {
-            plugin.getLog().info("[FeatherClans] Creating `clans` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `clans` ("
-                    + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
-                    + " `banner` TEXT NOT NULL, "
-                    + " `tag` VARCHAR(255) NOT NULL, "
-                    + " `home` TEXT NULL, "
-                    + " `leader_uuid` VARCHAR(255) NOT NULL, "
-                    + " `last_activity_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-                    + " `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-            try(Connection connection = this.getConnection()) {
-                connection.createStatement().execute(query);
-            } catch(SQLException e) {
-                plugin.getLog().severe("[FeatherClans] Unable to create `clans` table.");
-            }
-        }
-        if (!this.existsTable("clan_members")) {
-            plugin.getLog().info("[FeatherClans] Creating `clan_members` table.");
-            String query = "CREATE TABLE IF NOT EXISTS `clan_members` ("
-                    + " `id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
-                    + " `mojang_uuid` VARCHAR(255) NOT NULL, "
-                    + " `clan_id` INTEGER NOT NULL, "
-                    + " `last_seen_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-                    + " `join_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-            try(Connection connection = this.getConnection()) {
-                connection.createStatement().execute(query);
-            } catch(SQLException e) {
-                plugin.getLog().severe("[FeatherClans] Unable to create `clan_members` table.");
-            }
-        }
+
+        // Create clans Table
+        createTableIfNotExists("clans", "id", "INTEGER PRIMARY KEY AUTO_INCREMENT");
+        addColumnIfNotExists("clans", "banner", "TEXT NOT NULL");
+        addColumnIfNotExists("clans", "tag", "VARCHAR(255) NOT NULL");
+        addColumnIfNotExists("clans", "home", "TEXT NULL");
+        addColumnIfNotExists("clans", "leader_uuid", "VARCHAR(255) NOT NULL");
+        addColumnIfNotExists("clans", "last_activity_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+        addColumnIfNotExists("clans", "created_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+
+        // Create clan_members Table
+        createTableIfNotExists("clan_members", "id", "INTEGER PRIMARY KEY AUTO_INCREMENT");
+        addColumnIfNotExists("clan_members", "mojang_uuid", "VARCHAR(255) NOT NULL");
+        addColumnIfNotExists("clan_members", "clan_id", "INTEGER NOT NULL");
+        addColumnIfNotExists("clan_members", "last_seen_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+        addColumnIfNotExists("clan_members", "join_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
     }
 
-    public Connection getConnection() throws SQLException {
-        return source.getConnection();
-    }
 
 }
