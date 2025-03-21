@@ -29,25 +29,34 @@ public class SetArmorCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.setarmor")) {
-            sender.sendMessage(messages.get("clan_error_permission", null));
+        Player originator = (Player) sender;
+
+        if (!originator.hasPermission("feather.clans.setarmor")) {
+            originator.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
-        Player player = (Player) sender;
-        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
-        if (!leader) {
-            player.sendMessage(messages.get("clan_error_leader", null));
+        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
+            originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
 
-        String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
-        ItemStack chestplate = player.getInventory().getChestplate();
-        ItemStack leggings = player.getInventory().getLeggings();
-        ItemStack boots = player.getInventory().getBoots();
+        String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
+        ItemStack chestplate = originator.getInventory().getChestplate();
+        ItemStack leggings = originator.getInventory().getLeggings();
+        ItemStack boots = originator.getInventory().getBoots();
 
         if (chestplate == null || leggings == null || boots == null) {
-            player.sendMessage(messages.get("clan_setarmor_error_missing", null));
+            originator.sendMessage(messages.get("clan_setarmor_error_missing", null));
+            return true;
+        }
+
+        if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
+            if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
+                double amount = this.plugin.getFeatherClansConfig().getEconomySetArmorPrice();
+                originator.sendMessage(messages.get("clan_economy_cost_warning", Map.of("amount", String.valueOf((int) amount))));
+            }
+            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan setarmor")));
             return true;
         }
 
@@ -55,16 +64,16 @@ public class SetArmorCommand implements CommandExecutor {
         if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
             double amount = this.plugin.getFeatherClansConfig().getEconomySetArmorPrice();
-            if (economy.has(player, amount)) {
-                economy.withdrawPlayer(player, amount);
+            if (economy.has(originator, amount)) {
+                economy.withdrawPlayer(originator, amount);
                 success = plugin.getClanManager().setClanArmor(tag, chestplate, leggings, boots);
                 if(success) {
-                    player.sendMessage(messages.get("clan_setarmor_success_economy", Map.of(
+                    originator.sendMessage(messages.get("clan_setarmor_success_economy", Map.of(
                             "amount", String.valueOf((int) amount)
                     )));
                 }
             } else {
-                player.sendMessage(messages.get("clan_setarmor_error_economy", Map.of(
+                originator.sendMessage(messages.get("clan_setarmor_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)
                 )));
                 return true;
@@ -74,11 +83,11 @@ public class SetArmorCommand implements CommandExecutor {
         }
 
         if (!success) {
-            player.sendMessage(messages.get("clan_setarmor_error_generic", null));
+            originator.sendMessage(messages.get("clan_setarmor_error_generic", null));
             return true;
         }
 
-        player.sendMessage(messages.get("clan_setarmor_success", null));
+        originator.sendMessage(messages.get("clan_setarmor_success", null));
         return true;
     }
 }

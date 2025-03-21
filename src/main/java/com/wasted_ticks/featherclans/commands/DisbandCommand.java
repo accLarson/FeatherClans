@@ -33,34 +33,41 @@ public class DisbandCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.disband")) {
-            sender.sendMessage(messages.get("clan_error_permission", null));
+        Player originator = (Player) sender;
+
+        if (!originator.hasPermission("feather.clans.disband")) {
+            originator.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
-        Player player = (Player) sender;
-        boolean isLeader = manager.isOfflinePlayerLeader(player);
-        boolean successful = false;
-        if (isLeader) {
-            String tag = manager.getClanByOfflinePlayer(player);
-            List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
-            for (OfflinePlayer member : members) {
-                manager.resignOfflinePlayer(member);
-            }
-            successful = manager.deleteClan(tag);
-            player.sendMessage(messages.get("clan_disband_success", Map.of("clan", tag)));
-            plugin.getServer()
-                    .getOnlinePlayers()
-                    .forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of("clan", tag.toLowerCase()))));
-
-            plugin.getActiveManager().removeClan(tag.toLowerCase());
-
-        } else {
-            player.sendMessage(messages.get("clan_error_leader", null));
+        if (!manager.isOfflinePlayerLeader(originator)) {
+            originator.sendMessage(messages.get("clan_error_leader", null));
+            return true;
         }
 
+        if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
+            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan disband")));
+            return true;
+        }
+
+        String tag = manager.getClanByOfflinePlayer(originator);
+
+        List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
+
+        members.forEach(manager::resignOfflinePlayer);
+
+        boolean successful = manager.deleteClan(tag);
+
+        originator.sendMessage(messages.get("clan_disband_success", Map.of("clan", tag)));
+
+        plugin.getServer()
+                .getOnlinePlayers()
+                .forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of("clan", tag.toLowerCase()))));
+
+        plugin.getActiveManager().removeClan(tag.toLowerCase());
+
         if(!successful) {
-            player.sendMessage(messages.get("clan_disband_error_generic", null));
+            originator.sendMessage(messages.get("clan_disband_error_generic", null));
         }
 
         return true;

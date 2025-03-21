@@ -30,35 +30,46 @@ public class SetHomeCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.sethome")) {
-            sender.sendMessage(messages.get("clan_error_permission", null));
+        Player originator = (Player) sender;
+
+        if (!originator.hasPermission("feather.clans.sethome")) {
+            originator.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
-        Player player = (Player) sender;
-        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
-        if (!leader) {
-            player.sendMessage(messages.get("clan_error_leader", null));
+        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
+            originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
 
-        String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
-        Location location = player.getLocation();
+        String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
+
+        Location location = originator.getLocation();
+
+        if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
+            if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
+                double amount = this.plugin.getFeatherClansConfig().getEconomySetHomePrice();
+                originator.sendMessage(messages.get("clan_economy_cost_warning", Map.of("amount", String.valueOf((int) amount))));
+            }
+            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan sethome")));
+            return true;
+        }
 
         boolean success = false;
+
         if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
             double amount = this.plugin.getFeatherClansConfig().getEconomySetHomePrice();
-            if (economy.has(player, amount)) {
-                economy.withdrawPlayer(player, amount);
+            if (economy.has(originator, amount)) {
+                economy.withdrawPlayer(originator, amount);
                 success = plugin.getClanManager().setClanHome(tag, location);
                 if(success) {
-                    player.sendMessage(messages.get("clan_sethome_success_economy", Map.of(
+                    originator.sendMessage(messages.get("clan_sethome_success_economy", Map.of(
                             "amount", String.valueOf((int) amount)
                     )));
                 }
             } else {
-                player.sendMessage(messages.get("clan_sethome_error_economy", Map.of(
+                originator.sendMessage(messages.get("clan_sethome_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)
                 )));
                 return true;
@@ -68,11 +79,11 @@ public class SetHomeCommand implements CommandExecutor {
         }
 
         if (!success) {
-            player.sendMessage(messages.get("clan_sethome_error_generic", null));
+            originator.sendMessage(messages.get("clan_sethome_error_generic", null));
             return true;
         }
 
-        player.sendMessage(messages.get("clan_sethome_success", null));
+        originator.sendMessage(messages.get("clan_sethome_success", null));
         return true;
 
     }

@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class ResignCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
@@ -26,33 +28,42 @@ public class ResignCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.resign")) {
-            sender.sendMessage(messages.get("clan_error_permission", null));
+        Player originator = (Player) sender;
+
+        if (!originator.hasPermission("feather.clans.resign")) {
+            originator.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
-        Player player = (Player) sender;
-        if (!plugin.getClanManager().isOfflinePlayerInClan(player)) {
-            player.sendMessage(messages.get("clan_resign_error_no_clan", null));
+        if (!plugin.getClanManager().isOfflinePlayerInClan(originator)) {
+            originator.sendMessage(messages.get("clan_resign_error_no_clan", null));
             return true;
         }
 
-        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(player);
+        boolean leader = plugin.getClanManager().isOfflinePlayerLeader(originator);
+
         if (leader) {
-            player.sendMessage(messages.get("clan_resign_error_leader", null));
+            originator.sendMessage(messages.get("clan_resign_error_leader", null));
             return true;
         }
 
-        String tag = plugin.getClanManager().getClanByOfflinePlayer(player);
-        boolean deleted = plugin.getClanManager().resignOfflinePlayer(player);
-        if (!deleted) {
-            player.sendMessage(messages.get("clan_resign_error_generic", null));
+        if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
+            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan resign ")));
             return true;
         }
 
-        player.sendMessage(messages.get("clan_resign_success", null));
+        String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        plugin.getActiveManager().updateActiveStatus(player, tag);
+        boolean successful = plugin.getClanManager().resignOfflinePlayer(originator);
+
+        if (!successful) {
+            originator.sendMessage(messages.get("clan_resign_error_generic", null));
+            return true;
+        }
+
+        originator.sendMessage(messages.get("clan_resign_success", null));
+
+        plugin.getActiveManager().updateActiveStatus(originator, tag);
 
         return true;
 

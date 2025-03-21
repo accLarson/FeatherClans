@@ -36,100 +36,106 @@ public class CreateCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.create")) {
-            sender.sendMessage(messages.get("clan_error_permission", null));
+        Player originator = (Player) sender;
+
+        if (!originator.hasPermission("feather.clans.create")) {
+            originator.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
-        if (args.length != 2) {
-            sender.sendMessage(messages.get("clan_create_error_invalid_arg_length", null));
+        if (args.length < 2) {
+            originator.sendMessage(messages.get("clan_create_error_invalid_arg_length", null));
             return true;
         }
 
         String tag = args[1];
+
         int max = config.getClanMaxTagSize();
+
         if (tag.length() > max) {
-            sender.sendMessage(messages.get("clan_create_error_length_tag_max", Map.of(
+            originator.sendMessage(messages.get("clan_create_error_length_tag_max", Map.of(
                     "length", max + ""
             )));
             return true;
         }
 
         int min = config.getClanMinTagSize();
+
         if (tag.length() < min) {
-            sender.sendMessage(messages.get("clan_create_error_length_tag_min", Map.of(
+            originator.sendMessage(messages.get("clan_create_error_length_tag_min", Map.of(
                     "length", min + ""
             )));
             return true;
         }
 
         if (!tag.chars().allMatch(Character::isLetter)) {
-            sender.sendMessage(messages.get("clan_create_error_invalid_tag", null));
+            originator.sendMessage(messages.get("clan_create_error_invalid_tag", null));
             return true;
         }
 
         List<String> bannedTags = this.plugin.getFeatherClansConfig().getDenyTags();
+
         if (bannedTags.contains(tag)) {
-            sender.sendMessage(messages.get("clan_create_error_denied_tag", null));
+            originator.sendMessage(messages.get("clan_create_error_denied_tag", null));
             return true;
         }
 
         List<String> clans = plugin.getClanManager().getClans();
+
         if (clans.contains(tag.toLowerCase())) {
-            sender.sendMessage(messages.get("clan_create_error_similar_tag", null));
+            originator.sendMessage(messages.get("clan_create_error_similar_tag", null));
             return true;
         }
 
-        Player player = (Player) sender;
-        ItemStack stack = player.getInventory().getItemInMainHand();
+        ItemStack stack = originator.getInventory().getItemInMainHand();
+
         if (!stack.getType().name().contains("BANNER")) {
-            player.sendMessage(messages.get("clan_create_error_banner", null));
+            originator.sendMessage(messages.get("clan_create_error_banner", null));
             return true;
         }
 
-        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(player);
+        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(originator);
+
         if (inClan) {
-            player.sendMessage(messages.get("clan_create_error_in_clan", null));
+            originator.sendMessage(messages.get("clan_create_error_in_clan", null));
+            return true;
+        }
+
+        if (args.length < 3 || !args[2].equalsIgnoreCase("confirm")) {
+            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan create " + tag)));
             return true;
         }
 
         boolean created;
+
         if (config.isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
             double amount = config.getEconomyCreationPrice();
-            if (economy.has(player, amount)) {
-                economy.withdrawPlayer(player, amount);
-                created = plugin.getClanManager().createClan(player, stack, tag.toLowerCase());
+            if (economy.has(originator, amount)) {
+                economy.withdrawPlayer(originator, amount);
+                created = plugin.getClanManager().createClan(originator, stack, tag.toLowerCase());
                 if(created) {
-                    player.sendMessage(messages.get("clan_create_success_economy", Map.of(
+                    originator.sendMessage(messages.get("clan_create_success_economy", Map.of(
                             "amount", String.valueOf((int) amount)
                     )));
                 }
 
             } else {
-                player.sendMessage(messages.get("clan_create_error_economy", Map.of(
+                originator.sendMessage(messages.get("clan_create_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)
                 )));
                 return true;
             }
         } else {
-            created = plugin.getClanManager().createClan(player, stack, tag.toLowerCase());
+            created = plugin.getClanManager().createClan(originator, stack, tag.toLowerCase());
         }
 
         if(!created) {
-            player.sendMessage(messages.get("clan_create_error_generic", null));
+            originator.sendMessage(messages.get("clan_create_error_generic", null));
         } else {
             plugin.getServer()
                 .getOnlinePlayers()
-                .stream()
-//                .filter(p -> !p.equals(player))
-                .forEach(p -> p.sendMessage(messages.get("clan_create_success", Map.of(
-                        "clan", tag.toLowerCase()
-                ))));
-//            player.sendMessage(messages.get("clan_create_success", Map.of(
-//                    "clan", tag.toLowerCase()
-//            )));
-
+                .forEach(p -> p.sendMessage(messages.get("clan_create_success", Map.of("clan", tag.toLowerCase()))));
         }
         return true;
     }

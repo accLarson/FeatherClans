@@ -29,19 +29,19 @@ public class ConferCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.confer")) {
-            sender.sendMessage(messages.get("clan_error_permission", null));
+        Player originator = (Player) sender;
+
+        if (!originator.hasPermission("feather.clans.confer")) {
+            originator.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
-
-        Player originator = (Player) sender;
         if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
 
-        if (args.length != 2) {
+        if (args.length < 2) {
             originator.sendMessage(messages.get("clan_confer_no_player", null));
             return true;
         }
@@ -54,17 +54,24 @@ public class ConferCommand implements CommandExecutor {
         }
 
         if (plugin.getClanManager().isOfflinePlayerLeader(potentialLeader)) {
-            sender.sendMessage(messages.get("clan_confer_error_leader", null));
+            originator.sendMessage(messages.get("clan_confer_error_leader", null));
             return true;
         }
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
+
         if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader, clan)) {
             originator.sendMessage(messages.get("clan_confer_not_in_clan", null));
             return true;
         }
 
+        if (args.length < 3 || !args[2].equalsIgnoreCase("confirm")) {
+            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan confer " + potentialLeader.getName())));
+            return true;
+        }
+
         boolean successful = this.plugin.getClanManager().setClanLeader(clan, potentialLeader);
+
         if (successful) {
             originator.sendMessage(messages.get("clan_confer_success_originator", Map.of(
                     "player", potentialLeader.getName()
