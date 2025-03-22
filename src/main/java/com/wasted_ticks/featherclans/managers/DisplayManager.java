@@ -2,17 +2,22 @@ package com.wasted_ticks.featherclans.managers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Banner;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.block.data.Directional;
 import org.bukkit.inventory.meta.SkullMeta;
-
+import org.bukkit.inventory.meta.BannerMeta;
 import java.util.List;
 
 import static org.bukkit.entity.EntityType.ARMOR_STAND;
@@ -25,7 +30,7 @@ public class DisplayManager {
     private int count;
     private double xIncrement = 0;
     private double zIncrement = 0;
-    private double yaw = 45.0;
+    private float yaw = 45.0F;
     
     // Default armor items for when clan-specific armor is null
     private static final ItemStack DEFAULT_CHESTPLATE = new ItemStack(Material.LEATHER_CHESTPLATE);
@@ -64,11 +69,11 @@ public class DisplayManager {
 
     private void resetDisplays() {
         // Delete existing armor stands
-        this.deleteExistingArmorStands();
-        this.createArmorStands();
+        this.removeExistingDisplays();
+        this.createDisplays();
     }
 
-    private void deleteExistingArmorStands() {
+    private void removeExistingDisplays() {
         Location currentLocation = displayLocation.clone();
 
         int i = 0;
@@ -78,15 +83,27 @@ public class DisplayManager {
             currentLocation.getWorld().getNearbyEntities(currentLocation, 0.1, 0.1, 0.1)
                     .stream()
                     .filter(entity -> entity instanceof ArmorStand).findFirst().ifPresent(Entity::remove);
-            currentLocation.add(this.xIncrement, 0, this.zIncrement);
-            i++;
+            
+            Location bannerLocation = currentLocation.clone().add(0, 3, 0);
+            if (bannerLocation.getBlock().getType().name().contains("BANNER")) {
+                bannerLocation.getBlock().setType(Material.AIR);
+            }
+            
+            // Remove sign if it exists
+            Location signLocation = currentLocation.clone().add(0, -1, 0).add(blockFace.getModX(), 0, blockFace.getModZ());
+            if (signLocation.getBlock().getType().name().contains("SIGN")) {
+                signLocation.getBlock().setType(Material.AIR);
+            }
+            
+           currentLocation.add(this.xIncrement, 0, this.zIncrement);
+           i++;
         }
     }
 
-    private void createArmorStands() {
+    private void createDisplays() {
         Location currentLocation = displayLocation.clone();
         currentLocation.setPitch(0);
-        currentLocation.setYaw((float) yaw);
+        currentLocation.setYaw(yaw);
         List<String> activeClans = plugin.getActiveManager().getActiveClansOrdered();
 
         int i = 0;
@@ -103,7 +120,6 @@ public class DisplayManager {
             armorStand.setVisible(true);
             armorStand.setGravity(false);
             armorStand.setInvulnerable(true);
-
 
             // set head
             OfflinePlayer leader = Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clanTag));
@@ -123,10 +139,47 @@ public class DisplayManager {
             armorStand.setItem(EquipmentSlot.LEGS, leggings);
             armorStand.setItem(EquipmentSlot.FEET, boots);
 
+            // set banner
+            Location bannerLocation = currentLocation.clone().add(0, 3, 0);
+            bannerLocation.setYaw(yaw);
+            ItemStack bannerItem = plugin.getClanManager().getBanner(clanTag);
+
+            if (bannerItem != null && bannerItem.getItemMeta() instanceof BannerMeta) {
+                BannerMeta bannerMeta = (BannerMeta) bannerItem.getItemMeta();
+                // Set the block to the banner material type
+                String bannerType = bannerItem.getType().toString().replace("BANNER","WALL_BANNER");
+                bannerLocation.getBlock().setType(Material.valueOf(bannerType));
+
+                Directional directional = (Directional) bannerLocation.getBlock().getBlockData();
+                directional.setFacing(blockFace);
+                bannerLocation.getBlock().setBlockData(directional);
+                
+                // Get the block state and update it with the banner patterns
+                Banner bannerState = (Banner) bannerLocation.getBlock().getState();
+                bannerState.setPatterns(bannerMeta.getPatterns());
+                bannerState.update();
+            }
+            
+            // set sign
+            Location signLocation = currentLocation.clone().add(0, -1, 0).add(blockFace.getModX(), 0, blockFace.getModZ());
+            signLocation.getBlock().setType(Material.SPRUCE_WALL_SIGN);
+            
+            // Set the sign's facing direction
+            Directional signData = (Directional) signLocation.getBlock().getBlockData();
+            signData.setFacing(blockFace);
+            signLocation.getBlock().setBlockData(signData);
+
+            // Set the text on the sign
+            Sign sign = (Sign) signLocation.getBlock().getState();
+            sign.line(0, MiniMessage.miniMessage().deserialize("<white>" + clanTag));
+            sign.line(2, MiniMessage.miniMessage().deserialize("<dark_gray>" + leader.getName()));
+            sign.line(3, MiniMessage.miniMessage().deserialize("<gray>Active: <#7FD47F>" + plugin.getActiveManager().getActiveMemberCount(clanTag)));
+            sign.update();
+            
             // Move to the next position
             currentLocation.add(this.xIncrement, 0, this.zIncrement);
 
-            i++;
+           i++;
         }
     }
 }
