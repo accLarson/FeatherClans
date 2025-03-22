@@ -2,10 +2,11 @@ name: FeatherClans
 version: ${project.version}
 main: com.wasted_ticks.featherclans.FeatherClans
 api-version: 1.19
-authors: [ Wasted_Ticks ]
+authors: [ Zerek, Wasted_Ticks ]
 softdepend:
   - Vault
   - PlaceholderAPI
+  - LuckPerms
 commands:
   clan:
     description: gives access to clan related commands

@@ -1,6 +1,8 @@
 package com.wasted_ticks.featherclans.managers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.model.user.UserManager;
 import org.bukkit.OfflinePlayer;
 
 import java.util.*;
@@ -79,7 +81,7 @@ public class ActiveManager {
         long lastLogin = clanMember.getLastSeen();
         long thresholdTime = System.currentTimeMillis() - (inactiveDaysThreshold * 24L * 60L * 60L * 1000L);
         boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(clanMember);
-        if (lastLogin > thresholdTime && inClan) activeMembers.put(clanMember, clanTag);
+        if (lastLogin > thresholdTime && inClan && !this.isAlt(clanMember)) activeMembers.put(clanMember, clanTag);
         else activeMembers.remove(clanMember);
 
     }
@@ -89,5 +91,28 @@ public class ActiveManager {
         if (count >= activeMembersRequirement) activeClans.put(clanTag.toLowerCase(), count);
         else activeClans.remove(clanTag.toLowerCase());
     }
+
+    public boolean isAlt(OfflinePlayer player) {
+        // If LuckPerms is not available, we can't check
+        if (plugin.getLuckPermsApi() == null) {
+            plugin.getLogger().warning("LuckPerms API not available for alt account checking");
+            return false;
+        }
+
+        try {
+            // Load the user data (this returns a CompletableFuture)
+            // We need to join() to wait for the result since this method isn't async
+            var user = plugin.getLuckPermsApi().getUserManager().loadUser(player.getUniqueId()).join();
+            
+            // Check if the user has the "group.alt" permission or is in the "alt" group
+            if (user.getCachedData().getPermissionData().checkPermission("group.alt").asBoolean()) return true;
+                    
+        } catch (Exception e) {
+            plugin.getLogger().warning("Error checking if player " + player.getName() + " is an alt: " + e.getMessage());
+        }
+        
+        return false;
+    }
+
 
 }

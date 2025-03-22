@@ -11,6 +11,7 @@ import com.wasted_ticks.featherclans.managers.*;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
 import com.wasted_ticks.featherclans.utilities.PaginateUtility;
 import net.milkbowl.vault.economy.Economy;
+import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -31,13 +32,26 @@ public final class FeatherClans extends JavaPlugin {
     private DisplayManager displayManager;
     private InviteManager inviteManager;
     private PaginateUtility paginateUtility;
-
+    private LuckPerms luckPermsApi;
     private Economy economy;
 
     @Override
     public void onEnable() {
 
         plugin = this;
+
+        // Initialize LuckPerms API if available
+        if(Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+            plugin.getLogger().info("Hooking into LuckPerms API.");
+            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+            if (provider != null) luckPermsApi = provider.getProvider();
+        }
+
+        // Initialize Placeholder API if available
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            plugin.getLogger().info("Hooking into Placeholder API.");
+            new FeatherClansPlaceholderExpansion(this).register();
+        }
 
         this.config = new FeatherClansConfig(plugin);
         this.messages = new FeatherClansMessages(plugin);
@@ -54,11 +68,6 @@ public final class FeatherClans extends JavaPlugin {
                 plugin.getLog().severe("[FeatherClans] Unable to hook into vault, economy functions will be disabled.");
                 this.config.setEconomyEnabled(false);
             }
-        }
-
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            plugin.getLog().info("[FeatherClans] Hooking into Placeholder API.");
-            new FeatherClansPlaceholderExpansion(this).register();
         }
 
         this.registerCommands();
@@ -166,7 +175,11 @@ public final class FeatherClans extends JavaPlugin {
         return economy;
     }
 
+    public LuckPerms getLuckPermsApi() {
+        return luckPermsApi;
+    }
+
     public void disable() {
-        this.getPluginLoader().disablePlugin(this);
+
     }
 }
