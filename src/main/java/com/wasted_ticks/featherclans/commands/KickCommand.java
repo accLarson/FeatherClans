@@ -49,11 +49,6 @@ public class KickCommand implements CommandExecutor {
 
         OfflinePlayer kickee = Bukkit.getOfflinePlayer(args[1]);
 
-        if (!kickee.hasPlayedBefore()) {
-            originator.sendMessage(messages.get("clan_kick_error_unresolved_player", null));
-            return true;
-        }
-
         String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
         if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(kickee, tag)) {
