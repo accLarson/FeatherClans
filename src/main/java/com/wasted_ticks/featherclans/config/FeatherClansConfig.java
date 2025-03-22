@@ -20,8 +20,9 @@ public class FeatherClansConfig {
     private boolean economyEnabled;
     private double economyCreationPrice;
     private double economyInvitePrice;
-    private double economySetArmorPrice;
     private double economySetHomePrice;
+    private double economySetArmorPrice;
+    private double economySetBannerPrice;
 
     private boolean cleanupEnabled;
     private int cleanupArchiveDays;
@@ -58,8 +59,9 @@ public class FeatherClansConfig {
         this.economyEnabled = config.getBoolean("settings.economy.enabled");
         this.economyCreationPrice = config.getDouble("settings.economy.creation_price");
         this.economyInvitePrice = config.getDouble("settings.economy.invite_price");
-        this.economySetArmorPrice = config.getDouble("settings.economy.set_armor_price");
         this.economySetHomePrice = config.getDouble("settings.economy.set_home_price");
+        this.economySetArmorPrice = config.getDouble("settings.economy.set_armor_price");
+        this.economySetBannerPrice = config.getDouble("settings.economy.set_banner_price");
 
         this.cleanupEnabled = config.getBoolean("settings.clean_up.enabled");
         this.cleanupArchiveDays = config.getInt("settings.clean_up.archive_days");
@@ -107,12 +109,16 @@ public class FeatherClansConfig {
         return economyInvitePrice;
     }
 
+    public double getEconomySetHomePrice() {
+        return economySetHomePrice;
+    }
+
     public double getEconomySetArmorPrice() {
         return economySetArmorPrice;
     }
 
-    public double getEconomySetHomePrice() {
-        return economySetHomePrice;
+    public double getEconomySetBannerPrice() {
+        return economySetBannerPrice;
     }
 
     public boolean isCleanupEnabled() {

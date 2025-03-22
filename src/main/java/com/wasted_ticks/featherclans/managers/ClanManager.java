@@ -51,9 +51,9 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().info("[FeatherClans] Failed to load players.");
+            plugin.getLogger().info("Failed to load players.");
         } catch(IllegalArgumentException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to parse UUID into player cache.");
+            plugin.getLogger().severe("Failed to parse UUID into player cache.");
         }
     }
 
@@ -73,9 +73,9 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().info("[FeatherClans] Failed to load clans.");
+            plugin.getLogger().info("Failed to load clans.");
         } catch(IllegalArgumentException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to parse UUID into clan cache.");
+            plugin.getLogger().severe("Failed to parse UUID into clan cache.");
         }
     }
 
@@ -134,7 +134,7 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed check clan home for: " + tag.toLowerCase());
+            plugin.getLogger().severe("Failed check clan home for: " + tag.toLowerCase());
         }
         return null;
     }
@@ -184,7 +184,7 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed check clan home for: " + tag);
+            plugin.getLogger().severe("Failed check clan home for: " + tag);
         }
         return false;
     }
@@ -216,7 +216,7 @@ public class ClanManager {
                 return this.addOfflinePlayerToClan(player, tag.toLowerCase());
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to create clan: " + tag);
+            plugin.getLogger().severe("Failed to create clan: " + tag);
         }
         return false;
     }
@@ -239,7 +239,7 @@ public class ClanManager {
                 return true;
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to delete clan: " + tag);
+            plugin.getLogger().severe("Failed to delete clan: " + tag);
         }
         return false;
     }
@@ -263,7 +263,7 @@ public class ClanManager {
                 return true;
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to resign player: " + player.getName());
+            plugin.getLogger().severe("Failed to resign player: " + player.getName());
         }
         return false;
     }
@@ -287,7 +287,7 @@ public class ClanManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            plugin.getLog().severe("[FeatherClans] Failed to set clan home for clan: " + tag);
+            plugin.getLogger().severe("Failed to set clan home for clan: " + tag);
         }
         return false;
     }
@@ -311,7 +311,29 @@ public class ClanManager {
             update.setString(4, tag.toLowerCase());
             return update.executeUpdate() != 0;
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to set clan armor for clan: " + tag);
+            plugin.getLogger().severe("Failed to set clan armor for clan: " + tag);
+        }
+        return false;
+    }
+
+    /**
+     * Sets the clan banner for a given clan.
+     *
+     * @param tag clan tag
+     * @param banner banner item
+     * @return boolean indicating success
+     */
+    public boolean setBanner(String tag, ItemStack banner) {
+        String query = "UPDATE clans SET banner = ? WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(query)) {
+            update.setString(1, SerializationUtility.stackToString(banner));
+            update.setString(2, tag.toLowerCase());
+            if(update.executeUpdate() != 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to set clan banner for clan: " + tag);
         }
         return false;
     }
@@ -337,7 +359,7 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to get chestplate for clan: " + tag);
+            plugin.getLogger().severe("Failed to get chestplate for clan: " + tag);
         }
         return null;
     }
@@ -363,7 +385,7 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to get leggings for clan: " + tag);
+            plugin.getLogger().severe("Failed to get leggings for clan: " + tag);
         }
         return null;
     }
@@ -389,7 +411,7 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to get boots for clan: " + tag);
+            plugin.getLogger().severe("Failed to get boots for clan: " + tag);
         }
         return null;
     }
@@ -426,14 +448,14 @@ public class ClanManager {
                             return true;
                         }
                     } catch (SQLException e) {
-                        plugin.getLog().severe("[FeatherClans] Failed to add offline player to clan: " + player.getName() + ", clan: " + tag);
+                        plugin.getLogger().severe("Failed to add offline player to clan: " + player.getName() + ", clan: " + tag);
                     }
                 } else {
-                    plugin.getLog().severe("[FeatherClans] Clan ID result is 0.");
+                    plugin.getLogger().severe("Clan ID result is 0.");
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to retrieve clan ID in add offline player.");
+            plugin.getLogger().severe("Failed to retrieve clan ID in add offline player.");
         }
         return false;
     }
@@ -457,7 +479,7 @@ public class ClanManager {
                 return true;
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to set clan leader for clan: " + tag + ", to:" + player.getName());
+            plugin.getLogger().severe("Failed to set clan leader for clan: " + tag + ", to:" + player.getName());
         }
         return false;
     }
@@ -481,7 +503,7 @@ public class ClanManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherClans] Failed to get banner for: " + tag);
+            plugin.getLogger().severe("Failed to get banner for: " + tag);
         }
         return null;
     }

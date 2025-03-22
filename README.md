@@ -30,4 +30,6 @@ Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/Placeholder
     feather.clans.resign              -     Resign from your clan (must be in clan)
     feather.clans.roster              -     List clan members of a specific clan
     feather.clans.sethome             -     Set the clan's home (must be clan leader)
+    feather.clans.setarmor            -     Set the clan's armor for the Display (must be clan leader)
+    feather.clans.setbanner           -     Set the clan's banner (must be clan leader)
     feather.clans.updatedisplay       -     Trigger the clan display to update (admin)

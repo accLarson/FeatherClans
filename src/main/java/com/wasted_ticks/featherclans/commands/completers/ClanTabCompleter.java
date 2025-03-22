@@ -52,7 +52,8 @@ public class ClanTabCompleter implements TabCompleter {
             "resign",
             "roster",
             "sethome",
-            "setarmor"
+            "setarmor",
+            "setbanner"
     );
     private final FeatherClans plugin;
     private final ClanManager manager;
@@ -146,9 +147,11 @@ public class ClanTabCompleter implements TabCompleter {
 
                 // clan manage test disband
                 // clan manage test sethome
+                // clan manage test setarmor
+                // clan manage test setbanner
 
                 if (sender.hasPermission("feather.clans.manage") && args[0].equalsIgnoreCase("manage")) {
-                    StringUtil.copyPartialMatches(args[2], List.of("confer","kick","invite","sethome","disband","chat"), completions);
+                    StringUtil.copyPartialMatches(args[2], List.of("confer","kick","invite","sethome","setarmor","setbanner","disband","chat"), completions);
                 }
                 break;
 
