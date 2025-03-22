@@ -76,7 +76,7 @@ public class ClanTabCompleter implements TabCompleter {
 
                 else StringUtil.copyPartialMatches(args[0], EVERYONE_COMMANDS, completions);
 
-                if(sender.isOp()) StringUtil.copyPartialMatches(args[0], List.of("banner","manage"), completions);
+                if(sender.isOp()) StringUtil.copyPartialMatches(args[0], List.of("banner","manage", "updatedisplay"), completions);
 
                 break;
 

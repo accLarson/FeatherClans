@@ -37,6 +37,9 @@ public class HelpCommand implements CommandExecutor {
         if (sender.hasPermission("feather.clans.sethome")) {
             sender.sendMessage(messages.get("clan_help_sethome", null));
         }
+        if (sender.hasPermission("feather.clans.setarmor")) {
+            sender.sendMessage(messages.get("clan_help_setarmor", null));
+        }
         if (sender.hasPermission("feather.clans.create")) {
             sender.sendMessage(messages.get("clan_help_create", null));
         }

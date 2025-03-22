@@ -67,7 +67,7 @@ public class DisplayManager {
         resetDisplays();
     }
 
-    private void resetDisplays() {
+    public void resetDisplays() {
         // Delete existing armor stands
         this.removeExistingDisplays();
         this.createDisplays();

@@ -15,6 +15,7 @@ Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/Placeholder
     %featherclans_clan_brackets%       (players clan tag with brackets)
 ### Permission Nodes:  
     feather.clans.accept              -     Accept a clan invitation
+    feather.clans.banner              -     Recieve a clans banner (Admin)
     feather.clans.chat                -     Send a message to your clan members (must be in clan)
     feather.clans.confer              -     Confer the clan to another clan member (must be clan leader)
     feather.clans.create              -     Create a new clan
@@ -29,3 +30,4 @@ Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/Placeholder
     feather.clans.resign              -     Resign from your clan (must be in clan)
     feather.clans.roster              -     List clan members of a specific clan
     feather.clans.sethome             -     Set the clan's home (must be clan leader)
+    feather.clans.updatedisplay       -     Trigger the clan display to update (admin)
