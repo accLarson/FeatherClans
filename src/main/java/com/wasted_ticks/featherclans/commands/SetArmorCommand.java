@@ -71,6 +71,7 @@ public class SetArmorCommand implements CommandExecutor {
                     originator.sendMessage(messages.get("clan_setarmor_success_economy", Map.of(
                             "amount", String.valueOf((int) amount)
                     )));
+                    this.plugin.getDisplayManager().resetDisplays();
                 }
             } else {
                 originator.sendMessage(messages.get("clan_setarmor_error_economy", Map.of(

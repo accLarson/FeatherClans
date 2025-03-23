@@ -80,6 +80,7 @@ public class ConferCommand implements CommandExecutor {
                     "player", originator.getName(),
                     "clan", clan
             )));
+            this.plugin.getDisplayManager().resetDisplays();
         } else {
             originator.sendMessage(messages.get("clan_confer_error_generic", null));
         }

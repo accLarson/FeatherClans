@@ -62,17 +62,14 @@ public class ActiveManager {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
-
+    
     public void updateActiveStatus(OfflinePlayer offlinePlayer, String clanTag) {
+        Map<String, Integer> activeClansCopy = new HashMap<>(activeClans);
         this.assessActiveMemberStatus(offlinePlayer, clanTag);
         this.assessActiveClanStatus(clanTag);
+        if (!activeClansCopy.equals(this.activeClans)) this.plugin.getDisplayManager().resetDisplays();
     }
 
-    /**
-     * Helper method to get a stream of active members in a specific clan
-     * @param clanTag The clan tag to filter by
-     * @return Stream of Map.Entry objects containing active members in the specified clan
-     */
     private Stream<Map.Entry<OfflinePlayer, String>> getMembersInClan(String clanTag) {
         return activeMembers.entrySet().stream().filter(entry -> entry.getValue().equalsIgnoreCase(clanTag));
     }

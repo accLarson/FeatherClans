@@ -76,6 +76,7 @@ public class SetBannerCommand implements CommandExecutor {
                     originator.sendMessage(messages.get("clan_setbanner_success_economy", Map.of(
                             "amount", String.valueOf((int) amount)
                     )));
+                    this.plugin.getDisplayManager().resetDisplays();
                 }
             } else {
                 originator.sendMessage(messages.get("clan_setbanner_error_economy", Map.of(

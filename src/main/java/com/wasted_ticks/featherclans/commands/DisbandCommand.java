@@ -58,17 +58,18 @@ public class DisbandCommand implements CommandExecutor {
 
         boolean successful = manager.deleteClan(tag);
 
-        originator.sendMessage(messages.get("clan_disband_success", Map.of("clan", tag)));
+        if (successful) {
+            originator.sendMessage(messages.get("clan_disband_success", Map.of("clan", tag)));
 
-        plugin.getServer()
-                .getOnlinePlayers()
-                .forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of("clan", tag.toLowerCase()))));
+            plugin.getServer()
+                    .getOnlinePlayers()
+                    .forEach(p -> p.sendMessage(messages.get("clan_disband_broadcast", Map.of("clan", tag.toLowerCase()))));
 
-        plugin.getActiveManager().removeClan(tag.toLowerCase());
+            plugin.getActiveManager().removeClan(tag.toLowerCase());
 
-        if(!successful) {
-            originator.sendMessage(messages.get("clan_disband_error_generic", null));
-        }
+            this.plugin.getDisplayManager().resetDisplays();
+
+        } else originator.sendMessage(messages.get("clan_disband_error_generic", null));
 
         return true;
     }
