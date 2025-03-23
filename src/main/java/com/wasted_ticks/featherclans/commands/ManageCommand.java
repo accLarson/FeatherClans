@@ -233,6 +233,7 @@ public class ManageCommand implements CommandExecutor {
                 else player.sendMessage(messages.get("clan_sethome_error_generic",null));
 
         }
+        this.plugin.getDisplayManager().resetDisplays();
         return true;
     }
 }
