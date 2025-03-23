@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -46,7 +47,7 @@ public class SetArmorCommand implements CommandExecutor {
         ItemStack leggings = originator.getInventory().getLeggings();
         ItemStack boots = originator.getInventory().getBoots();
 
-        if (chestplate == null || leggings == null || boots == null) {
+        if (chestplate == null || leggings == null || boots == null || chestplate.getType().equals(Material.ELYTRA)) {
             originator.sendMessage(messages.get("clan_setarmor_error_missing", null));
             return true;
         }
