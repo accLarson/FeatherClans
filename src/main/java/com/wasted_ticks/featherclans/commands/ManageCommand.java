@@ -95,11 +95,7 @@ public class ManageCommand implements CommandExecutor {
                     sender.sendMessage(messages.get("clan_confer_no_player", null));
                     break;
                 }
-                Player potentialLeader = Bukkit.getPlayer(args[3]);
-                if (potentialLeader == null) {
-                    sender.sendMessage(messages.get("clan_confer_unresolved_player", null));
-                    break;
-                }
+                OfflinePlayer potentialLeader = Bukkit.getOfflinePlayer(args[3]);
 
                 if (manager.isOfflinePlayerInSpecificClan(potentialLeader, tag)) {
                     sender.sendMessage(messages.get("clan_manage_confer_not_in_clan", null));
@@ -116,10 +112,12 @@ public class ManageCommand implements CommandExecutor {
                             "player", potentialLeader.getName(),
                             "clan", tag
                     )));
-                    potentialLeader.sendMessage(messages.get("clan_manage_confer_success_player", Map.of(
-                            "player", sender.getName(),
-                            "clan", tag
-                    )));
+                    if (potentialLeader.isOnline()) {
+                        ((Player)potentialLeader).sendMessage(messages.get("clan_manage_confer_success_player", Map.of(
+                                "player", sender.getName(),
+                                "clan", tag
+                        )));
+                    }
                 } else sender.sendMessage(messages.get("clan_confer_error_generic", null));
                 break;
 
