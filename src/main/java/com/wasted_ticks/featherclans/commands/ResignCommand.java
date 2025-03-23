@@ -48,7 +48,7 @@ public class ResignCommand implements CommandExecutor {
         }
 
         if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
-            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan resign ")));
+            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan resign")));
             return true;
         }
 
