@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
@@ -162,7 +163,15 @@ public class DisplayManager {
             
             // set sign
             Location signLocation = currentLocation.clone().add(0, -1, 0).add(blockFace.getModX(), 0, blockFace.getModZ());
-            signLocation.getBlock().setType(Material.SPRUCE_WALL_SIGN);
+            String configSignType = plugin.getFeatherClansConfig().getSignType();
+            Material signMaterial;
+            try {
+                signMaterial = Material.valueOf(configSignType.toUpperCase() + "_WALL_SIGN");
+            } catch (IllegalArgumentException e) {
+                plugin.getLog().warning("Invalid sign_type in config: " + configSignType + ". Defaulting to OAK_WALL_SIGN");
+                signMaterial = Material.OAK_WALL_SIGN;
+            }
+            signLocation.getBlock().setType(signMaterial);
             
             // Set the sign's facing direction
             Directional signData = (Directional) signLocation.getBlock().getBlockData();
@@ -171,9 +180,9 @@ public class DisplayManager {
 
             // Set the text on the sign
             Sign sign = (Sign) signLocation.getBlock().getState();
-            sign.line(0, MiniMessage.miniMessage().deserialize("<white>" + clanTag));
-            sign.line(2, MiniMessage.miniMessage().deserialize("<dark_gray>" + leader.getName()));
-            sign.line(3, MiniMessage.miniMessage().deserialize("<gray>Active: <#7FD47F>" + plugin.getActiveManager().getActiveMemberCount(clanTag)));
+            sign.getSide(Side.FRONT).line(0, MiniMessage.miniMessage().deserialize("<white>" + clanTag));
+            sign.getSide(Side.FRONT).line(2, MiniMessage.miniMessage().deserialize("<gray>" + leader.getName()));
+            sign.getSide(Side.FRONT).line(3, MiniMessage.miniMessage().deserialize("<gray>Active: <#7FD47F>" + plugin.getActiveManager().getActiveMemberCount(clanTag)));
             sign.update();
             
             // Move to the next position

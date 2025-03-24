@@ -48,6 +48,7 @@ settings:
     location: [0, 0, 0]
     facing: NORTH
     count: 10
+    sign_type: OAK
   mysql:
     enabled: true
     username: ''

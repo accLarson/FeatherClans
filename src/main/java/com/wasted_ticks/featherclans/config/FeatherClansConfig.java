@@ -15,6 +15,7 @@ public class FeatherClansConfig {
     private Location displayLocation;
     private String displayFacing;
     private int displayCount;
+    private String signType;
 
     /* SETTINGS */
     private boolean economyEnabled;
@@ -87,6 +88,7 @@ public class FeatherClansConfig {
         this.displayLocation = new Location(world, coords.get(0), coords.get(1), coords.get(2));
         this.displayFacing = config.getString("settings.display.facing");
         this.displayCount = config.getInt("settings.display.count");
+        this.signType = config.getString("settings.display.sign_type");
 
         this.denyTags = config.getStringList("settings.deny_tags");
 
@@ -203,5 +205,9 @@ public class FeatherClansConfig {
 
     public int getDisplayCount() {
         return displayCount;
+    }
+
+    public String getSignType() {
+        return signType;
     }
 }
