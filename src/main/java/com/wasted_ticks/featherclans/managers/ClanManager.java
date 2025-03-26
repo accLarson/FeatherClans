@@ -11,15 +11,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ClanManager {
 
     private static final HashMap<UUID, String> players = new HashMap<>();
+    private static final Set<UUID> officers = new HashSet<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
     private final FeatherClans plugin;
     private final DatabaseManager database;
@@ -32,6 +30,7 @@ public class ClanManager {
 
     private void load() {
         loadPlayers();
+        loadOfficers();
         loadClans();
     }
 
@@ -54,6 +53,30 @@ public class ClanManager {
             plugin.getLogger().info("Failed to load players.");
         } catch(IllegalArgumentException e) {
             plugin.getLogger().severe("Failed to parse UUID into player cache.");
+        }
+    }
+
+    private void loadOfficers() {
+        String string = "SELECT mojang_uuid FROM clan_members WHERE is_officer = true;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement statement = connection.prepareStatement(string);
+            ResultSet results = statement.executeQuery())
+        {
+            if(results != null) {
+                while (results.next()) {
+                    String uuid = results.getString("mojang_uuid");
+                    if(uuid != null) {
+                        try {
+                            officers.add(UUID.fromString(uuid));
+                        } catch(IllegalArgumentException e) {
+                            plugin.getLogger().severe("Failed to parse UUID into officer cache: " + uuid);
+                        }
+                    }
+                }
+            }
+            plugin.getLogger().info("Loaded " + officers.size() + " officers into cache.");
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to load officers.");
         }
     }
 
@@ -109,7 +132,6 @@ public class ClanManager {
     public List<OfflinePlayer> getOfflinePlayersByClan(String clan) {
         return players.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(clan))
-//                .filter(entry -> entry.getValue().equalsIgnoreCase(clan))
                 .map(entry -> Bukkit.getOfflinePlayer(entry.getKey()))
                 .collect(Collectors.toList());
     }
@@ -162,6 +184,16 @@ public class ClanManager {
      */
     public boolean isOfflinePlayerLeader(OfflinePlayer player) {
         return clans.containsValue(player.getUniqueId());
+    }
+
+    /**
+     * Determines if an offline player is an officer in a clan.
+     *
+     * @param player
+     * @return boolean
+     */
+    public boolean isOfflinePlayerOfficer(OfflinePlayer player) {
+        return officers.contains(player.getUniqueId());
     }
 
     /**
@@ -234,6 +266,7 @@ public class ClanManager {
         {
             delete.setString(1, tag.toLowerCase(Locale.ROOT));
             if(delete.executeUpdate() != 0) {
+                this.getOfficers(tag).forEach(officers::remove);
                 players.entrySet().removeIf(entry -> entry.getValue().equals(tag));
                 clans.remove(tag.toLowerCase());
                 return true;
@@ -484,8 +517,39 @@ public class ClanManager {
         return false;
     }
 
+    /**
+     * Sets the clan officer status for the provided player.
+     *
+     * @param player
+     * @param status
+     * @return boolean
+     */
+    public boolean setClanOfficerStatus(OfflinePlayer player, boolean status) {
+        String string = "UPDATE clan_members SET is_officer = ? WHERE mojang_uuid = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(string))
+        {
+            update.setBoolean(1, status);
+            update.setString(2, player.getUniqueId().toString());
+            if(update.executeUpdate() != 0) {
+                if(status) officers.add(player.getUniqueId());
+                else officers.remove(player.getUniqueId());
+                
+                plugin.getLogger().info("(Officer) Successfully " + (status ? "promoted" : "demoted") + " player: " + player.getName());
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to set officer status for player: " + player.getName());
+        }
+        return false;
+    }
+    
     public UUID getLeader(String tag) {
         return clans.get(tag.toLowerCase());
+    }
+
+    public List<UUID> getOfficers(String tag) {
+        return officers.stream().filter(officerUUID -> players.get(officerUUID).equalsIgnoreCase(tag)).collect(Collectors.toList());
     }
 
     public ItemStack getBanner(String tag) {

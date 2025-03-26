@@ -183,6 +183,11 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
+                if (this.plugin.getClanManager().isOfflinePlayerOfficer(kickee)) {
+                    sender.sendMessage(messages.get("clan_kick_error_officer", null));
+                    break;
+                }
+
                 if (!manager.resignOfflinePlayer(kickee)) {
                     sender.sendMessage(messages.get("clan_kick_error", null));
                     break;

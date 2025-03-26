@@ -121,6 +121,7 @@ public class DatabaseManager {
         createTableIfNotExists("clan_members", "id", "INTEGER PRIMARY KEY AUTO_INCREMENT");
         addColumnIfNotExists("clan_members", "mojang_uuid", "VARCHAR(255) NOT NULL");
         addColumnIfNotExists("clan_members", "clan_id", "INTEGER NOT NULL");
+        addColumnIfNotExists("clan_members", "is_officer", "BOOLEAN NOT NULL DEFAULT FALSE");
         addColumnIfNotExists("clan_members", "last_seen_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
         addColumnIfNotExists("clan_members", "join_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
     }

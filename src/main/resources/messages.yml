@@ -96,6 +96,7 @@ clan_kick_error_no_player_specified: "<#949BD1>Error<#656B96>: No player specifi
 clan_kick_error_unresolved_player: "<#949BD1>Error<#656B96>: Unable to resolve player name."
 clan_kick_error_not_in_clan: "<#949BD1>Error<#656B96>: Player must be in your clan."
 clan_kick_error_leader: "<#949BD1>Error<#656B96>: Can't kick yourself. Confer and resign, or disband."
+clan_kick_error_officer: "<#949BD1>Error<#656B96>: Can't kick an officer, demote them first."
 clan_kick_error: "<#949BD1>Error<#656B96>: Unable to kick player."
 clan_kick_success: "<#656B96>You've kicked <#949BD1><player> <#656B96>from your clan."
 clan_kick_success_target: "<#656B96>You have been kicked from <#949BD1><clan><#656B96>."

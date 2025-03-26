@@ -69,6 +69,9 @@ public class ConferCommand implements CommandExecutor {
         boolean successful = this.plugin.getClanManager().setClanLeader(clan, potentialLeader);
 
         if (successful) {
+            this.plugin.getClanManager().setClanOfficerStatus(potentialLeader, false);
+            this.plugin.getClanManager().setClanOfficerStatus(originator, true);
+
             originator.sendMessage(messages.get("clan_confer_success_originator", Map.of(
                     "player", potentialLeader.getName()
             )));

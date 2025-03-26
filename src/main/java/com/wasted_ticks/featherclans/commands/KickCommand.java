@@ -61,6 +61,11 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
+        if (this.plugin.getClanManager().isOfflinePlayerOfficer(kickee)) {
+            originator.sendMessage(messages.get("clan_kick_error_officer", null));
+            return true;
+        }
+
         if (args.length < 3 || !args[2].equalsIgnoreCase("confirm")) {
             originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan kick " + kickee.getName())));
             return true;
