@@ -80,8 +80,6 @@ public class ActiveManager {
         long lastLogin = clanMember.getLastSeen();
         long thresholdTime = System.currentTimeMillis() - (inactiveDaysThreshold * 24L * 60L * 60L * 1000L);
         boolean inClan = plugin.getClanManager().isOfflinePlayerInSpecificClan(clanMember, clanTag);
-        plugin.getLogger().info("isOfflinePlayerInSpecificClan " + clanMember.getName() + " " + clanTag + " " +inClan);
-
         if (lastLogin > thresholdTime && inClan && !this.isAlt(clanMember)) activeMembers.put(clanMember.getUniqueId(), clanTag);
         else activeMembers.remove(clanMember.getUniqueId());
     }
