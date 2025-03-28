@@ -1,8 +1,6 @@
 package com.wasted_ticks.featherclans.managers;
 
 import com.wasted_ticks.featherclans.FeatherClans;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.model.user.UserManager;
 import org.bukkit.OfflinePlayer;
 
 import java.util.*;
@@ -11,7 +9,7 @@ import java.util.stream.Stream;
 
 public class ActiveManager {
     private final Map<String, Integer> activeClans = new HashMap<>();
-    private final Map<OfflinePlayer, String> activeMembers = new HashMap<>();
+    private final Map<UUID, String> activeMembers = new HashMap<>();
 
     private final FeatherClans plugin;
     private int activeMembersRequirement;
@@ -39,7 +37,7 @@ public class ActiveManager {
 
     public void removeClan(String clanTag) {
         this.activeClans.remove(clanTag);
-        this.getMembersInClan(clanTag).map(Map.Entry::getKey).collect(Collectors.toList()).forEach(this.activeMembers::remove);
+        this.getActiveMembersInClan(clanTag).forEach(this.activeMembers::remove);
     }
 
     public boolean isActive(String clanTag) {
@@ -52,9 +50,17 @@ public class ActiveManager {
 
     public int getActiveMemberCount(String clanTag) {
         // Count all active members belonging to this clan regardless of whether the clan is "active"
-        return (int) this.getMembersInClan(clanTag).count();
+        return this.getActiveMembersInClan(clanTag).size();
     }
-    
+
+    public List<UUID> getActiveMembersInClan(String clanTag) {
+        return activeMembers.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().equalsIgnoreCase(clanTag))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
     public List<String> getActiveClansOrdered() {
         return activeClans.entrySet()
                 .stream()
@@ -62,7 +68,7 @@ public class ActiveManager {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
-    
+
     public void updateActiveStatus(OfflinePlayer offlinePlayer, String clanTag) {
         Map<String, Integer> activeClansCopy = new HashMap<>(activeClans);
         this.assessActiveMemberStatus(offlinePlayer, clanTag);
@@ -70,17 +76,14 @@ public class ActiveManager {
         if (!activeClansCopy.equals(this.activeClans)) this.plugin.getDisplayManager().resetDisplays();
     }
 
-    private Stream<Map.Entry<OfflinePlayer, String>> getMembersInClan(String clanTag) {
-        return activeMembers.entrySet().stream().filter(entry -> entry.getValue().equalsIgnoreCase(clanTag));
-    }
-
     private void assessActiveMemberStatus(OfflinePlayer clanMember, String clanTag) {
         long lastLogin = clanMember.getLastSeen();
         long thresholdTime = System.currentTimeMillis() - (inactiveDaysThreshold * 24L * 60L * 60L * 1000L);
-        boolean inClan = plugin.getClanManager().isOfflinePlayerInClan(clanMember);
-        if (lastLogin > thresholdTime && inClan && !this.isAlt(clanMember)) activeMembers.put(clanMember, clanTag);
-        else activeMembers.remove(clanMember);
+        boolean inClan = plugin.getClanManager().isOfflinePlayerInSpecificClan(clanMember, clanTag);
+        plugin.getLogger().info("isOfflinePlayerInSpecificClan " + clanMember.getName() + " " + clanTag + " " +inClan);
 
+        if (lastLogin > thresholdTime && inClan && !this.isAlt(clanMember)) activeMembers.put(clanMember.getUniqueId(), clanTag);
+        else activeMembers.remove(clanMember.getUniqueId());
     }
 
     private void assessActiveClanStatus(String clanTag) {

@@ -172,7 +172,7 @@ public class ClanManager {
     }
 
     public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, String clan) {
-        return players.get(player.getUniqueId()) == null || !players.get(player.getUniqueId()).equalsIgnoreCase(clan);
+        return players.containsKey(player.getUniqueId()) && players.get(player.getUniqueId()).equalsIgnoreCase(clan);
     }
 
 

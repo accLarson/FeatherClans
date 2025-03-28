@@ -77,7 +77,7 @@ public class ClanTabCompleter implements TabCompleter {
 
                 else StringUtil.copyPartialMatches(args[0], EVERYONE_COMMANDS, completions);
 
-                if(sender.isOp()) StringUtil.copyPartialMatches(args[0], List.of("banner","manage", "updatedisplay"), completions);
+                if(sender.isOp()) StringUtil.copyPartialMatches(args[0], List.of("banner","manage", "debug"), completions);
 
                 break;
 
@@ -133,6 +133,8 @@ public class ClanTabCompleter implements TabCompleter {
                     case "manage":
                         if (sender.hasPermission("feather.clans.manage")) StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
                         break;
+                    case "debug":
+                        if (sender.hasPermission("feather.clans.debug")) StringUtil.copyPartialMatches(args[1], List.of("updatedisplay","getactive"), completions);
 
                 }
                 break;

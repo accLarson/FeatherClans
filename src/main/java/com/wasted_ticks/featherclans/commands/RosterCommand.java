@@ -82,8 +82,16 @@ public class RosterCommand implements CommandExecutor {
         // Use ActiveManager to get active member count
         String activeCount = String.valueOf(plugin.getActiveManager().getActiveMemberCount(clanTag));
 
-        List<OfflinePlayer> sortedClanMembers = clanMembers.stream().sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen()))).collect(Collectors.toList());
-        sortedClanMembers = sortedClanMembers.stream().sorted(Comparator.comparing(m -> !plugin.getClanManager().isOfflinePlayerLeader(m))).collect(Collectors.toList());
+        // Sort clan members with a three-tier hierarchy:
+        // 1. Leaders at the top
+        // 2. Officers in the middle
+        // 3. Regular members at the bottom
+        // Within each tier, sort by last seen time (most recently active first)
+        List<OfflinePlayer> sortedClanMembers = clanMembers.stream()
+                .sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen())))
+                .sorted(Comparator.comparing((OfflinePlayer m) -> !plugin.getClanManager().isOfflinePlayerOfficer(m))
+                        .thenComparing(m -> !plugin.getClanManager().isOfflinePlayerLeader(m)))
+                .collect(Collectors.toList());
 
         ChatUtility chatUtility = new ChatUtility(this.plugin);
         MiniMessage parser = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.color()).resolver(StandardTags.reset()).build()).build();
@@ -127,10 +135,11 @@ public class RosterCommand implements CommandExecutor {
             Component role;
             if (manager.isOfflinePlayerLeader(clanMember)) {
                 role = chatUtility.addSpacing(parser.deserialize("<#6C719D>Leader"), 80);
+            } else if (manager.isOfflinePlayerOfficer(clanMember)) {
+                role = chatUtility.addSpacing(parser.deserialize("<#6C719D>Officer"), 80);
             } else {
                 role = chatUtility.addSpacing(parser.deserialize("<#6C719D>Member"), 80);
             }
-
             Component lastSeen;
             lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + TimeUtility.formatTimeSince(clanMember.getLastSeen())), 110, true);
             rosterOutputLines.add(member.append(role).append(lastSeen));
