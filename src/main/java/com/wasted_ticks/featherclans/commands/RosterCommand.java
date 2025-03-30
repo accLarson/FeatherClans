@@ -89,8 +89,8 @@ public class RosterCommand implements CommandExecutor {
         // Within each tier, sort by last seen time (most recently active first)
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream()
                 .sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen())))
-                .sorted(Comparator.comparing((OfflinePlayer m) -> !plugin.getClanManager().isOfflinePlayerOfficer(m))
-                        .thenComparing(m -> !plugin.getClanManager().isOfflinePlayerLeader(m)))
+                .sorted(Comparator.comparing((OfflinePlayer m) -> !plugin.getClanManager().isOfflinePlayerLeader(m))
+                        .thenComparing(m -> !plugin.getClanManager().isOfflinePlayerOfficer(m)))
                 .collect(Collectors.toList());
 
         ChatUtility chatUtility = new ChatUtility(this.plugin);

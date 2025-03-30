@@ -171,6 +171,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("friendlyfire", new FriendlyFireCommand(plugin));
         handler.register("manage", new ManageCommand(plugin));
         handler.register("debug", new DebugCommand(plugin));
+        handler.register("officer",new OfficerCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 
