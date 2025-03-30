@@ -56,7 +56,7 @@ public class ConferCommand implements CommandExecutor {
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader.getUniqueId(), clan)) {
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader.getUniqueId(), clan)) {
             originator.sendMessage(messages.get("clan_confer_not_in_clan", null));
             return true;
         }

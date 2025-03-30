@@ -97,7 +97,7 @@ public class ManageCommand implements CommandExecutor {
                 }
                 OfflinePlayer potentialLeader = Bukkit.getOfflinePlayer(args[3]);
 
-                if (manager.isOfflinePlayerInSpecificClan(potentialLeader.getUniqueId(), tag)) {
+                if (!manager.isOfflinePlayerInSpecificClan(potentialLeader.getUniqueId(), tag)) {
                     sender.sendMessage(messages.get("clan_manage_confer_not_in_clan", null));
                     break;
                 }
@@ -171,10 +171,8 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (manager.isOfflinePlayerInSpecificClan(kickee.getUniqueId(), tag)) {
-                    sender.sendMessage(messages.get("clan_manage_kick_error_not_in_clan", Map.of(
-                            "clan", tag
-                    )));
+                if (!manager.isOfflinePlayerInSpecificClan(kickee.getUniqueId(), tag)) {
+                    sender.sendMessage(messages.get("clan_manage_kick_error_not_in_clan", Map.of("clan", tag)));
                     break;
                 }
 

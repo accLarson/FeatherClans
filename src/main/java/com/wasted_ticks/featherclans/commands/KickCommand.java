@@ -51,7 +51,7 @@ public class KickCommand implements CommandExecutor {
 
         String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        if (this.plugin.getClanManager().isOfflinePlayerInSpecificClan(kickee.getUniqueId(), tag)) {
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(kickee.getUniqueId(), tag)) {
             originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
             return true;
         }
