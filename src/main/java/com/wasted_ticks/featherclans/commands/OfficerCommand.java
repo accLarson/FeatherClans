@@ -47,23 +47,23 @@ public class OfficerCommand implements CommandExecutor {
         }
 
         if (args.length < 2) {
+            originator.sendMessage(messages.get("clan_officer_error_usage", null));
+            return true;
+        }
+
+        if (!(args[1].equalsIgnoreCase("promote") || args[1].equalsIgnoreCase("demote"))) {
+            originator.sendMessage(messages.get("clan_officer_error_usage", null));
+            return true;
+        }
+
+        boolean status = args[1].equalsIgnoreCase("promote");
+
+        if (args.length < 3) {
             originator.sendMessage(messages.get("clan_officer_no_player", null));
             return true;
         }
 
-        OfflinePlayer officer = Bukkit.getOfflinePlayer(args[1]);
-
-        if (args.length < 3) {
-            originator.sendMessage(messages.get("clan_officer_error_usage", null));
-            return true;
-        }
-
-        if (!(args[2].equalsIgnoreCase("promote") || args[2].equalsIgnoreCase("demote"))) {
-            originator.sendMessage(messages.get("clan_officer_error_usage", null));
-            return true;
-        }
-
-        boolean status = args[2].equalsIgnoreCase("promote");
+        OfflinePlayer officer = Bukkit.getOfflinePlayer(args[2]);
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 

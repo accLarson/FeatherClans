@@ -92,11 +92,14 @@ public class ClanTabCompleter implements TabCompleter {
 
                     case "kick":
                     case "confer":
-                    case "officer":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             String tag = manager.getClanByOfflinePlayer((Player) sender);
                             StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
                         }
+                        break;
+
+                    case "officer":
+                        if (manager.isOfflinePlayerLeader((Player) sender)) StringUtil.copyPartialMatches(args[1], List.of("promote","demote"), completions);
                         break;
 
                     case "banner":
@@ -109,27 +112,6 @@ public class ClanTabCompleter implements TabCompleter {
 
                     case "roster":
                         if (sender.hasPermission("feather.clans.roster")) StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
-                        // name
-                        // exp
-                        // hours
-                        // kdr
-                        // last seen
-                        // completions = manager.getClans();
-                        break;
-
-                    case "leaderboard":
-                        // exp: total of all offline players current exp
-                        // hours: total of all offline players current hours
-                        // kdr: mode, resets monthly
-                        // completions.addAll(Arrays.asList("exp", "hours", "kdr"));
-                        break;
-
-                    case "list":
-                        // tag
-                        // creation date
-                        // num of players
-                        // last seen
-                        // completions.addAll(Arrays.asList("alpha", "creation"));
                         break;
 
                     case "manage":
@@ -160,7 +142,8 @@ public class ClanTabCompleter implements TabCompleter {
                     StringUtil.copyPartialMatches(args[2], List.of("confer","kick","invite","sethome","setarmor","setbanner","disband","chat"), completions);
                 }
                 else if (manager.isOfflinePlayerLeader((Player) sender) && args[0].equalsIgnoreCase("officer")) {
-                    StringUtil.copyPartialMatches(args[2], List.of("promote","demote"), completions);
+                    String tag = manager.getClanByOfflinePlayer((Player) sender);
+                    StringUtil.copyPartialMatches(args[2], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
                 }
                 break;
 
