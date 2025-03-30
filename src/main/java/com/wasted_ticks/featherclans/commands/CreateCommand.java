@@ -102,6 +102,10 @@ public class CreateCommand implements CommandExecutor {
         }
 
         if (args.length < 3 || !args[2].equalsIgnoreCase("confirm")) {
+            if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
+                double amount = this.plugin.getFeatherClansConfig().getEconomyCreationPrice();
+                originator.sendMessage(messages.get("clan_economy_cost_warning", Map.of("amount", String.valueOf((int) amount))));
+            }
             originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan create " + tag)));
             return true;
         }
