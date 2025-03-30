@@ -171,8 +171,8 @@ public class ClanManager {
         return players.containsKey(player.getUniqueId());
     }
 
-    public boolean isOfflinePlayerInSpecificClan(OfflinePlayer player, String clan) {
-        return players.containsKey(player.getUniqueId()) && players.get(player.getUniqueId()).equalsIgnoreCase(clan);
+    public boolean isOfflinePlayerInSpecificClan(UUID uuid, String clan) {
+        return players.containsKey(uuid) && players.get(uuid).equalsIgnoreCase(clan);
     }
 
 

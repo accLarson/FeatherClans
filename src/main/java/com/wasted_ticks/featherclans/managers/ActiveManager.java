@@ -79,8 +79,8 @@ public class ActiveManager {
     private void assessActiveMemberStatus(OfflinePlayer clanMember, String clanTag) {
         long lastLogin = clanMember.getLastSeen();
         long thresholdTime = System.currentTimeMillis() - (inactiveDaysThreshold * 24L * 60L * 60L * 1000L);
-        boolean inClan = plugin.getClanManager().isOfflinePlayerInSpecificClan(clanMember, clanTag);
-        if (lastLogin > thresholdTime && inClan && !this.isAlt(clanMember)) activeMembers.put(clanMember.getUniqueId(), clanTag);
+        boolean inClan = plugin.getClanManager().isOfflinePlayerInSpecificClan(clanMember.getUniqueId(), clanTag);
+        if (lastLogin > thresholdTime && inClan && !plugin.getAltUtility().isAlt(clanMember)) activeMembers.put(clanMember.getUniqueId(), clanTag);
         else activeMembers.remove(clanMember.getUniqueId());
     }
 
@@ -89,28 +89,4 @@ public class ActiveManager {
         if (count >= activeMembersRequirement) activeClans.put(clanTag.toLowerCase(), count);
         else activeClans.remove(clanTag.toLowerCase());
     }
-
-    public boolean isAlt(OfflinePlayer player) {
-        // If LuckPerms is not available, we can't check
-        if (plugin.getLuckPermsApi() == null) {
-            plugin.getLogger().warning("LuckPerms API not available for alt account checking");
-            return false;
-        }
-
-        try {
-            // Load the user data (this returns a CompletableFuture)
-            // We need to join() to wait for the result since this method isn't async
-            var user = plugin.getLuckPermsApi().getUserManager().loadUser(player.getUniqueId()).join();
-            
-            // Check if the user has the "group.alt" permission or is in the "alt" group
-            if (user.getCachedData().getPermissionData().checkPermission("group.alt").asBoolean()) return true;
-                    
-        } catch (Exception e) {
-            plugin.getLogger().warning("Error checking if player " + player.getName() + " is an alt: " + e.getMessage());
-        }
-        
-        return false;
-    }
-
-
 }

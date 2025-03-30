@@ -140,8 +140,21 @@ public class RosterCommand implements CommandExecutor {
             } else {
                 role = chatUtility.addSpacing(parser.deserialize("<#6C719D>Member"), 80);
             }
+            
             Component lastSeen;
-            lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + TimeUtility.formatTimeSince(clanMember.getLastSeen())), 110, true);
+            String lastSeenText = TimeUtility.formatTimeSince(clanMember.getLastSeen());
+            
+            // Check if player is an alt account
+            if (plugin.getAltUtility().isAlt(clanMember)) {
+                // Add asterisk prefix and hover text for alt accounts
+                String hoverText2 = "<#949BD1>This is an alt account and is not included in the active count.";
+                Component altLastSeen = parser.deserialize("<#6C719D>*" + lastSeenText)
+                        .hoverEvent(HoverEvent.showText(parser.deserialize(hoverText2)));
+                lastSeen = chatUtility.addSpacing(altLastSeen, 110, true);
+            } else {
+                lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + lastSeenText), 110, true);
+            }
+            
             rosterOutputLines.add(member.append(role).append(lastSeen));
         }
 

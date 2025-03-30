@@ -9,6 +9,7 @@ import com.wasted_ticks.featherclans.listeners.PlayerJoinListener;
 import com.wasted_ticks.featherclans.listeners.ProjectileHitEventListener;
 import com.wasted_ticks.featherclans.managers.*;
 import com.wasted_ticks.featherclans.placeholders.FeatherClansPlaceholderExpansion;
+import com.wasted_ticks.featherclans.utilities.AltUtility;
 import com.wasted_ticks.featherclans.utilities.PaginateUtility;
 import net.milkbowl.vault.economy.Economy;
 import net.luckperms.api.LuckPerms;
@@ -32,6 +33,7 @@ public final class FeatherClans extends JavaPlugin {
     private DisplayManager displayManager;
     private InviteManager inviteManager;
     private PaginateUtility paginateUtility;
+    private AltUtility altUtility;
     private LuckPerms luckPermsApi;
     private Economy economy;
 
@@ -58,6 +60,7 @@ public final class FeatherClans extends JavaPlugin {
         this.databaseManager = new DatabaseManager(plugin);
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
+        this.altUtility = new AltUtility(plugin);
         this.activeManager = new ActiveManager(plugin);
         this.displayManager = new DisplayManager(plugin);
         this.inviteManager = new InviteManager(plugin);
@@ -128,6 +131,10 @@ public final class FeatherClans extends JavaPlugin {
 
     public PaginateUtility getPaginateUtil() {
         return this.paginateUtility;
+    }
+
+    public AltUtility getAltUtility() {
+        return this.altUtility;
     }
 
     public FeatherClansConfig getFeatherClansConfig() {
