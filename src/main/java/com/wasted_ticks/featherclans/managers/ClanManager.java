@@ -171,10 +171,31 @@ public class ClanManager {
         return players.containsKey(player.getUniqueId());
     }
 
-    public boolean isOfflinePlayerInSpecificClan(UUID uuid, String clan) {
-        return players.containsKey(uuid) && players.get(uuid).equalsIgnoreCase(clan);
+    public boolean isOfflinePlayerInSpecificClan(OfflinePlayer kickee, String clan) {
+        return players.containsKey(kickee.getUniqueId()) && players.get(kickee.getUniqueId()).equalsIgnoreCase(clan);
     }
+    
+    public boolean isUsernameInSpecificClan(String username, String clan) {
+        List<String> clanUsernames = this.getOfflinePlayersByClan(clan)
+                .stream()
+                .map(OfflinePlayer::getName)
+                .filter(Objects::nonNull)
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
 
+        return clanUsernames.contains(username.toLowerCase());
+    }
+    
+    public UUID getUUIDFromUsername(String username) {
+        for (UUID uuid : players.keySet()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            String playerName = offlinePlayer.getName();
+            if (playerName != null && playerName.equalsIgnoreCase(username)) {
+                return uuid;
+            }
+        }
+        return null;
+    }
 
     /**
      * Determines if an offline player is a leader of a clan.
@@ -411,7 +432,7 @@ public class ClanManager {
             select.setString(1, tag.toLowerCase());
             ResultSet results = select.executeQuery();
 
-            if(results != null && results.next()) {
+            if(results != null &&  results.next()) {
                 String leggings = results.getString("leggings");
                 if(leggings != null) {
                     return SerializationUtility.stringToStack(leggings);

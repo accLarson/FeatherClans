@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ManageCommand implements CommandExecutor {
@@ -97,9 +98,16 @@ public class ManageCommand implements CommandExecutor {
                 }
                 OfflinePlayer potentialLeader = Bukkit.getOfflinePlayer(args[3]);
 
-                if (!manager.isOfflinePlayerInSpecificClan(potentialLeader.getUniqueId(), tag)) {
-                    sender.sendMessage(messages.get("clan_manage_confer_not_in_clan", null));
-                    break;
+                if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader, tag)) {
+
+                    if (this.plugin.getClanManager().isUsernameInSpecificClan(args[3],tag)) {
+                        UUID uuid = this.plugin.getClanManager().getUUIDFromUsername(args[3]);
+                        potentialLeader = Bukkit.getOfflinePlayer(uuid);
+                    }
+                    else {
+                        sender.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
+                        return true;
+                    }
                 }
 
                 if (manager.isOfflinePlayerLeader(potentialLeader)) {
@@ -171,9 +179,16 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                if (!manager.isOfflinePlayerInSpecificClan(kickee.getUniqueId(), tag)) {
-                    sender.sendMessage(messages.get("clan_manage_kick_error_not_in_clan", Map.of("clan", tag)));
-                    break;
+                if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(kickee, tag)) {
+
+                    if (this.plugin.getClanManager().isUsernameInSpecificClan(args[3],tag)) {
+                        UUID uuid = this.plugin.getClanManager().getUUIDFromUsername(args[1]);
+                        kickee = Bukkit.getOfflinePlayer(uuid);
+                    }
+                    else {
+                        sender.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
+                        return true;
+                    }
                 }
 
                 if (manager.isOfflinePlayerLeader(kickee)) {

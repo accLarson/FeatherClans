@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class KickCommand implements CommandExecutor {
 
@@ -37,7 +38,7 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
-        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
+        if (!(plugin.getClanManager().isOfflinePlayerLeader(originator) || plugin.getClanManager().isOfflinePlayerOfficer(originator))) {
             originator.sendMessage(messages.get("clan_error_leader", null));
             return true;
         }
@@ -51,9 +52,16 @@ public class KickCommand implements CommandExecutor {
 
         String tag = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(kickee.getUniqueId(), tag)) {
-            originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
-            return true;
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(kickee, tag)) {
+
+            if (this.plugin.getClanManager().isUsernameInSpecificClan(args[1],tag)) {
+                UUID uuid = this.plugin.getClanManager().getUUIDFromUsername(args[1]);
+                kickee = Bukkit.getOfflinePlayer(uuid);
+            }
+            else {
+                originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
+                return true;
+            }
         }
 
         if (this.plugin.getClanManager().isOfflinePlayerLeader(kickee)) {

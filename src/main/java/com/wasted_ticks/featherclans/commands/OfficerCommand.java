@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class OfficerCommand implements CommandExecutor {
 
@@ -67,10 +68,18 @@ public class OfficerCommand implements CommandExecutor {
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        if (!this.manager.isOfflinePlayerInSpecificClan(officer.getUniqueId(), clan)) {
-            originator.sendMessage(messages.get("clan_officer_not_in_clan", null));
-            return true;
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(officer, clan)) {
+
+            if (this.plugin.getClanManager().isUsernameInSpecificClan(args[2],clan)) {
+                UUID uuid = this.plugin.getClanManager().getUUIDFromUsername(args[2]);
+                officer = Bukkit.getOfflinePlayer(uuid);
+            }
+            else {
+                originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
+                return true;
+            }
         }
+
 
         if (this.manager.isOfflinePlayerLeader(officer)) {
             originator.sendMessage(messages.get("clan_officer_error_leader", null));

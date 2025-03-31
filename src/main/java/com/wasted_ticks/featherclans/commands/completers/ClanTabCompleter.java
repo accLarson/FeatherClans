@@ -24,34 +24,45 @@ public class ClanTabCompleter implements TabCompleter {
             "create",
             "decline",
             "help",
-            // "leaderboard",
             "list",
             "roster"
     );
     private static final List<String> MEMBER_COMMANDS = Arrays.asList(
+            "help",
+            "list",
+            "roster",
+            // additional
             "chat",
             "friendlyfire",
-            "help",
             "home",
-            // "leaderboard",
+            "resign"
+    );
+    private static final List<String> OFFICER_COMMANDS = Arrays.asList(
+            "help",
             "list",
+            "roster",
+            "chat",
+            "friendlyfire",
+            "home",
             "resign",
-            "roster"
+            // additional
+            "invite",
+            "kick"
     );
     private static final List<String> LEADER_COMMANDS = Arrays.asList(
             "chat",
-            "confer",
-            "disband",
             "friendlyfire",
             "help",
             "home",
-            "invite",
-            "kick",
-            // "leaderboard",
             "list",
-            "officer",
             "resign",
             "roster",
+            "invite",
+            "kick",
+            // additional
+            "confer",
+            "disband",
+            "officer",
             "sethome",
             "setarmor",
             "setbanner"
@@ -74,6 +85,8 @@ public class ClanTabCompleter implements TabCompleter {
             case 1:
                 if (manager.isOfflinePlayerLeader((OfflinePlayer) sender)) StringUtil.copyPartialMatches(args[0], LEADER_COMMANDS, completions);
 
+                else if (manager.isOfflinePlayerOfficer((OfflinePlayer) sender)) StringUtil.copyPartialMatches(args[0], OFFICER_COMMANDS, completions);
+
                 else if (manager.isOfflinePlayerInClan((OfflinePlayer) sender)) StringUtil.copyPartialMatches(args[0], MEMBER_COMMANDS, completions);
 
                 else StringUtil.copyPartialMatches(args[0], EVERYONE_COMMANDS, completions);
@@ -85,12 +98,18 @@ public class ClanTabCompleter implements TabCompleter {
             case 2:
                 switch (args[0]) {
                     case "invite":
-                        if (manager.isOfflinePlayerLeader((Player) sender)) {
+                        if (manager.isOfflinePlayerLeader((Player) sender) || manager.isOfflinePlayerInClan((Player) sender)) {
                             StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream().filter(p -> !manager.isOfflinePlayerInClan(p)).map(Player::getName).collect(Collectors.toList()), completions);
                         }
                         break;
 
                     case "kick":
+                        if (manager.isOfflinePlayerLeader((Player) sender) || manager.isOfflinePlayerOfficer((Player) sender)) {
+                            String tag = manager.getClanByOfflinePlayer((Player) sender);
+                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
+                        }
+                        break;
+
                     case "confer":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             String tag = manager.getClanByOfflinePlayer((Player) sender);

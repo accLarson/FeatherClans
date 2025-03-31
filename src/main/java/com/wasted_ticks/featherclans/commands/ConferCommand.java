@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class ConferCommand implements CommandExecutor {
 
@@ -56,9 +57,16 @@ public class ConferCommand implements CommandExecutor {
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader.getUniqueId(), clan)) {
-            originator.sendMessage(messages.get("clan_confer_not_in_clan", null));
-            return true;
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader, clan)) {
+
+            if (this.plugin.getClanManager().isUsernameInSpecificClan(args[1],clan)) {
+                UUID uuid = this.plugin.getClanManager().getUUIDFromUsername(args[1]);
+                potentialLeader = Bukkit.getOfflinePlayer(uuid);
+            }
+            else {
+                originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
+                return true;
+            }
         }
 
         if (args.length < 3 || !args[2].equalsIgnoreCase("confirm")) {
