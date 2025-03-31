@@ -281,13 +281,13 @@ public class ClanManager {
      * @return boolean
      */
     public boolean deleteClan(String tag) {
+        this.getOfficers(tag).forEach(officers::remove);
         String string = "DELETE FROM clans WHERE lower(tag) = ?;";
         try(Connection connection = database.getConnection();
             PreparedStatement delete = connection.prepareStatement(string))
         {
             delete.setString(1, tag.toLowerCase(Locale.ROOT));
             if(delete.executeUpdate() != 0) {
-                this.getOfficers(tag).forEach(officers::remove);
                 players.entrySet().removeIf(entry -> entry.getValue().equals(tag));
                 clans.remove(tag.toLowerCase());
                 return true;
