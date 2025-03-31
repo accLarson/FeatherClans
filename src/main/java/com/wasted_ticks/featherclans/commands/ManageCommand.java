@@ -97,6 +97,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
                 OfflinePlayer potentialLeader = Bukkit.getOfflinePlayer(args[3]);
+                OfflinePlayer currentLeader = Bukkit.getOfflinePlayer(manager.getLeader(tag));
 
                 if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(potentialLeader, tag)) {
 
@@ -110,23 +111,25 @@ public class ManageCommand implements CommandExecutor {
                     }
                 }
 
-                if (manager.isOfflinePlayerLeader(potentialLeader)) {
-                    sender.sendMessage(messages.get("clan_manage_confer_error_leader", null));
-                    break;
-                }
+                boolean successful = manager.setClanLeader(tag, potentialLeader);
 
-                if (manager.setClanLeader(tag, potentialLeader)) {
-                    sender.sendMessage(messages.get("clan_manage_confer_success_originator", Map.of(
-                            "player", potentialLeader.getName(),
-                            "clan", tag
+                if (successful) {
+                    this.plugin.getClanManager().setClanOfficerStatus(potentialLeader, false);
+                    this.plugin.getClanManager().setClanOfficerStatus(currentLeader, true);
+
+                    sender.sendMessage(messages.get("clan_confer_success_originator", Map.of(
+                            "player", potentialLeader.getName()
                     )));
                     if (potentialLeader.isOnline()) {
-                        ((Player)potentialLeader).sendMessage(messages.get("clan_manage_confer_success_player", Map.of(
+                        ((Player)potentialLeader).sendMessage(messages.get("clan_confer_success_player", Map.of(
                                 "player", sender.getName(),
                                 "clan", tag
                         )));
                     }
-                } else sender.sendMessage(messages.get("clan_confer_error_generic", null));
+                    this.plugin.getDisplayManager().resetDisplays();
+                } else {
+                    sender.sendMessage(messages.get("clan_confer_error_generic", null));
+                }
                 break;
 
             case "invite":

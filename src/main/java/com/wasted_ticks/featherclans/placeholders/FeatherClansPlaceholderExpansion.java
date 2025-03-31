@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.placeholders;
 import com.wasted_ticks.featherclans.FeatherClans;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,14 +44,14 @@ public class FeatherClansPlaceholderExpansion extends PlaceholderExpansion {
         if(params.equalsIgnoreCase("clan_role")) {
             String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
             if (clan == null) return "";
-            else if (plugin.getClanManager().isOfflinePlayerOfficer(player)) return "◇";
-            else if (plugin.getClanManager().isOfflinePlayerLeader(player)) return "◆";
-            else return "";
+            else if (plugin.getClanManager().isOfflinePlayerOfficer(player)) return "&#808080▸ ";
+            else if (plugin.getClanManager().isOfflinePlayerLeader(player)) return "&#ffffff▸ ";
+            else return " ";
         }
 
         if(params.equalsIgnoreCase("clan")) {
             String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
-            return (clan != null) ? clan + " " : "";
+            return (clan != null) ? clan : "";
         }
 
         if(params.equalsIgnoreCase("clan_parenthesis")) {
