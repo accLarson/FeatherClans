@@ -39,7 +39,7 @@ public class KickCommand implements CommandExecutor {
         }
 
         if (!(plugin.getClanManager().isOfflinePlayerLeader(originator) || plugin.getClanManager().isOfflinePlayerOfficer(originator))) {
-            originator.sendMessage(messages.get("clan_error_leader", null));
+            originator.sendMessage(messages.get("clan_error_leader_officer", null));
             return true;
         }
 

@@ -27,7 +27,7 @@ Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/Placeholder
     feather.clans.invite              -     Invite a player to your clan (must be clan leader)
     feather.clans.kick                -     Kick a member from your clan (must be clan leader)
     feather.clans.list                -     List all clans
-    feather.clans.officer             -     promote and demote officers
+    feather.clans. officer             -     promote and demote officers
     feather.clans.resign              -     Resign from your clan (must be in clan)
     feather.clans.roster              -     List clan members of a specific clan
     feather.clans.sethome             -     Set the clan's home (must be clan leader)

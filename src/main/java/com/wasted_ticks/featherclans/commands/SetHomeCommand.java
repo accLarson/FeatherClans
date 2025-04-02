@@ -37,8 +37,8 @@ public class SetHomeCommand implements CommandExecutor {
             return true;
         }
 
-        if (!plugin.getClanManager().isOfflinePlayerLeader(originator)) {
-            originator.sendMessage(messages.get("clan_error_leader", null));
+        if (!(plugin.getClanManager().isOfflinePlayerLeader(originator) || plugin.getClanManager().isOfflinePlayerOfficer(originator))) {
+            originator.sendMessage(messages.get("clan_error_leader_officer", null));
             return true;
         }
 

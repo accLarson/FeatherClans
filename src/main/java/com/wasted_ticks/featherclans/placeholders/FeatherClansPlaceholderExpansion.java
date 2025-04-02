@@ -44,7 +44,7 @@ public class FeatherClansPlaceholderExpansion extends PlaceholderExpansion {
         if(params.equalsIgnoreCase("clan_role")) {
             String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
             if (clan == null) return "";
-            else if (plugin.getClanManager().isOfflinePlayerOfficer(player)) return "&#808080▸ ";
+            else if (plugin.getClanManager().isOfflinePlayerOfficer(player)) return "&#aaaaaa▸ ";
             else if (plugin.getClanManager().isOfflinePlayerLeader(player)) return "&#ffffff▸ ";
             else return " ";
         }
