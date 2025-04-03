@@ -109,6 +109,7 @@ public class DatabaseManager {
         createTableIfNotExists("clans", "id", "INTEGER PRIMARY KEY AUTO_INCREMENT");
         addColumnIfNotExists("clans", "banner", "TEXT NOT NULL");
         addColumnIfNotExists("clans", "tag", "VARCHAR(255) NOT NULL");
+        addColumnIfNotExists("clans", "colored_tag", "VARCHAR(255) NULL");
         addColumnIfNotExists("clans", "home", "TEXT NULL");
         addColumnIfNotExists("clans", "chestplate", "TEXT NULL");
         addColumnIfNotExists("clans", "leggings", "TEXT NULL");

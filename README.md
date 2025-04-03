@@ -9,10 +9,12 @@ Includes optional [Vault](https://github.com/milkbowl/Vault) support, if *'use-e
 Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/PlaceholderAPI) support.  
 
 ### Placeholders:  
-    %featherclans_clan%                (players clan tag or empty string)
+    %featherclans_clan%                (player's clan tag or empty string)
+    %featherclans_clan_formatted%      (player's colored tag if exists and active otherwise unformatted clan tag)
     %featherclans_is_clanmember%       (PAPI boolean for true or false)
-    %featherclans_clan_parenthesis%    (players clan tag with parenthesis)
-    %featherclans_clan_brackets%       (players clan tag with brackets)
+    %featherclans_clan_parenthesis%    (player's clan tag with parenthesis)
+    %featherclans_clan_brackets%       (player's clan tag with brackets)
+    %featherclans_clan_role%           (player's clan role indicator [leader|officer] or empty string)
 ### Permission Nodes:  
     feather.clans.accept              -     Accept a clan invitation
     feather.clans.banner              -     Recieve a clans banner (Admin)

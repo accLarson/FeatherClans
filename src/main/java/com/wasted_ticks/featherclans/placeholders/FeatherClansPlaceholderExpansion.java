@@ -44,14 +44,22 @@ public class FeatherClansPlaceholderExpansion extends PlaceholderExpansion {
         if(params.equalsIgnoreCase("clan_role")) {
             String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
             if (clan == null) return "";
-            else if (plugin.getClanManager().isOfflinePlayerOfficer(player)) return "&#aaaaaa▸ ";
-            else if (plugin.getClanManager().isOfflinePlayerLeader(player)) return "&#ffffff▸ ";
+            else if (plugin.getClanManager().isOfflinePlayerOfficer(player)) return "<#ffffff>◂ ";
+            else if (plugin.getClanManager().isOfflinePlayerLeader(player)) return "<#ffffff>▸ ";
             else return " ";
         }
 
         if(params.equalsIgnoreCase("clan")) {
             String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
             return (clan != null) ? clan : "";
+        }
+
+        if(params.equalsIgnoreCase("clan_formatted")) {
+            String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
+            if (plugin.getActiveManager().isActive(clan)) {
+                String coloredTag = plugin.getClanManager().getColorTag(clan);
+                return (coloredTag != null) ? coloredTag : clan;
+            }
         }
 
         if(params.equalsIgnoreCase("clan_parenthesis")) {

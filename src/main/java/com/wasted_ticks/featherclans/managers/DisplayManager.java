@@ -180,7 +180,9 @@ public class DisplayManager {
 
             // Set the text on the sign
             Sign sign = (Sign) signLocation.getBlock().getState();
-            sign.getSide(Side.FRONT).line(0, MiniMessage.miniMessage().deserialize("<white>" + clanTag));
+            String coloredTag = plugin.getClanManager().getColorTag(clanTag);
+            String tagText = (coloredTag != null) ? coloredTag : clanTag;
+            sign.getSide(Side.FRONT).line(0, MiniMessage.miniMessage().deserialize("<white>" + tagText));
             sign.getSide(Side.FRONT).line(2, MiniMessage.miniMessage().deserialize("<gray>" + leader.getName()));
             sign.getSide(Side.FRONT).line(3, MiniMessage.miniMessage().deserialize("<gray>Active: <#7FD47F>" + plugin.getActiveManager().getActiveMemberCount(clanTag)));
             sign.update();

@@ -19,6 +19,7 @@ public class ClanManager {
     private static final HashMap<UUID, String> players = new HashMap<>();
     private static final Set<UUID> officers = new HashSet<>();
     private static final HashMap<String, UUID> clans = new HashMap<>();
+    private static final HashMap<String, String> coloredTags = new HashMap<>();
     private final FeatherClans plugin;
     private final DatabaseManager database;
 
@@ -32,6 +33,7 @@ public class ClanManager {
         loadPlayers();
         loadOfficers();
         loadClans();
+        loadColoredTags();
     }
 
     private void loadPlayers() {
@@ -102,6 +104,26 @@ public class ClanManager {
         }
     }
 
+    private void loadColoredTags() {
+        String query = "SELECT `tag`, `colored_tag` FROM clans WHERE colored_tag IS NOT NULL;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet results = statement.executeQuery())
+        {
+            if(results != null) {
+                while (results.next()) {
+                    String tag = results.getString("tag");
+                    String coloredTag = results.getString("colored_tag");
+                    if(tag != null && coloredTag != null) {
+                        coloredTags.put(tag.toLowerCase(), coloredTag);
+                    }
+                }
+            }
+            plugin.getLogger().info("Loaded " + coloredTags.size() + " colored tags into cache.");
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to load colored tags.");
+        }
+    }
 
     /**
      * Gets a list of all clans.
@@ -290,6 +312,7 @@ public class ClanManager {
             if(delete.executeUpdate() != 0) {
                 players.entrySet().removeIf(entry -> entry.getValue().equals(tag));
                 clans.remove(tag.toLowerCase());
+                coloredTags.remove(tag.toLowerCase());
                 return true;
             }
         } catch (SQLException e) {
@@ -408,7 +431,7 @@ public class ClanManager {
 
             if(results != null && results.next()) {
                 String chestplate = results.getString("chestplate");
-                if(chestplate != null) {
+                if(chestplate !=  null) {
                     return SerializationUtility.stringToStack(chestplate);
                 }
             }
@@ -468,6 +491,39 @@ public class ClanManager {
             plugin.getLogger().severe("Failed to get boots for clan: " + tag);
         }
         return null;
+    }
+
+    /**
+     * Gets the color tag for a given clan.
+     *
+     * @param tag clan tag
+     * @return String representing the clan's color tag, or null if not found
+     */
+    public String getColorTag(String tag) {
+        return coloredTags.get(tag.toLowerCase());
+    }
+
+    /**
+     * Sets the color tag for a given clan.
+     *
+     * @param tag clan tag
+     * @param coloredTag color tag value
+     * @return boolean indicating success
+     */
+    public boolean setColorTag(String tag, String coloredTag) {
+        String query = "UPDATE clans SET colored_tag = ? WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement update = connection.prepareStatement(query)) {
+            update.setString(1, coloredTag);
+            update.setString(2, tag.toLowerCase());
+            if (update.executeUpdate() != 0) {
+                coloredTags.put(tag.toLowerCase(), coloredTag);
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to set color tag for clan: " + tag);
+        }
+        return false;
     }
 
     /**

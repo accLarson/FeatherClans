@@ -47,7 +47,8 @@ public class ClanTabCompleter implements TabCompleter {
             "resign",
             // additional
             "invite",
-            "kick"
+            "kick",
+            "sethome"
     );
     private static final List<String> LEADER_COMMANDS = Arrays.asList(
             "chat",
@@ -59,13 +60,14 @@ public class ClanTabCompleter implements TabCompleter {
             "roster",
             "invite",
             "kick",
+            "sethome",
             // additional
             "confer",
             "disband",
             "officer",
-            "sethome",
             "setarmor",
-            "setbanner"
+            "setbanner",
+            "settag"
     );
     private final FeatherClans plugin;
     private final ClanManager manager;
