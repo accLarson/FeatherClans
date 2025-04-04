@@ -50,6 +50,9 @@ settings:
     facing: NORTH
     count: 10
     sign_type: OAK
+  indicators:
+    officer: "<#e8e8e8>◂ "
+    leader: "<#e8e8e8>▸ "
   mysql:
     enabled: true
     username: ''

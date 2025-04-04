@@ -96,9 +96,13 @@ public class RosterCommand implements CommandExecutor {
         ChatUtility chatUtility = new ChatUtility(this.plugin);
         MiniMessage parser = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.color()).resolver(StandardTags.reset()).build()).build();
 
-        List<Component> rosterOutputLines = new ArrayList<>();
+        String coloredTag = null;
+        if (plugin.getActiveManager().isActive(clanTag)) coloredTag = plugin.getClanManager().getColorTag(clanTag);
+        String formattedTag = (coloredTag == null) ? clanTag : coloredTag;
 
-        Component clanInfoLine = parser.deserialize("<gray>Clan: <#949BD1>" + clanTag);
+
+
+        Component clanInfoLine = parser.deserialize("<gray>Clan: <#949BD1>" + formattedTag);
         clanInfoLine = chatUtility.addSpacing(clanInfoLine, 72);
         clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Ally: <#949BD1>-"), 72));
         clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Online: <#949BD1>" + onlineCount + "/" + clanMembers.size()), 96, true));
@@ -108,13 +112,13 @@ public class RosterCommand implements CommandExecutor {
         int dayReq = plugin.getFeatherClansConfig().getClanInactiveDaysThreshold();
         String hoverText = "<#7FD47F>Active clan status <#6C719D>requirement:\n" + "<white>" + memberReq + "+ <#6C719D>members seen within <white>" + dayReq + " <#6C719D>days";
 
-
         // Apply conditional coloring based on active status
         String activeValueColor = "<gray>";
         if (activeCount.equals("0")) activeValueColor = "<dark_gray>";
         else if (plugin.getActiveManager().isActive(clanTag)) activeValueColor = "<#7FD47F>"; // Pastel green color
         Component activeComponent = parser.deserialize("<gray>Active: " + activeValueColor + activeCount).hoverEvent(HoverEvent.showText(parser.deserialize(hoverText)));
 
+        List<Component> rosterOutputLines = new ArrayList<>();
         clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(activeComponent, 70, true));
         rosterOutputLines.add(clanInfoLine);
         rosterOutputLines.add(messages.get("clan_line", null));

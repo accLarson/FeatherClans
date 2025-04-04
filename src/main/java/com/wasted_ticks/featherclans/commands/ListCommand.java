@@ -98,6 +98,11 @@ public class ListCommand implements CommandExecutor {
         clanLines.add(messages.get("clan_line", null));
 
         for (String clan : sortedClans) {
+            String coloredTag = null;
+            if (plugin.getActiveManager().isActive(clan)) coloredTag = plugin.getClanManager().getColorTag(clan);
+            String formattedTag = (coloredTag == null) ? clan : coloredTag;
+
+
             List<OfflinePlayer> clanMembers = plugin.getClanManager().getOfflinePlayersByClan(clan);
             // Get the most recent login time from clan members
             long mostRecentLogin = clanMembers.stream().mapToLong(OfflinePlayer::getLastLogin).max().orElse(0);
@@ -116,7 +121,7 @@ public class ListCommand implements CommandExecutor {
             long onlineCount = clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count();
 
 
-            Component tag = chatUtility.addSpacing(parser.deserialize(clan), 45);
+            Component tag = chatUtility.addSpacing(parser.deserialize(formattedTag), 45);
             Component leader = chatUtility.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()), 102);
             Component ally = chatUtility.addSpacing(parser.deserialize("<#949bd1>-"), 42);
             Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + onlineCount + "/" + clanMembers.size()), 44,true);

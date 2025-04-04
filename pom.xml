@@ -6,7 +6,7 @@
 
     <groupId>com.wasted_ticks</groupId>
     <artifactId>FeatherClans</artifactId>
-    <version>1.8.0</version>
+    <version>1.9.0</version>
     <packaging>jar</packaging>
 
     <name>FeatherClans</name>

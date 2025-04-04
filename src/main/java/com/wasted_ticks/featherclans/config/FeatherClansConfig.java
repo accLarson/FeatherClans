@@ -38,6 +38,10 @@ public class FeatherClansConfig {
     private int clanMaxTagSize;
     private int clanMaxMembers;
 
+    /* INDICATORS */
+    private String officerIndicator;
+    private String leaderIndicator;
+
     private boolean mysqlEnabled;
     private String mysqlUsername;
     private String mysqlHost;
@@ -77,6 +81,10 @@ public class FeatherClansConfig {
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
         this.clanMaxTagSize = config.getInt("settings.clan.max_tag_size");
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
+
+        /* Load indicator settings */
+        this.officerIndicator = config.getString("settings.indicators.officer");
+        this.leaderIndicator = config.getString("settings.indicators.leader");
 
         this.mysqlEnabled = config.getBoolean("settings.mysql.enabled");
         this.mysqlUsername = config.getString("settings.mysql.username");
@@ -215,5 +223,13 @@ public class FeatherClansConfig {
 
     public String getSignType() {
         return signType;
+    }
+
+    public String getOfficerIndicator() {
+        return officerIndicator;
+    }
+
+    public String getLeaderIndicator() {
+        return leaderIndicator;
     }
 }
