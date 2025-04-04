@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class FeatherClansPlaceholderExpansion extends PlaceholderExpansion {
 
     private final FeatherClans plugin;
@@ -56,10 +58,10 @@ public class FeatherClansPlaceholderExpansion extends PlaceholderExpansion {
 
         if(params.equalsIgnoreCase("clan_formatted")) {
             String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
-            if (plugin.getActiveManager().isActive(clan)) {
-                String coloredTag = plugin.getClanManager().getColorTag(clan);
-                return (coloredTag != null) ? coloredTag : clan;
-            }
+            String coloredTag = null;
+            if (clan == null) return "";
+            else if (plugin.getActiveManager().isActive(clan)) coloredTag = plugin.getClanManager().getColorTag(clan);
+            return (coloredTag == null) ? clan : coloredTag;
         }
 
         if(params.equalsIgnoreCase("clan_parenthesis")) {
