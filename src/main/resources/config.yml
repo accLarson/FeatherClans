@@ -36,6 +36,8 @@ settings:
     archive_days: 30
     delete_days: 45
   clan:
+    # The amount of days a leader must be offline for an officer to takeover.
+    takeover_days_threshold: 50
     # The amount of days a player who doesn't log in would be considered inactive.
     inactive_days_threshold: 4
     # The amount of active members a clan must have to be considered itself active.

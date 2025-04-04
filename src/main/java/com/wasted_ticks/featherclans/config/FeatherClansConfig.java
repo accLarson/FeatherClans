@@ -37,8 +37,8 @@ public class FeatherClansConfig {
     private int clanMinTagSize;
     private int clanMaxTagSize;
     private int clanMaxMembers;
+    private int clanTakeoverDaysThreshold;
 
-    /* INDICATORS */
     private String officerIndicator;
     private String leaderIndicator;
 
@@ -81,8 +81,8 @@ public class FeatherClansConfig {
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
         this.clanMaxTagSize = config.getInt("settings.clan.max_tag_size");
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
+        this.clanTakeoverDaysThreshold = config.getInt("settings.clan.takeover_days_threshold");
 
-        /* Load indicator settings */
         this.officerIndicator = config.getString("settings.indicators.officer");
         this.leaderIndicator = config.getString("settings.indicators.leader");
 
@@ -175,6 +175,10 @@ public class FeatherClansConfig {
 
     public int getClanMaxMembers() {
         return clanMaxMembers;
+    }
+
+    public int getClanTakeoverDaysThreshold() {
+        return clanTakeoverDaysThreshold;
     }
 
     public boolean isMysqlEnabled() {
