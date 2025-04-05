@@ -56,7 +56,7 @@ public class TakeoverCommand implements CommandExecutor {
         
         int leaderDaysOffline = TimeUtility.getDaysSince(leader.getLastSeen());
         
-        if (leaderDaysOffline <= threshold) {
+        if (leaderDaysOffline < threshold) {
             originator.sendMessage(messages.get("clan_takeover_error_threshold", Map.of(
                     "inactive_days", String.valueOf(leaderDaysOffline),
                     "threshold", String.valueOf(threshold))));
@@ -74,7 +74,7 @@ public class TakeoverCommand implements CommandExecutor {
         if (success) {
             this.plugin.getClanManager().setClanOfficerStatus(originator, false);
             this.plugin.getClanManager().setClanOfficerStatus(leader, true);
-            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan sethome")));
+            originator.sendMessage(messages.get("clan_takeover_success",Map.of("clan", tag)));
 
         } else originator.sendMessage(messages.get("clan_takeover_error_generic", null));
 

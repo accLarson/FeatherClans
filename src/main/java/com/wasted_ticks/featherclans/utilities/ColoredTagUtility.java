@@ -1,13 +1,18 @@
 package com.wasted_ticks.featherclans.utilities;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ColoredTagUtility {
-    private static final Map<String,String> colorMap = new HashMap<>();
+    private static final Map<String,String> colorMap = new LinkedHashMap<>();
     
     static {
-        colorMap.put("&s", "<#DA9696>");
+        colorMap.put("&f", "<#FFFFFF>");
+        colorMap.put("&g", "<#CCCCCC>");
+        colorMap.put("&h", "<#9F9F9F>");
+        colorMap.put("&i", "<#757575>");
+        colorMap.put("&j", "<#947F6A>");
+        colorMap.put("&s", "<#EBAD9D>");
         colorMap.put("&t", "<#E8B789>");
         colorMap.put("&u", "<#E6E2A3>");
         colorMap.put("&v", "<#A8CC94>");
@@ -15,10 +20,6 @@ public class ColoredTagUtility {
         colorMap.put("&x", "<#8AA6D4>");
         colorMap.put("&y", "<#BA9BD4>");
         colorMap.put("&z", "<#E2A5CE>");
-        colorMap.put("&g", "<#CCCCCC>");
-        colorMap.put("&h", "<#757575>");
-        colorMap.put("&i", "<#9F9F9F>");
-        colorMap.put("&j", "<#947F6A>");
     }
 
     public static boolean isValidColoredTag(String coloredTag, String tag) {
@@ -39,4 +40,15 @@ public class ColoredTagUtility {
         return convertedTag;
     }
 
+    public static String getColorOptions() {
+        StringBuilder options = new StringBuilder();
+        
+        for (Map.Entry<String, String> entry : colorMap.entrySet()) {
+            String colorCode = entry.getKey();
+            String hexColor = entry.getValue();
+            options.append(hexColor).append(colorCode).append(" ");
+        }
+        
+        return options.toString().trim();
+    }
 }

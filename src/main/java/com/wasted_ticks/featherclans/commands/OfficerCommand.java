@@ -19,12 +19,14 @@ public class OfficerCommand implements CommandExecutor {
     private final FeatherClans plugin;
     private final ClanManager manager;
     private final FeatherClansMessages messages;
+    private final int takeoverThreshold;
 
 
     public OfficerCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.manager = plugin.getClanManager();
         this.messages = plugin.getFeatherClansMessages();
+        this.takeoverThreshold = plugin.getFeatherClansConfig().getClanTakeoverDaysThreshold();
     }
 
     @Override
@@ -64,15 +66,15 @@ public class OfficerCommand implements CommandExecutor {
             return true;
         }
 
-        OfflinePlayer officer = Bukkit.getOfflinePlayer(args[2]);
+        OfflinePlayer target = Bukkit.getOfflinePlayer(args[2]);
 
         String clan = this.plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(officer, clan)) {
+        if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(target, clan)) {
 
             if (this.plugin.getClanManager().isUsernameInSpecificClan(args[2],clan)) {
                 UUID uuid = this.plugin.getClanManager().getUUIDFromUsername(args[2]);
-                officer = Bukkit.getOfflinePlayer(uuid);
+                target = Bukkit.getOfflinePlayer(uuid);
             }
             else {
                 originator.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
@@ -81,36 +83,40 @@ public class OfficerCommand implements CommandExecutor {
         }
 
 
-        if (this.manager.isOfflinePlayerLeader(officer)) {
+        if (this.manager.isOfflinePlayerLeader(target)) {
             originator.sendMessage(messages.get("clan_officer_error_leader", null));
             return true;
         }
 
-        if (status && this.manager.isOfflinePlayerOfficer(officer)) {
+        if (status && this.manager.isOfflinePlayerOfficer(target)) {
             originator.sendMessage(messages.get("clan_officer_error_already_officer", null));
             return true;
         }
 
-        if (!status && !this.manager.isOfflinePlayerOfficer(officer)) {
+        if (!status && !this.manager.isOfflinePlayerOfficer(target)) {
             originator.sendMessage(messages.get("clan_officer_error_not_officer", null));
             return true;
         }
 
         if (args.length < 4 || !args[3].equalsIgnoreCase("confirm")) {
-            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan officer " + officer.getName())));
+            if (status) {
+                originator.sendMessage(messages.get("clan_officer_promote_warning", Map.of("clan", clan, "days", String.valueOf(takeoverThreshold))));
+                originator.sendMessage(messages.get("clan_officer_promote_commands",null));
+            }
+            originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan officer " + args[1].toLowerCase() + " " + target.getName())));
             return true;
         }
 
-        boolean successful = manager.setClanOfficerStatus(officer, status);
+        boolean successful = manager.setClanOfficerStatus(target, status);
 
         if (successful) {
             if (status) {
-                originator.sendMessage(messages.get("clan_officer_promote_success_originator", Map.of("player", officer.getName())));
-                if (officer.isOnline()) {((Player)officer).sendMessage(messages.get("clan_officer_promote_success_player", Map.of("player", originator.getName(), "clan", clan)));}
+                originator.sendMessage(messages.get("clan_officer_promote_success_originator", Map.of("player", target.getName())));
+                if (target.isOnline()) {((Player)target).sendMessage(messages.get("clan_officer_promote_success_player", Map.of("player", originator.getName(), "clan", clan)));}
             }
             else {
-                originator.sendMessage(messages.get("clan_officer_demote_success_originator", Map.of("player", officer.getName())));
-                if (officer.isOnline()) {((Player)officer).sendMessage(messages.get("clan_officer_demote_success_player", Map.of("player", originator.getName(), "clan", clan)));}
+                originator.sendMessage(messages.get("clan_officer_demote_success_originator", Map.of("player", target.getName())));
+                if (target.isOnline()) {((Player)target).sendMessage(messages.get("clan_officer_demote_success_player", Map.of("player", originator.getName(), "clan", clan)));}
 
             }
         } else {

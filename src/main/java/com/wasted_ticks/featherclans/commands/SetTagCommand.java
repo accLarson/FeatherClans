@@ -48,19 +48,19 @@ public class SetTagCommand implements CommandExecutor {
 
         if (args.length < 2) {
             originator.sendMessage(messages.get("clan_settag_guide", null));
-            originator.sendMessage(messages.get("clan_settag_colors", null));
+            originator.sendMessage(messages.get("clan_settag_colors", Map.of("colors", ColoredTagUtility.getColorOptions())));
             return true;
         }
 
         if (tag.equalsIgnoreCase(args[1])) {
             originator.sendMessage(messages.get("clan_settag_guide", null));
-            originator.sendMessage(messages.get("clan_settag_colors", null));
+            originator.sendMessage(messages.get("clan_settag_colors", Map.of("colors", ColoredTagUtility.getColorOptions())));
             return true;        }
 
         if (!ColoredTagUtility.isValidColoredTag(args[1], tag)) {
             originator.sendMessage(messages.get("clan_settag_error_invalid_input", Map.of("tag", tag)));
-            originator.sendMessage(messages.get("clan_settag_guide", null));
-            originator.sendMessage(messages.get("clan_settag_colors", null));
+            originator.sendMessage(messages.get("clan_settag_guide", null)); 
+            originator.sendMessage(messages.get("clan_settag_colors", Map.of("colors", ColoredTagUtility.getColorOptions())));
 
             return true;
         }

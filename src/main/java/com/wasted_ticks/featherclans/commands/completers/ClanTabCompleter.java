@@ -48,7 +48,8 @@ public class ClanTabCompleter implements TabCompleter {
             // additional
             "invite",
             "kick",
-            "sethome"
+            "sethome",
+            "takeover" // OFFICER ONLY - NOT AVAILABLE TO LEADER
     );
     private static final List<String> LEADER_COMMANDS = Arrays.asList(
             "chat",
