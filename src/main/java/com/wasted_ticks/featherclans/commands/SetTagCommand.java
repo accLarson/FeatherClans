@@ -46,6 +46,11 @@ public class SetTagCommand implements CommandExecutor {
 
         String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
 
+        if (!plugin.getActiveManager().isActive(tag)) {
+            originator.sendMessage(messages.get("clan_settag_error_not_active", null));
+            return true;
+        }
+
         if (args.length < 2) {
             originator.sendMessage(messages.get("clan_settag_guide", null));
             originator.sendMessage(messages.get("clan_settag_colors", Map.of("colors", ColoredTagUtility.getColorOptions())));

@@ -7,19 +7,20 @@ public class ColoredTagUtility {
     private static final Map<String,String> colorMap = new LinkedHashMap<>();
     
     static {
-        colorMap.put("&f", "<#FFFFFF>");
-        colorMap.put("&g", "<#CCCCCC>");
-        colorMap.put("&h", "<#9F9F9F>");
-        colorMap.put("&i", "<#757575>");
+        colorMap.put("&f", "<#E0E0E0>"); // was "<#FFFFFF>"
+        colorMap.put("&g", "<#AFAFAF>"); // was "<#CCCCCC>"
+        colorMap.put("&h", "<#888888>"); // was "<#9F9F9F>"
+        colorMap.put("&i", "<#6C6C6C>"); // was "<#757575>"
         colorMap.put("&j", "<#947F6A>");
-        colorMap.put("&s", "<#EBAD9D>");
-        colorMap.put("&t", "<#E8B789>");
+        colorMap.put("&s", "<#E2A697>"); // was "<#EBAD9D>"
+        colorMap.put("&t", "<#E8C289>"); // was "<#E8B789>"
         colorMap.put("&u", "<#E6E2A3>");
         colorMap.put("&v", "<#A8CC94>");
         colorMap.put("&w", "<#98CBD9>");
         colorMap.put("&x", "<#8AA6D4>");
         colorMap.put("&y", "<#BA9BD4>");
         colorMap.put("&z", "<#E2A5CE>");
+
     }
 
     public static boolean isValidColoredTag(String coloredTag, String tag) {
