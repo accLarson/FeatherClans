@@ -146,7 +146,9 @@ public class RosterCommand implements CommandExecutor {
             }
             
             Component lastSeen;
-            String lastSeenText = TimeUtility.formatTimeSince(clanMember.getLastSeen());
+            String lastSeenText;
+            if (clanMember.isOnline() && !isVanished(clanMember.getPlayer())) lastSeenText = "online";
+            else lastSeenText = TimeUtility.formatTimeSince(clanMember.getLastSeen());
             
             // Check if player is an alt account
             if (plugin.getAltUtility().isAlt(clanMember)) {
