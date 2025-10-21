@@ -35,9 +35,8 @@ public class RosterCommand implements CommandExecutor {
     }
 
     private boolean isVanished(Player player) {
-        for (MetadataValue meta : player.getMetadata("vanished")) {
+        for (MetadataValue meta : player.getMetadata("vanished"))
             if (meta.asBoolean()) return true;
-        }
         return false;
     }
 
@@ -100,11 +99,15 @@ public class RosterCommand implements CommandExecutor {
         if (plugin.getActiveManager().isActive(clanTag)) coloredTag = plugin.getClanManager().getColorTag(clanTag);
         String formattedTag = (coloredTag == null) ? clanTag : coloredTag;
 
-
+        // variable for ally
+        String allyTag = manager.hasAlly(clanTag.toLowerCase()) ? manager.getAlly(clanTag.toLowerCase()) : null;
+        String coloredAlly = (allyTag != null && plugin.getActiveManager().isActive(allyTag)) ? manager.getColorTag(allyTag) : null;
+        String allyInfoText = (allyTag != null) ? "<gray>Ally: " + ((coloredAlly == null) ? "<#949BD1>" + allyTag : coloredAlly) : "<gray>Ally: <#949BD1>-";
 
         Component clanInfoLine = parser.deserialize("<gray>Clan: <#949BD1>" + formattedTag);
         clanInfoLine = chatUtility.addSpacing(clanInfoLine, 72);
-        clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Ally: <#949BD1>-"), 72));
+
+        clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize(allyInfoText), 72));
         clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Online: <#949BD1>" + onlineCount + "/" + clanMembers.size()), 96, true));
 
         // Create hover text for active members count
@@ -137,19 +140,18 @@ public class RosterCommand implements CommandExecutor {
             member = chatUtility.addSpacing(parser.deserialize(name), 120);
 
             Component role;
-            if (manager.isOfflinePlayerLeader(clanMember)) {
+            if (manager.isOfflinePlayerLeader(clanMember))
                 role = chatUtility.addSpacing(parser.deserialize("<#6C719D>Leader"), 80);
-            } else if (manager.isOfflinePlayerOfficer(clanMember)) {
+            else if (manager.isOfflinePlayerOfficer(clanMember))
                 role = chatUtility.addSpacing(parser.deserialize("<#6C719D>Officer"), 80);
-            } else {
+            else
                 role = chatUtility.addSpacing(parser.deserialize("<#6C719D>Member"), 80);
-            }
-            
+
             Component lastSeen;
             String lastSeenText;
             if (clanMember.isOnline() && !isVanished(clanMember.getPlayer())) lastSeenText = "online";
             else lastSeenText = TimeUtility.formatTimeSince(clanMember.getLastSeen());
-            
+
             // Check if player is an alt account
             if (plugin.getAltUtility().isAlt(clanMember)) {
                 // Add asterisk prefix and hover text for alt accounts
@@ -160,7 +162,7 @@ public class RosterCommand implements CommandExecutor {
             } else {
                 lastSeen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + lastSeenText), 110, true);
             }
-            
+
             rosterOutputLines.add(member.append(role).append(lastSeen));
         }
 

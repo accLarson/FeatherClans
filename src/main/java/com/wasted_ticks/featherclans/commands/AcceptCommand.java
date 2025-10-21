@@ -1,9 +1,11 @@
 package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
+import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
-import com.wasted_ticks.featherclans.utilities.RequestUtility;
+import com.wasted_ticks.featherclans.data.Request;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,28 +38,115 @@ public class AcceptCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        boolean inClan = plugin.getClanManager().isOfflinePlayerLeader(player);
-        if (inClan) {
-            player.sendMessage(messages.get("clan_accept_in_clan", null));
-            return false;
-        }
 
-        RequestUtility request = this.plugin.getInviteManager().getRequest(player);
+        Request request = this.plugin.getInviteManager().getRequest(player);
         if (request == null) {
             player.sendMessage(messages.get("clan_accept_no_request", null));
-            return false;
+            return true;
         }
 
-        String tag = request.getClan();
-        Player originator = request.getOriginator();
+        // Handle alliance acceptance
+        if (request.getType() == Request.RequestType.ALLIANCE) {
+            Player originator = request.getOriginator();
+            String originatorClan = request.getClan();
+            String acceptorClan = plugin.getClanManager().getClanByOfflinePlayer(player);
 
-        boolean success = false;
-        if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
+            if (acceptorClan == null) {
+                player.sendMessage(messages.get("clan_error_not_in_clan", null));
+                plugin.getInviteManager().clearRequest(player);
+                return true;
+            }
+
+            if (!plugin.getClanManager().isOfflinePlayerLeader(player)) {
+                player.sendMessage(messages.get("clan_error_leader", null));
+                plugin.getInviteManager().clearRequest(player);
+                return true;
+            }
+
+            if (plugin.getClanManager().hasAlly(acceptorClan)) {
+                player.sendMessage(messages.get("clan_error_youre_already_allied", null));
+                plugin.getInviteManager().clearRequest(player);
+                return true;
+            }
+
+            if (plugin.getClanManager().hasAlly(originatorClan)) {
+                player.sendMessage(messages.get("clan_error_theyre_already_allied", null));
+                plugin.getInviteManager().clearRequest(player);
+                return true;
+            }
+
+            // Handle economy if enabled
+            if (plugin.getFeatherClansConfig().isEconomyEnabled()) {
+                Economy economy = plugin.getEconomy();
+                double amount = plugin.getFeatherClansConfig().getEconomyAlliancePrice();
+
+                boolean playerHasFunds = economy.has(player, amount);
+                boolean originatorHasFunds = originator != null && economy.has(originator, amount);
+
+                if (!playerHasFunds && !originatorHasFunds) {
+                    player.sendMessage(messages.get("clan_ally_accept_error_economy_both", Map.of(
+                            "amount", String.valueOf((int) amount),
+                            "player", originator != null ? originator.getName() : "Unknown"
+                    )));
+                    plugin.getInviteManager().clearRequest(player);
+                    return true;
+                } else if (!playerHasFunds) {
+                    player.sendMessage(messages.get("clan_ally_accept_error_economy_you", Map.of(
+                            "amount", String.valueOf((int) amount)
+                    )));
+                    plugin.getInviteManager().clearRequest(player);
+                    return true;
+                } else if (!originatorHasFunds) {
+                    player.sendMessage(messages.get("clan_ally_accept_error_economy_other", Map.of(
+                            "amount", String.valueOf((int) amount),
+                            "player", originator != null ? originator.getName() : "Unknown"
+                    )));
+                    plugin.getInviteManager().clearRequest(player);
+                    return true;
+                }
+
+                // Withdraw from both players
+                economy.withdrawPlayer(player, amount);
+                if (originator != null) {
+                    economy.withdrawPlayer(originator, amount);
+                }
+            }
+
+            // Create the alliance
+            if (plugin.getClanManager().addAlliance(originatorClan, acceptorClan)) {
+                player.sendMessage(messages.get("clan_ally_accept_success_player", Map.of("clan", originatorClan)));
+                
+                if (originator != null && originator.isOnline()) {
+                    originator.sendMessage(messages.get("clan_ally_accept_success_originator", Map.of(
+                            "player", player.getName(),
+                            "clan", acceptorClan
+                    )));
+                }
+                
+                plugin.getDisplayManager().resetDisplays();
+            }
+
+            plugin.getInviteManager().clearRequest(player);
+            return true;
+        }
+
+        // Handle membership acceptance
+        String tag = request.getClan();
+        player.sendMessage(messages.get("clan_accept_success_player", Map.of(
+                "clan", tag
+        )));
+
+        if (plugin.getFeatherClansConfig().isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
-            double amount = this.plugin.getFeatherClansConfig().getEconomyInvitePrice();
+            double amount = plugin.getFeatherClansConfig().getEconomyMembershipPrice();
             if (economy.has(player, amount)) {
                 economy.withdrawPlayer(player, amount);
-                success = plugin.getClanManager().addOfflinePlayerToClan(player, tag);
+                if (plugin.getClanManager().addOfflinePlayerToClan(player, tag)) {
+                    plugin.getInviteManager().clearRequest(player);
+                    player.sendMessage(messages.get("clan_accept_success_player", Map.of(
+                            "clan", tag
+                    )));
+                }
             } else {
                 player.sendMessage(messages.get("clan_accept_error_economy", Map.of(
                         "amount", String.valueOf((int) amount)
@@ -65,21 +154,14 @@ public class AcceptCommand implements CommandExecutor {
                 return true;
             }
         } else {
-            success = plugin.getClanManager().addOfflinePlayerToClan(player, tag);
-
+            if (plugin.getClanManager().addOfflinePlayerToClan(player, tag)) {
+                plugin.getInviteManager().clearRequest(player);
+                player.sendMessage(messages.get("clan_accept_success_player", Map.of(
+                        "clan", tag
+                )));
+            }
         }
 
-        if(success) {
-            plugin.getInviteManager().clearRequest(player);
-            player.sendMessage(messages.get("clan_accept_success_player", Map.of(
-                    "clan", tag
-            )));
-            originator.sendMessage(messages.get("clan_accept_success_originator", Map.of(
-                    "player", player.getName()
-            )));
-
-            plugin.getActiveManager().updateActiveStatus(player, tag);
-        }
         return true;
     }
 }

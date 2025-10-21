@@ -2,6 +2,7 @@ package com.wasted_ticks.featherclans.commands;
 
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.data.Request;
 import com.wasted_ticks.featherclans.managers.ClanManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -165,7 +166,7 @@ public class ManageCommand implements CommandExecutor {
                     break;
                 }
 
-                plugin.getInviteManager().invite(invitee, tag, (Player) sender);
+                plugin.getInviteManager().addRequest(Request.RequestType.MEMBERSHIP, invitee, (Player) sender, tag);
                 break;
 
             case "kick":

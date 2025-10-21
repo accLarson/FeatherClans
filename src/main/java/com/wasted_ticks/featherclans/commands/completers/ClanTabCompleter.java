@@ -33,6 +33,7 @@ public class ClanTabCompleter implements TabCompleter {
             "roster",
             // additional
             "chat",
+            "allychat",
             "friendlyfire",
             "home",
             "resign"
@@ -42,6 +43,7 @@ public class ClanTabCompleter implements TabCompleter {
             "list",
             "roster",
             "chat",
+            "allychat",
             "friendlyfire",
             "home",
             "resign",
@@ -53,6 +55,7 @@ public class ClanTabCompleter implements TabCompleter {
     );
     private static final List<String> LEADER_COMMANDS = Arrays.asList(
             "chat",
+            "allychat",
             "friendlyfire",
             "help",
             "home",
@@ -95,6 +98,7 @@ public class ClanTabCompleter implements TabCompleter {
                 else StringUtil.copyPartialMatches(args[0], EVERYONE_COMMANDS, completions);
 
                 if(sender.isOp()) StringUtil.copyPartialMatches(args[0], List.of("banner","manage", "debug"), completions);
+                if(manager.isOfflinePlayerLeader((OfflinePlayer) sender)) StringUtil.copyPartialMatches(args[0], List.of("ally"), completions);
 
                 break;
 
@@ -139,6 +143,11 @@ public class ClanTabCompleter implements TabCompleter {
                     case "manage":
                         if (sender.hasPermission("feather.clans.manage")) StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
                         break;
+                    case "ally":
+                        if (manager.isOfflinePlayerLeader((Player) sender)) {
+                            StringUtil.copyPartialMatches(args[1], List.of("propose", "dissolve"), completions);
+                        }
+                        break;
                     case "debug":
                         if (sender.hasPermission("feather.clans.debug")) StringUtil.copyPartialMatches(args[1], List.of("updatedisplay","getactive"), completions);
 
@@ -146,26 +155,11 @@ public class ClanTabCompleter implements TabCompleter {
                 break;
 
             case 3:
-                // clan manage test chat    <message>
-
-                // clan manage test confer  <clan-member>
-                // clan manage test kick    <clan-member>
-                // clan manage test invite  <player>
-
-
-                // clan manage test disband
-                // clan manage test sethome
-                // clan manage test setarmor
-                // clan manage test setbanner
-
-                //clan officer <player> [promote|demote]
-
-                if (sender.hasPermission("feather.clans.manage") && args[0].equalsIgnoreCase("manage")) {
-                    StringUtil.copyPartialMatches(args[2], List.of("confer","kick","invite","sethome","setarmor","setbanner","disband","chat"), completions);
-                }
-                else if (manager.isOfflinePlayerLeader((Player) sender) && args[0].equalsIgnoreCase("officer")) {
+                if (manager.isOfflinePlayerLeader((Player) sender) && args[0].equalsIgnoreCase("ally") && args[1].equalsIgnoreCase("propose")) {
                     String tag = manager.getClanByOfflinePlayer((Player) sender);
-                    StringUtil.copyPartialMatches(args[2], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
+                    StringUtil.copyPartialMatches(args[2], manager.getClans().stream()
+                            .filter(clan -> !clan.equalsIgnoreCase(tag))
+                            .collect(Collectors.toList()), completions);
                 }
                 break;
 

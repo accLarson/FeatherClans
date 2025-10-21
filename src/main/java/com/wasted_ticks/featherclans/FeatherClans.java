@@ -31,7 +31,7 @@ public final class FeatherClans extends JavaPlugin {
     private FriendlyFireManager friendlyFireManager;
     private ActiveManager activeManager;
     private DisplayManager displayManager;
-    private InviteManager inviteManager;
+    private RequestManager requestManager;
     private PaginateUtility paginateUtility;
     private AltUtility altUtility;
     private LuckPerms luckPermsApi;
@@ -63,7 +63,7 @@ public final class FeatherClans extends JavaPlugin {
         this.altUtility = new AltUtility(plugin);
         this.activeManager = new ActiveManager(plugin);
         this.displayManager = new DisplayManager(plugin);
-        this.inviteManager = new InviteManager(plugin);
+        this.requestManager = new RequestManager(plugin);
         this.paginateUtility = new PaginateUtility(plugin);
 
         if (this.config.isEconomyEnabled()) {
@@ -109,8 +109,8 @@ public final class FeatherClans extends JavaPlugin {
         return this.clanManager;
     }
 
-    public InviteManager getInviteManager() {
-        return this.inviteManager;
+    public RequestManager getInviteManager() {
+        return this.requestManager;
     }
 
     public DatabaseManager getDatabaseManager() {
@@ -163,6 +163,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("resign", new ResignCommand(plugin));
         handler.register("roster", new RosterCommand(plugin));
         handler.register("chat", new ChatCommand(plugin));
+        handler.register("allychat", new AllyChatCommand(plugin));
         handler.register("list", new ListCommand(plugin));
         handler.register("leaderboard", new LeaderboardCommand(plugin));
         handler.register("help", new HelpCommand(plugin));
@@ -174,6 +175,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("officer",new OfficerCommand(plugin));
         handler.register("settag", new SetTagCommand(plugin));
         handler.register("takeover", new TakeoverCommand(plugin));
+        handler.register("ally", new AllyCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
 

@@ -125,7 +125,13 @@ public class DatabaseManager {
         addColumnIfNotExists("clan_members", "is_officer", "BOOLEAN NOT NULL DEFAULT FALSE");
         addColumnIfNotExists("clan_members", "last_seen_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
         addColumnIfNotExists("clan_members", "join_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+
+
+        // Create clan_alliances Table
+        createTableIfNotExists("clan_alliances", "id", "INTEGER PRIMARY KEY AUTO_INCREMENT");
+        addColumnIfNotExists("clan_alliances", "clan_1", "INTEGER NOT NULL");
+        addColumnIfNotExists("clan_alliances", "clan_2", "INTEGER NOT NULL");
+        addColumnIfNotExists("clan_alliances", "ally_home", "TEXT NULL");
+        addColumnIfNotExists("clan_alliances", "created_date", "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
     }
-
-
 }

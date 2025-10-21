@@ -33,9 +33,8 @@ public class ListCommand implements CommandExecutor {
     }
 
     private boolean isVanished(Player player) {
-        for (MetadataValue meta : player.getMetadata("vanished")) {
+        for (MetadataValue meta : player.getMetadata("vanished"))
             if (meta.asBoolean()) return true;
-        }
         return false;
     }
 
@@ -120,10 +119,15 @@ public class ListCommand implements CommandExecutor {
             // variable for online count
             long onlineCount = clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count();
 
+            // variable for ally
+            String allyTag = plugin.getClanManager().hasAlly(clan) ? plugin.getClanManager().getAlly(clan.toLowerCase()) : null;
+            String coloredAlly = (allyTag != null && plugin.getActiveManager().isActive(allyTag)) ? plugin.getClanManager().getColorTag(allyTag) : null;
+            String allyText = (allyTag != null) ? ((coloredAlly == null) ? "<#949bd1>" + allyTag : coloredAlly) : "<#949bd1>-";
 
             Component tag = chatUtility.addSpacing(parser.deserialize(formattedTag), 45);
             Component leader = chatUtility.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()), 102);
-            Component ally = chatUtility.addSpacing(parser.deserialize("<#949bd1>-"), 42);
+
+            Component ally = chatUtility.addSpacing(parser.deserialize(allyText), 42);
             Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + onlineCount + "/" + clanMembers.size()), 44,true);
             Component active = chatUtility.addSpacing(activeComponent, 44, true);
             Component seen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + TimeUtility.formatTimeSince(mostRecentLogin)), 40, true);

@@ -45,12 +45,17 @@ public class DisbandCommand implements CommandExecutor {
             return true;
         }
 
+        String tag = manager.getClanByOfflinePlayer(originator);
+
+        if (manager.hasAlly(tag)) {
+            originator.sendMessage(messages.get("clan_disband_error_has_alliance", null));
+            return true;
+        }
+
         if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
             originator.sendMessage(messages.get("clan_command_confirm", Map.of("command", "/clan disband")));
             return true;
         }
-
-        String tag = manager.getClanByOfflinePlayer(originator);
 
         List<OfflinePlayer> members = manager.getOfflinePlayersByClan(tag);
 

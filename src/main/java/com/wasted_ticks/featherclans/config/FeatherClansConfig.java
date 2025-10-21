@@ -20,11 +20,12 @@ public class FeatherClansConfig {
     /* SETTINGS */
     private boolean economyEnabled;
     private double economyCreationPrice;
-    private double economyInvitePrice;
     private double economySetHomePrice;
     private double economySetArmorPrice;
     private double economySetTagPrice;
     private double economySetBannerPrice;
+    private double economyMembershipPrice;
+    private double economyAlliancePrice;
 
     private boolean cleanupEnabled;
     private int cleanupArchiveDays;
@@ -32,7 +33,7 @@ public class FeatherClansConfig {
 
     private int clanActiveMembersRequirement;
     private int clanInactiveDaysThreshold;
-    private int clanInviteTimeout;
+    private int clanRequestTimeout;
     private int clanTeleportDelaySeconds;
     private int clanMinTagSize;
     private int clanMaxTagSize;
@@ -64,11 +65,12 @@ public class FeatherClansConfig {
 
         this.economyEnabled = config.getBoolean("settings.economy.enabled");
         this.economyCreationPrice = config.getDouble("settings.economy.creation_price");
-        this.economyInvitePrice = config.getDouble("settings.economy.invite_price");
         this.economySetHomePrice = config.getDouble("settings.economy.set_home_price");
         this.economySetArmorPrice = config.getDouble("settings.economy.set_armor_price");
         this.economySetTagPrice = config.getDouble("settings.economy.set_tag_price");
         this.economySetBannerPrice = config.getDouble("settings.economy.set_banner_price");
+        this.economyMembershipPrice = config.getDouble("settings.economy.membership_price");
+        this.economyAlliancePrice = config.getDouble("settings.economy.alliance_price");
 
         this.cleanupEnabled = config.getBoolean("settings.clean_up.enabled");
         this.cleanupArchiveDays = config.getInt("settings.clean_up.archive_days");
@@ -76,7 +78,7 @@ public class FeatherClansConfig {
 
         this.clanActiveMembersRequirement = config.getInt("settings.clan.active_members_requirement");
         this.clanInactiveDaysThreshold = config.getInt("settings.clan.inactive_days_threshold");
-        this.clanInviteTimeout = config.getInt("settings.clan.invite_timeout");
+        this.clanRequestTimeout = config.getInt("settings.clan.invite_timeout");
         this.clanTeleportDelaySeconds = config.getInt("settings.clan.teleport_delay_seconds");
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
         this.clanMaxTagSize = config.getInt("settings.clan.max_tag_size");
@@ -117,10 +119,6 @@ public class FeatherClansConfig {
         return economyCreationPrice;
     }
 
-    public double getEconomyInvitePrice() {
-        return economyInvitePrice;
-    }
-
     public double getEconomySetHomePrice() {
         return economySetHomePrice;
     }
@@ -135,6 +133,14 @@ public class FeatherClansConfig {
 
     public double getEconomySetBannerPrice() {
         return economySetBannerPrice;
+    }
+
+    public double getEconomyMembershipPrice() {
+        return economyMembershipPrice;
+    }
+
+    public double getEconomyAlliancePrice() {
+        return economyAlliancePrice;
     }
 
     public boolean isCleanupEnabled() {
@@ -157,8 +163,8 @@ public class FeatherClansConfig {
         return clanInactiveDaysThreshold;
     }
 
-    public int getClanInviteTimeout() {
-        return clanInviteTimeout;
+    public int getClanRequestTimeout() {
+        return clanRequestTimeout;
     }
 
     public int getClanTeleportDelaySeconds() {

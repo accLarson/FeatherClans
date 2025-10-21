@@ -11,15 +11,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ClanManager {
 
-    private static final HashMap<UUID, String> players = new HashMap<>();
+    private static final Map<UUID, String> players = new HashMap<>();
     private static final Set<UUID> officers = new HashSet<>();
-    private static final HashMap<String, UUID> clans = new HashMap<>();
-    private static final HashMap<String, String> coloredTags = new HashMap<>();
+    private static final Map<String, UUID> clans = new HashMap<>();
+    private static final Map<String, String> coloredTags = new HashMap<>();
+    private static final Map<String, String> alliances = new HashMap<>();
     private final FeatherClans plugin;
     private final DatabaseManager database;
 
@@ -34,6 +36,7 @@ public class ClanManager {
         loadOfficers();
         loadClans();
         loadColoredTags();
+        loadAlliances();
     }
 
     private void loadPlayers() {
@@ -51,6 +54,7 @@ public class ClanManager {
                     }
                 }
             }
+            plugin.getLogger().info("Loaded " + players.size() + " clan members into cache.");
         } catch (SQLException e) {
             plugin.getLogger().info("Failed to load players.");
         } catch(IllegalArgumentException e) {
@@ -97,6 +101,7 @@ public class ClanManager {
                     }
                 }
             }
+            plugin.getLogger().info("Loaded " + clans.size() + " clans into cache.");
         } catch (SQLException e) {
             plugin.getLogger().info("Failed to load clans.");
         } catch(IllegalArgumentException e) {
@@ -122,6 +127,32 @@ public class ClanManager {
             plugin.getLogger().info("Loaded " + coloredTags.size() + " colored tags into cache.");
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to load colored tags.");
+        }
+    }
+    
+    private void loadAlliances() {
+        String query = "SELECT c1.tag as tag1, c2.tag as tag2 FROM clan_alliances " +
+                      "JOIN clans c1 ON clan_alliances.clan_1 = c1.id " +
+                      "JOIN clans c2 ON clan_alliances.clan_2 = c2.id;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet results = statement.executeQuery())
+        {
+            int count = 0;
+            if(results != null) {
+                while (results.next()) {
+                    String clan1Tag = results.getString("tag1");
+                    String clan2Tag = results.getString("tag2");
+                    
+                    // Store both directions of the alliance
+                    alliances.put(clan1Tag.toLowerCase(), clan2Tag.toLowerCase());
+                    alliances.put(clan2Tag.toLowerCase(), clan1Tag.toLowerCase());
+                    count += 2;
+                }
+            }
+            plugin.getLogger().info("Loaded " + (count/2) + " clan alliances (" + count + " mappings) into cache.");
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to load clan alliances.");
         }
     }
 
@@ -288,7 +319,9 @@ public class ClanManager {
             insert.setString(3, uuid.toString());
             if(insert.executeUpdate() != 0) {
                 clans.put(tag.toLowerCase(), uuid);
-                return this.addOfflinePlayerToClan(player, tag.toLowerCase());
+                boolean success = this.addOfflinePlayerToClan(player, tag.toLowerCase());
+                if(success) plugin.getActiveManager().updateActiveStatus(player, tag.toLowerCase());
+                return success;
             }
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to create clan: " + tag);
@@ -336,7 +369,9 @@ public class ClanManager {
             delete.setString(1, player.getUniqueId().toString());
             int rows = delete.executeUpdate();
             if(rows != 0) {
+                // Remove from local caches
                 players.remove(player.getUniqueId());
+                officers.remove(player.getUniqueId());
                 return true;
             }
         } catch (SQLException e) {
@@ -546,15 +581,18 @@ public class ClanManager {
 
                 if(id != 0) {
 
-                    String string = "INSERT INTO clan_members (`mojang_uuid`, `clan_id`) VALUES (?,?);";
+                    String string = "INSERT INTO clan_members (`mojang_uuid`, `clan_id`, `is_officer`) VALUES (?,?, ?);";
 
                     try(
                             PreparedStatement insert = connection.prepareStatement(string))
                     {
                         insert.setString(1, player.getUniqueId().toString());
                         insert.setInt(2, id);
+                        insert.setBoolean(3, false);
                         if(insert.executeUpdate() != 0) {
+                            // Update caches: set clan membership and ensure officer flag is cleared in-memory
                             players.put(player.getUniqueId(), tag.toLowerCase());
+                            officers.remove(player.getUniqueId());
                             return true;
                         }
                     } catch (SQLException e) {
@@ -626,7 +664,12 @@ public class ClanManager {
     }
 
     public List<UUID> getOfficers(String tag) {
-        return officers.stream().filter(officerUUID -> players.get(officerUUID).equalsIgnoreCase(tag)).collect(Collectors.toList());
+        return officers.stream()
+                .filter(officerUUID -> {
+                    String playerClan = players.get(officerUUID);
+                    return playerClan != null && playerClan.equalsIgnoreCase(tag);
+                })
+                .collect(Collectors.toList());
     }
 
     public ItemStack getBanner(String tag) {
@@ -647,5 +690,72 @@ public class ClanManager {
             plugin.getLogger().severe("Failed to get banner for: " + tag);
         }
         return null;
+    }
+
+    public boolean hasAlly(String clan) {
+        return (alliances.containsKey(clan.toLowerCase()));
+    }
+
+    public String getAlly(String clan) {
+        return alliances.get(clan);
+    }
+
+    private Integer getAllianceID(String clan) {
+        String query = "SELECT id FROM clan_alliances WHERE " +
+                "clan_1 = (SELECT id FROM clans WHERE lower(tag) = ?) OR " +
+                "clan_2 = (SELECT id FROM clans WHERE lower(tag) = ?)";
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, clan.toLowerCase());
+            statement.setString(2, clan.toLowerCase());
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt("id");
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to get alliance ID for clan " + clan + ": " + e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean addAlliance(String clan1, String clan2) {
+        String query = "INSERT INTO clan_alliances (clan_1, clan_2) VALUES ((SELECT id FROM clans WHERE lower(tag) = ?), (SELECT id FROM clans WHERE lower(tag) = ?))";
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, clan1.toLowerCase());
+            statement.setString(2, clan2.toLowerCase());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                // Update the cache with both directions of the alliance
+                alliances.put(clan1.toLowerCase(), clan2.toLowerCase());
+                alliances.put(clan2.toLowerCase(), clan1.toLowerCase());
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to add alliance between " + clan1 + " and " + clan2 + ": " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean removeAlliance(String clan1, String clan2) {
+        Integer allianceID = getAllianceID(clan1);
+        if (allianceID == null) {
+            plugin.getLogger().warning("No alliance found for clan " + clan1);
+            return false;
+        }
+        String query = "DELETE FROM clan_alliances WHERE id = ?";
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, allianceID);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                alliances.remove(clan1.toLowerCase());
+                alliances.remove(clan2.toLowerCase());
+                return true;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to remove alliance between " + clan1 + " and " + clan2 + ": " + e.getMessage());
+        }
+        return false;
     }
 }

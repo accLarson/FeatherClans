@@ -34,6 +34,9 @@ public class HelpCommand implements CommandExecutor {
         if (sender.hasPermission("feather.clans.home.others")) {
             sender.sendMessage(messages.get("clan_help_home_others", null));
         }
+        if (sender.hasPermission("feather.clans.officer")) {
+            sender.sendMessage(messages.get("clan_help_officer", null));
+        }
         if (sender.hasPermission("feather.clans.sethome")) {
             sender.sendMessage(messages.get("clan_help_sethome", null));
         }
@@ -46,17 +49,32 @@ public class HelpCommand implements CommandExecutor {
         if (sender.hasPermission("feather.clans.invite")) {
             sender.sendMessage(messages.get("clan_help_invite", null));
         }
+        if (sender.hasPermission("feather.clans.kick")) {
+            sender.sendMessage(messages.get("clan_help_kick", null));
+        }
+        if (sender.hasPermission("feather.clans.confer")) {
+            sender.sendMessage(messages.get("clan_help_confer", null));
+        }
+        if (sender.hasPermission("feather.clans.ally")) {
+            sender.sendMessage(messages.get("clan_help_ally", null));
+        }
         if (sender.hasPermission("feather.clans.disband")) {
             sender.sendMessage(messages.get("clan_help_disband", null));
         }
         if (sender.hasPermission("feather.clans.friendlyfire")) {
             sender.sendMessage(messages.get("clan_help_friendlyfire", null));
         }
-        if (sender.hasPermission("feather.clans.confer")) {
-            sender.sendMessage(messages.get("clan_help_confer", null));
+        if (sender.hasPermission("feather.clans.setbanner")) {
+            sender.sendMessage(messages.get("clan_help_setbanner", null));
+        }
+        if (sender.hasPermission("feather.clans.settag")) {
+            sender.sendMessage(messages.get("clan_help_settag", null));
         }
         if (sender.hasPermission("feather.clans.chat")) {
             sender.sendMessage(messages.get("clan_help_chat", null));
+        }
+        if (sender.hasPermission("feather.clans.chat")) {
+            sender.sendMessage(messages.get("clan_help_allychat", null));
         }
         if (sender.hasPermission("feather.clans.accept")) {
             sender.sendMessage(messages.get("clan_help_accept", null));
@@ -80,9 +98,6 @@ public class HelpCommand implements CommandExecutor {
         }
         if (sender.hasPermission("feather.clans.takeover")) {
             sender.sendMessage(messages.get("clan_help_takeover", null));
-        }
-        if (sender.hasPermission("feather.clans.settag")) {
-            sender.sendMessage(messages.get("clan_help_settag", null));
         }
         if (sender.hasPermission("feather.clans.resign")) {
             sender.sendMessage(messages.get("clan_help_resign", null));

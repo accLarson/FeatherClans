@@ -25,7 +25,13 @@ public class EntityDamageByEntityEventListener implements Listener {
             ClanManager manager = this.plugin.getClanManager();
 
             if(manager.isOfflinePlayerInClan(player) && manager.isOfflinePlayerInClan(damager)){
-                if(manager.getClanByOfflinePlayer(player).equals(manager.getClanByOfflinePlayer(damager))) {
+                String playerClan = manager.getClanByOfflinePlayer(player);
+                String damagerClan = manager.getClanByOfflinePlayer(damager);
+                
+                boolean sameClan = playerClan.equals(damagerClan);
+                boolean areAllies = !sameClan && damagerClan.equalsIgnoreCase(manager.getAlly(playerClan.toLowerCase()));
+                
+                if (sameClan || areAllies) {
                     if (!plugin.getFriendlyFireManager().isAllowingFriendlyFire(player) || !plugin.getFriendlyFireManager().isAllowingFriendlyFire(damager)) {
                         event.setCancelled(true);
                     }
