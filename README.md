@@ -17,6 +17,7 @@ Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/Placeholder
     %featherclans_clan_role%           (player's clan role indicator [leader|officer] or empty string)
 ### Permission Nodes:  
     feather.clans.accept              -     Accept a clan invitation
+    feather.clans.ally                -     propose and disolve alliances (must be clan leader)
     feather.clans.banner              -     Recieve a clans banner (Admin)
     feather.clans.chat                -     Send a message to your clan members (must be in clan)
     feather.clans.confer              -     Confer the clan to another clan member (must be clan leader)
@@ -29,7 +30,7 @@ Includes optional [PlaceholderAPI](https://github.com/PlaceholderAPI/Placeholder
     feather.clans.invite              -     Invite a player to your clan (must be clan leader)
     feather.clans.kick                -     Kick a member from your clan (must be clan leader)
     feather.clans.list                -     List all clans
-    feather.clans. officer             -     promote and demote officers
+    feather.clans. officer            -     promote and demote officers (must be clan leader)
     feather.clans.resign              -     Resign from your clan (must be in clan)
     feather.clans.roster              -     List clan members of a specific clan
     feather.clans.sethome             -     Set the clan's home (must be clan leader)

@@ -123,6 +123,14 @@ public class AcceptCommand implements CommandExecutor {
                     )));
                 }
                 
+                // Broadcast alliance to all online players
+                plugin.getServer().getOnlinePlayers().forEach(p -> 
+                    p.sendMessage(messages.get("clan_ally_success_broadcast", Map.of(
+                            "clan1", originatorClan,
+                            "clan2", acceptorClan
+                    )))
+                );
+                
                 plugin.getDisplayManager().resetDisplays();
             }
 

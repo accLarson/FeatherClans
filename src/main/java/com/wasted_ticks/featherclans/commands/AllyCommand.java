@@ -4,6 +4,7 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.data.Request;
 import com.wasted_ticks.featherclans.managers.ClanManager;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -125,6 +126,16 @@ public class AllyCommand implements CommandExecutor {
             return true;
         }
 
+        if (plugin.getFeatherClansConfig().isEconomyEnabled()) {
+            Economy economy = plugin.getEconomy();
+            double amount = plugin.getFeatherClansConfig().getEconomyAlliancePrice();
+            if (!economy.has(originator, amount)) {
+                originator.sendMessage(messages.get("clan_ally_accept_error_economy_you", Map.of(
+                        "amount", String.valueOf((int) amount)
+                )));
+                return true;
+            }
+        }
         if (args.length < 4 || !args[3].equalsIgnoreCase("confirm")) {
             if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
                 double amount = this.plugin.getFeatherClansConfig().getEconomyAlliancePrice();
