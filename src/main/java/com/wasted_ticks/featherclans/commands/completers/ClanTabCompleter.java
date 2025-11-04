@@ -143,6 +143,7 @@ public class ClanTabCompleter implements TabCompleter {
                     case "manage":
                         if (sender.hasPermission("feather.clans.manage")) StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
                         break;
+                    
                     case "ally":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             StringUtil.copyPartialMatches(args[1], List.of("propose", "dissolve"), completions);
@@ -176,8 +177,35 @@ public class ClanTabCompleter implements TabCompleter {
                         case "invite":
                             StringUtil.copyPartialMatches(args[3], plugin.getServer().getOnlinePlayers().stream().filter(p -> !manager.isOfflinePlayerInClan(p)).map(Player::getName).collect(Collectors.toList()), completions);
                             break;
+
+                        case "officer":
+                            StringUtil.copyPartialMatches(args[3], List.of("promote", "demote"), completions);
+                            break;
+
+                        case "settag":
+                            // No completion needed for colored tag input
+                            break;
+
+                        case "ally":
+                            StringUtil.copyPartialMatches(args[3], List.of("propose", "dissolve"), completions);
+                            break;
                     }
                 }
+                break;
+
+            case 5:
+                if (sender.hasPermission("feather.clans.manage") && args[0].equalsIgnoreCase("manage")) {
+                    if (args[2].equalsIgnoreCase("officer")) {
+                        String clanTag = args[1];
+                        StringUtil.copyPartialMatches(args[4], manager.getOfflinePlayersByClan(clanTag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
+                    } else if (args[2].equalsIgnoreCase("ally") && args[3].equalsIgnoreCase("propose")) {
+                        String clanTag = args[1];
+                        StringUtil.copyPartialMatches(args[4], manager.getClans().stream()
+                                .filter(clan -> !clan.equalsIgnoreCase(clanTag))
+                                .collect(Collectors.toList()), completions);
+                    }
+                }
+                break;
 
             default:
                 break;
