@@ -58,10 +58,9 @@ public class FeatherClansPlaceholderExpansion extends PlaceholderExpansion {
 
         if(params.equalsIgnoreCase("clan_formatted")) {
             String clan = plugin.getClanManager().getClanByOfflinePlayer(player);
-            String coloredTag = null;
             if (clan == null) return "";
-            else if (plugin.getActiveManager().isActive(clan)) coloredTag = plugin.getClanManager().getColorTag(clan);
-            return (coloredTag == null) ? clan : coloredTag;
+            String coloredTag = plugin.getClanManager().getColorTag(clan);
+            return (coloredTag != null) ? coloredTag : clan;
         }
 
         if(params.equalsIgnoreCase("clan_parenthesis")) {

@@ -4,13 +4,11 @@ import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import com.wasted_ticks.featherclans.utilities.ColoredTagUtility;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -46,11 +44,6 @@ public class SetTagCommand implements CommandExecutor {
 
         String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
 
-        if (!plugin.getActiveManager().isActive(tag)) {
-            originator.sendMessage(messages.get("clan_settag_error_not_active", null));
-            return true;
-        }
-
         if (args.length < 2) {
             originator.sendMessage(messages.get("clan_settag_guide", null));
             originator.sendMessage(messages.get("clan_settag_colors", Map.of("colors", ColoredTagUtility.getColorOptions())));
@@ -74,7 +67,6 @@ public class SetTagCommand implements CommandExecutor {
 
         if (args.length < 3 || !args[2].equalsIgnoreCase("confirm")) {
             originator.sendMessage(messages.get("clan_settag_draft", null).append(MiniMessage.miniMessage().deserialize("<white>" + coloredTag)));
-            originator.sendMessage(messages.get("clan_settag_active_warning", null));
             if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
                 double amount = this.plugin.getFeatherClansConfig().getEconomySetTagPrice();
                 originator.sendMessage(messages.get("clan_economy_cost_warning", Map.of("amount", String.valueOf((int) amount))));

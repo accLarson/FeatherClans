@@ -169,7 +169,6 @@ clan_settag_guide: "<#949BD1>Guide<#656B96>: Change the color of your clan tag /
 clan_settag_colors: "<#949BD1>Colors: <colors>"
 clan_settag_error_invalid_input: "<#949BD1>Error<#656B96>: input must be \"<#949BD1><tag><#656B96>\" with color codes."
 clan_settag_draft: "<#846d91>Proposed Tag<#656B96>: "
-clan_settag_active_warning: "<#c0a1d1>Warning: <#846d91>Colored tags only display for active clans."
 clan_settag_success: "<#656B96>You've set your clan tag."
 clan_settag_success_economy: "<#656B96>Setting your clan tag cost you <#949BD1><amount> Lapis<#656B96>."
 clan_settag_error_economy: "<#949BD1>Error<#656B96>: Setting your clan tag costs <#949BD1><amount> Lapis<#656B96>."
