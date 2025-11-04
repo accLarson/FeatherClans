@@ -34,7 +34,13 @@ public class FriendlyFireCommand implements CommandExecutor {
         Player player = (Player) sender;
         if (plugin.getClanManager().isOfflinePlayerInClan(player)) {
 
-            if (plugin.getFriendlyFireManager().isAllowingFriendlyFire(player)) {
+            // Check if player has force permission - they cannot toggle
+            if (player.hasPermission("feather.clans.forcefriendlyfire")) {
+                player.sendMessage(messages.get("clan_friendlyfire_forced", null));
+                return true;
+            }
+            
+            if (plugin.getFriendlyFireManager().isPlayerInList(player)) {
                 plugin.getFriendlyFireManager().removePlayer(player);
                 player.sendMessage(messages.get("clan_friendlyfire_disabled", null));
             } else {
