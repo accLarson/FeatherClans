@@ -183,6 +183,24 @@ public final class FeatherClans extends JavaPlugin {
             command.setExecutor(handler);
             command.setTabCompleter(new ClanTabCompleter(plugin));
         }
+
+        PluginCommand cmccCommand = this.getCommand("cmcc");
+        if (cmccCommand != null) {
+            cmccCommand.setExecutor(handler);
+            cmccCommand.setTabCompleter(new ClanTabCompleter(plugin));
+        }
+
+        PluginCommand ccCommand = this.getCommand("cc");
+        if (ccCommand != null) {
+            ccCommand.setExecutor(handler);
+            ccCommand.setTabCompleter(new ClanTabCompleter(plugin));
+        }
+
+        PluginCommand cacCommand = this.getCommand("cac");
+        if (cacCommand != null) {
+            cacCommand.setExecutor(handler);
+            cacCommand.setTabCompleter(new ClanTabCompleter(plugin));
+        }
     }
 
     public Economy getEconomy() {

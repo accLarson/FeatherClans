@@ -1,7 +1,7 @@
 name: FeatherClans
 version: ${project.version}
 main: com.wasted_ticks.featherclans.FeatherClans
-api-version: 1.19
+api-version: 1.21
 authors: [ Zerek, Wasted_Ticks ]
 softdepend:
   - Vault
@@ -11,3 +11,12 @@ commands:
   clan:
     description: gives access to clan related commands
     usage: /clan
+  cmcc:
+    description: shortcut for clan manage chat
+    usage: /cmcc <clan> <message>
+  cc:
+    description: shortcut for clan chat
+    usage: /cc <message>
+  cac:
+    description: shortcut for clan allychat
+    usage: /cac <message>

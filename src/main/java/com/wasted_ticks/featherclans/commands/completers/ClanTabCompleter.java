@@ -71,7 +71,8 @@ public class ClanTabCompleter implements TabCompleter {
             "officer",
             "setarmor",
             "setbanner",
-            "settag"
+            "settag",
+            "ally"
     );
     private final FeatherClans plugin;
     private final ClanManager manager;
@@ -85,6 +86,28 @@ public class ClanTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
+
+        // Handle /clan manage separately - it has its own argument structure
+        if (args.length > 0 && args[0].equalsIgnoreCase("manage") && sender.hasPermission("feather.clans.manage")) {
+            handleManageTabCompletion(sender, args, completions);
+            return completions;
+        }
+
+        // Handle /cc and /cac - return an empty list to suppress player name suggestions
+        if (alias.equalsIgnoreCase("cc") || alias.equalsIgnoreCase("cac")) {
+            // Return the empty list - no tab completion for chat messages
+            return completions;
+        }
+        
+        // Handle regular /clan commands
+        // Handle /cmcc tab completion - show clan names at position 0
+        if (alias.equalsIgnoreCase("cmcc")) {
+            if (args.length == 1) {
+                StringUtil.copyPartialMatches(args[0], manager.getClans(), completions);
+            }
+            // No completion for message arguments
+            return completions;
+        }
 
 
         switch (args.length) {
@@ -106,21 +129,28 @@ public class ClanTabCompleter implements TabCompleter {
                 switch (args[0]) {
                     case "invite":
                         if (manager.isOfflinePlayerLeader((Player) sender) || manager.isOfflinePlayerInClan((Player) sender)) {
-                            StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream().filter(p -> !manager.isOfflinePlayerInClan(p)).map(Player::getName).collect(Collectors.toList()), completions);
+                            StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream()
+                                    .filter(p -> !manager.isOfflinePlayerInClan(p))
+                                    .map(Player::getName)
+                                    .collect(Collectors.toList()), completions);
                         }
                         break;
 
                     case "kick":
                         if (manager.isOfflinePlayerLeader((Player) sender) || manager.isOfflinePlayerOfficer((Player) sender)) {
                             String tag = manager.getClanByOfflinePlayer((Player) sender);
-                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
+                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream()
+                                    .map(OfflinePlayer::getName)
+                                    .collect(Collectors.toList()), completions);
                         }
                         break;
 
                     case "confer":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             String tag = manager.getClanByOfflinePlayer((Player) sender);
-                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
+                            StringUtil.copyPartialMatches(args[1], manager.getOfflinePlayersByClan(tag).stream()
+                                    .map(OfflinePlayer::getName)
+                                    .collect(Collectors.toList()), completions);
                         }
                         break;
 
@@ -140,22 +170,29 @@ public class ClanTabCompleter implements TabCompleter {
                         if (sender.hasPermission("feather.clans.roster")) StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
                         break;
 
-                    case "manage":
-                        if (sender.hasPermission("feather.clans.manage")) StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
-                        break;
-                    
                     case "ally":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             StringUtil.copyPartialMatches(args[1], List.of("propose", "dissolve"), completions);
                         }
                         break;
+                        
                     case "debug":
                         if (sender.hasPermission("feather.clans.debug")) StringUtil.copyPartialMatches(args[1], List.of("updatedisplay","getactive"), completions);
+                        break;
 
                 }
                 break;
 
             case 3:
+                // Handle /clan officer [promote|demote] [player]
+                if (manager.isOfflinePlayerLeader((Player) sender) && args[0].equalsIgnoreCase("officer")) {
+                    String tag = manager.getClanByOfflinePlayer((Player) sender);
+                    StringUtil.copyPartialMatches(args[2], manager.getOfflinePlayersByClan(tag).stream()
+                            .map(OfflinePlayer::getName)
+                            .collect(Collectors.toList()), completions);
+                }
+                
+                // Handle /clan ally propose [clan]
                 if (manager.isOfflinePlayerLeader((Player) sender) && args[0].equalsIgnoreCase("ally") && args[1].equalsIgnoreCase("propose")) {
                     String tag = manager.getClanByOfflinePlayer((Player) sender);
                     StringUtil.copyPartialMatches(args[2], manager.getClans().stream()
@@ -165,45 +202,19 @@ public class ClanTabCompleter implements TabCompleter {
                 break;
 
             case 4:
-                if (sender.hasPermission("feather.clans.manage") && args[0].equalsIgnoreCase("manage")) {
-                    switch (args[2]) {
-
-                        case "kick":
-                        case "confer":
-                            String tag = args[1];
-                            StringUtil.copyPartialMatches(args[3], manager.getOfflinePlayersByClan(tag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
-                            break;
-
-                        case "invite":
-                            StringUtil.copyPartialMatches(args[3], plugin.getServer().getOnlinePlayers().stream().filter(p -> !manager.isOfflinePlayerInClan(p)).map(Player::getName).collect(Collectors.toList()), completions);
-                            break;
-
-                        case "officer":
-                            StringUtil.copyPartialMatches(args[3], List.of("promote", "demote"), completions);
-                            break;
-
-                        case "settag":
-                            // No completion needed for colored tag input
-                            break;
-
-                        case "ally":
-                            StringUtil.copyPartialMatches(args[3], List.of("propose", "dissolve"), completions);
-                            break;
-                    }
+                // Handle /clan officer [promote|demote] [player] confirm
+                if (manager.isOfflinePlayerLeader((Player) sender) && args[0].equalsIgnoreCase("officer")) {
+                    StringUtil.copyPartialMatches(args[3], List.of("confirm"), completions);
                 }
-                break;
-
-            case 5:
-                if (sender.hasPermission("feather.clans.manage") && args[0].equalsIgnoreCase("manage")) {
-                    if (args[2].equalsIgnoreCase("officer")) {
-                        String clanTag = args[1];
-                        StringUtil.copyPartialMatches(args[4], manager.getOfflinePlayersByClan(clanTag).stream().map(OfflinePlayer::getName).collect(Collectors.toList()), completions);
-                    } else if (args[2].equalsIgnoreCase("ally") && args[3].equalsIgnoreCase("propose")) {
-                        String clanTag = args[1];
-                        StringUtil.copyPartialMatches(args[4], manager.getClans().stream()
-                                .filter(clan -> !clan.equalsIgnoreCase(clanTag))
-                                .collect(Collectors.toList()), completions);
-                    }
+                
+                // Handle /clan ally propose [clan] confirm
+                if (manager.isOfflinePlayerLeader((Player) sender) && args[0].equalsIgnoreCase("ally") && args[1].equalsIgnoreCase("propose")) {
+                    StringUtil.copyPartialMatches(args[3], List.of("confirm"), completions);
+                }
+                
+                // Handle /clan ally dissolve confirm
+                if (manager.isOfflinePlayerLeader((Player) sender) && args[0].equalsIgnoreCase("ally") && args[1].equalsIgnoreCase("dissolve")) {
+                    StringUtil.copyPartialMatches(args[2], List.of("confirm"), completions);
                 }
                 break;
 
@@ -211,5 +222,88 @@ public class ClanTabCompleter implements TabCompleter {
                 break;
         }
         return completions;
+    }
+    
+    /**
+     * Handles tab completion for /clan manage commands separately from regular player commands.
+     * Manage commands have a different argument structure: /clan manage [clan] [action] [args...]
+     * 
+     * @param sender The command sender
+     * @param args The command arguments
+     * @param completions The list to add completions to
+     */
+    private void handleManageTabCompletion(CommandSender sender, String[] args, List<String> completions) {
+        switch (args.length) {
+            case 2:
+                // /clan manage [clan] - show all clan names
+                StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
+                break;
+                
+            case 3:
+                // /clan manage [clan] [action] - show available manage actions
+                StringUtil.copyPartialMatches(args[2], List.of("chat", "confer", "invite", "kick", "disband", "sethome", "officer", "setarmor", "setbanner", "settag", "ally"), completions);
+                break;
+                
+            case 4:
+                // /clan manage [clan] [action] [arg] - context-specific completions
+                String clanTag = args[1];
+                switch (args[2].toLowerCase()) {
+                    case "kick":
+                    case "confer":
+                        // Show clan members
+                        StringUtil.copyPartialMatches(args[3], manager.getOfflinePlayersByClan(clanTag).stream()
+                                .map(OfflinePlayer::getName)
+                                .collect(Collectors.toList()), completions);
+                        break;
+                        
+                    case "invite":
+                        // Show online players not in any clan
+                        StringUtil.copyPartialMatches(args[3], plugin.getServer().getOnlinePlayers().stream()
+                                .filter(p -> !manager.isOfflinePlayerInClan(p))
+                                .map(Player::getName)
+                                .collect(Collectors.toList()), completions);
+                        break;
+                        
+                    case "officer":
+                        // Show promote/demote options
+                        StringUtil.copyPartialMatches(args[3], List.of("promote", "demote"), completions);
+                        break;
+                        
+                    case "ally":
+                        // Show propose/dissolve options
+                        StringUtil.copyPartialMatches(args[3], List.of("propose", "dissolve"), completions);
+                        break;
+                        
+                    case "settag":
+                    case "chat":
+                    case "disband":
+                    case "sethome":
+                    case "setarmor":
+                    case "setbanner":
+                        // No completion needed for these
+                        break;
+                }
+                break;
+                
+            case 5:
+                // /clan manage [clan] [action] [subaction] [arg]
+                String targetClan = args[1];
+                if (args[2].equalsIgnoreCase("officer")) {
+                    // /clan manage [clan] officer [promote|demote] [player]
+                    StringUtil.copyPartialMatches(args[4], manager.getOfflinePlayersByClan(targetClan).stream()
+                            .map(OfflinePlayer::getName)
+                            .collect(Collectors.toList()), completions);
+                } else if (args[2].equalsIgnoreCase("ally") && args[3].equalsIgnoreCase("propose")) {
+                    // /clan manage [clan] ally propose [clan]
+                    StringUtil.copyPartialMatches(args[4], manager.getClans().stream()
+                            .filter(clan -> !clan.equalsIgnoreCase(targetClan))
+                            .collect(Collectors.toList()), completions);
+                }
+                break;
+                
+            default:
+                // No completions for deeper arguments
+                break;
+        }
     }
 }
