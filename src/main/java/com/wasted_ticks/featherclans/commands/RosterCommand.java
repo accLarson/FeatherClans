@@ -76,7 +76,22 @@ public class RosterCommand implements CommandExecutor {
         }
 
         List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(clanTag.toLowerCase());
-        int onlineCount = (int) clanMembers.stream().filter(member -> member.isOnline() && !isVanished(member.getPlayer())).count();
+        
+        // Count members excluding alts
+        long onlineNonAltCount = clanMembers.stream()
+            .filter(member -> !plugin.getAltUtility().isAlt(member))
+            .filter(member -> member.isOnline() && !isVanished(member.getPlayer()))
+            .count();
+        
+        long totalNonAltCount = clanMembers.stream()
+            .filter(member -> !plugin.getAltUtility().isAlt(member))
+            .count();
+        
+        // Keep original counts for hover text
+        long onlineCountIncludingAlts = clanMembers.stream()
+            .filter(member -> member.isOnline() && !isVanished(member.getPlayer()))
+            .count();
+        long totalCountIncludingAlts = clanMembers.size();
 
         // Use ActiveManager to get active member count
         String activeCount = String.valueOf(plugin.getActiveManager().getActiveMemberCount(clanTag));
@@ -108,7 +123,12 @@ public class RosterCommand implements CommandExecutor {
         clanInfoLine = chatUtility.addSpacing(clanInfoLine, 72);
 
         clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize(allyInfoText), 72));
-        clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize("<gray>Online: <#949BD1>" + onlineCount + "/" + clanMembers.size()), 96, true));
+        
+        // Create online component with asterisk and hover text
+        String hoverTextOnline = "<#6C719D>Including marked alts: <white>" + onlineCountIncludingAlts + "/" + totalCountIncludingAlts;
+        Component onlineComponent = parser.deserialize("<gray>Online: <#949BD1>" + onlineNonAltCount + "/" + totalNonAltCount + " <#6C719D>*")
+            .hoverEvent(HoverEvent.showText(parser.deserialize(hoverTextOnline)));
+        clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(onlineComponent, 96, true));
 
         // Create hover text for active members count
         int memberReq = plugin.getFeatherClansConfig().getClanActiveMembersRequirement();

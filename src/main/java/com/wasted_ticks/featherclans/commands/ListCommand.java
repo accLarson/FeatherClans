@@ -66,10 +66,20 @@ public class ListCommand implements CommandExecutor {
                         // First by active count
                         .comparingInt((String clan) -> plugin.getActiveManager().getActiveMemberCount(clan))
                         // Then by online count
-                        .thenComparingInt(clan -> (int) plugin.getClanManager().getOfflinePlayersByClan(clan).stream()
-                                .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer())).count())
+                        .thenComparingInt(clan -> {
+                            List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
+                            return (int) members.stream()
+                                .filter(member -> !plugin.getAltUtility().isAlt(member))
+                                .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer()))
+                                .count();
+                        })
                         // Finally by clan size
-                        .thenComparingInt(clan -> plugin.getClanManager().getOfflinePlayersByClan(clan).size())
+                        .thenComparingInt(clan -> {
+                            List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
+                            return (int) members.stream()
+                                .filter(member -> !plugin.getAltUtility().isAlt(member))
+                                .count();
+                        })
                         .reversed()
                 )
                 .collect(Collectors.toList());
@@ -103,6 +113,17 @@ public class ListCommand implements CommandExecutor {
 
 
             List<OfflinePlayer> clanMembers = plugin.getClanManager().getOfflinePlayersByClan(clan);
+            
+            // Count members excluding alts
+            long onlineNonAltCount = clanMembers.stream()
+                .filter(member -> !plugin.getAltUtility().isAlt(member))
+                .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer()))
+                .count();
+            
+            long totalNonAltCount = clanMembers.stream()
+                .filter(member -> !plugin.getAltUtility().isAlt(member))
+                .count();
+            
             // Get the most recent login time from clan members
             long mostRecentLogin = clanMembers.stream().mapToLong(OfflinePlayer::getLastLogin).max().orElse(0);
 
@@ -116,9 +137,6 @@ public class ListCommand implements CommandExecutor {
 
             Component activeComponent = parser.deserialize(activeValueColor + activeCount);
 
-            // variable for online count
-            long onlineCount = clanMembers.stream().filter(member -> (member.isOnline() && !this.isVanished(member.getPlayer()))).count();
-
             // variable for ally
             String allyTag = plugin.getClanManager().hasAlly(clan) ? plugin.getClanManager().getAlly(clan.toLowerCase()) : null;
             String coloredAlly = (allyTag != null && plugin.getActiveManager().isActive(allyTag)) ? plugin.getClanManager().getColorTag(allyTag) : null;
@@ -128,7 +146,7 @@ public class ListCommand implements CommandExecutor {
             Component leader = chatUtility.addSpacing(parser.deserialize("<#949bd1>" + Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clan)).getName()), 102);
 
             Component ally = chatUtility.addSpacing(parser.deserialize(allyText), 42);
-            Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + onlineCount + "/" + clanMembers.size()), 44,true);
+            Component online = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + onlineNonAltCount + "/" + totalNonAltCount), 44, true);
             Component active = chatUtility.addSpacing(activeComponent, 44, true);
             Component seen = chatUtility.addSpacing(parser.deserialize("<#6C719D>" + TimeUtility.formatTimeSince(mostRecentLogin)), 40, true);
 
