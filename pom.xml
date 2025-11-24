@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.wasted_ticks</groupId>
+    <groupId>dev.zerek</groupId>
     <artifactId>FeatherClans</artifactId>
     <version>3.4.0</version>
     <packaging>jar</packaging>
@@ -43,7 +43,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.zaxxer</pattern>
-                                    <shadedPattern>com.wasted_ticks.featherclans.libs</shadedPattern>
+                                    <shadedPattern>dev.zerek.featherclans.libs</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>

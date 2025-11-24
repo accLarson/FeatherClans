@@ -1,6 +1,6 @@
 name: FeatherClans
 version: ${project.version}
-main: com.wasted_ticks.featherclans.FeatherClans
+main: dev.zerek.featherclans.FeatherClans
 api-version: 1.21
 authors: [ Zerek, Wasted_Ticks ]
 softdepend:
