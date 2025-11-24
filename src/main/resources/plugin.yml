@@ -20,13 +20,9 @@ permissions:
       feather.clans.resign: true
       feather.clans.roster: true
       feather.clans.list: true
-      feather.clans.leaderboard: true
-      feather.clans.banner: true
       feather.clans.friendlyfire: true
       feather.clans.chat: true
       feather.clans.chattoggle: true
-      feather.clans.allychat: true
-      feather.clans.allychattoggle: true
       feather.clans.create: true
       feather.clans.invite: true
       feather.clans.kick: true
