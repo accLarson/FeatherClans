@@ -3,12 +3,14 @@ package com.wasted_ticks.featherclans.commands;
 import com.wasted_ticks.featherclans.FeatherClans;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,8 @@ public class AllyChatCommand implements CommandExecutor {
         String message = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
         String allyClan = plugin.getClanManager().getAlly(clan.toLowerCase());
 
+        List<Player> allRecipients = new ArrayList<>();
+
         // Send to own clan members
         List<OfflinePlayer> clanPlayers = plugin.getClanManager().getOfflinePlayersByClan(clan);
         for (OfflinePlayer player : clanPlayers) {
@@ -67,6 +71,7 @@ public class AllyChatCommand implements CommandExecutor {
                         "player", originator.getName(),
                         "message", message
                 )));
+                allRecipients.add(player.getPlayer());
             }
         }
 
@@ -79,8 +84,11 @@ public class AllyChatCommand implements CommandExecutor {
                         "player", originator.getName(),
                         "message", message
                 )));
+                allRecipients.add(player.getPlayer());
             }
         }
+
+        pingPlayers(message, allRecipients, originator);
 
         // Send to operators for spy
         for (OfflinePlayer operator : plugin.getServer().getOperators()) {
@@ -95,5 +103,33 @@ public class AllyChatCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    private void pingPlayers(String message, List<Player> recipients, Player sender) {
+        Sound sound = plugin.getFeatherClansConfig().getPingSound();
+        float volume = plugin.getFeatherClansConfig().getPingVolume();
+        float pitch = plugin.getFeatherClansConfig().getPingPitch();
+
+        // Strip punctuation from message
+        String cleanedMessage = message.replace(".", "")
+                .replace(",", "")
+                .replace("\"", "")
+                .replace("!", "")
+                .replace("?", "")
+                .replace("(", "")
+                .replace(")", "")
+                .toLowerCase();
+
+        // Split into words and collect into a list
+        List<String> words = Arrays.stream(cleanedMessage.split(" "))
+                .collect(Collectors.toList());
+
+        // Filter recipients whose names appear in the word list
+        List<Player> playersToPing = recipients.stream()
+                .filter(player -> words.contains(player.getName().toLowerCase()))
+                .collect(Collectors.toList());
+
+        // Play sound for each matched player
+        playersToPing.forEach(p -> p.playSound(p.getLocation(), sound, volume, pitch));
     }
 }

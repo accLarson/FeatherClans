@@ -3,6 +3,7 @@ package com.wasted_ticks.featherclans.config;
 import com.wasted_ticks.featherclans.FeatherClans;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -51,6 +52,10 @@ public class FeatherClansConfig {
     private String mysqlDatabase;
 
     private List<String> denyTags;
+
+    private String pingSound;
+    private float pingVolume;
+    private float pingPitch;
 
     private int linesPerPage;
 
@@ -103,6 +108,10 @@ public class FeatherClansConfig {
         this.signType = config.getString("settings.display.sign_type");
 
         this.denyTags = config.getStringList("settings.deny_tags");
+
+        this.pingSound = config.getString("settings.chat.ping_sound", "BLOCK_NOTE_BLOCK_HARP");
+        this.pingVolume = (float) config.getDouble("settings.chat.ping_volume", 1.0);
+        this.pingPitch = (float) config.getDouble("settings.chat.ping_pitch", 1.0);
 
         this.linesPerPage = config.getInt("page-formats.lines-per-page");
     }
@@ -241,5 +250,22 @@ public class FeatherClansConfig {
 
     public String getLeaderIndicator() {
         return leaderIndicator;
+    }
+
+    public Sound getPingSound() {
+        try {
+            return Sound.valueOf(pingSound);
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().warning("Invalid sound configured for ping: " + pingSound + ", using default.");
+            return Sound.BLOCK_NOTE_BLOCK_HARP;
+        }
+    }
+
+    public float getPingVolume() {
+        return pingVolume;
+    }
+
+    public float getPingPitch() {
+        return pingPitch;
     }
 }

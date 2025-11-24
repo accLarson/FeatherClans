@@ -36,6 +36,10 @@ settings:
     enabled: false
     archive_days: 30
     delete_days: 45
+  chat:
+    ping_sound: "BLOCK_NOTE_BLOCK_HARP"
+    ping_volume: 1.0
+    ping_pitch: 1.0
   clan:
     # The amount of days a leader must be offline for an officer to takeover.
     takeover_days_threshold: 50
