@@ -1,7 +1,6 @@
 package dev.zerek.featherclans.managers;
 
 import dev.zerek.featherclans.FeatherClans;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -121,14 +120,8 @@ public class DisplayManager {
             armorStand.setGravity(false);
             armorStand.setInvulnerable(true);
 
-            // set head
-            OfflinePlayer leader = Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clanTag));
-            armorStand.setItem(EquipmentSlot.HEAD, new ItemStack(Material.PLAYER_HEAD));
-            ItemStack head = armorStand.getItem(EquipmentSlot.HEAD);
-            SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
-            skullMeta.setOwningPlayer(leader);
-            skullMeta.displayName(Component.text(String.valueOf(leader.getUniqueId())));
-            head.setItemMeta(skullMeta);
+            // Set head with player skin (async)
+            setArmorStandHead(armorStand, clanTag);
 
             // Get clan armor with fallbacks for null items
             ItemStack chestplate = plugin.getClanManager().getChestplate(clanTag) != null ? plugin.getClanManager().getChestplate(clanTag) : DEFAULT_CHESTPLATE;
@@ -167,7 +160,7 @@ public class DisplayManager {
             try {
                 signMaterial = Material.valueOf(configSignType.toUpperCase() + "_WALL_SIGN");
             } catch (IllegalArgumentException e) {
-                plugin.getLog().warning("Invalid sign_type in config: " + configSignType + ". Defaulting to OAK_WALL_SIGN");
+                plugin.getLogger().warning("Invalid sign_type in config: " + configSignType + ". Defaulting to OAK_WALL_SIGN");
                 signMaterial = Material.OAK_WALL_SIGN;
             }
             signLocation.getBlock().setType(signMaterial);
@@ -181,8 +174,9 @@ public class DisplayManager {
             Sign sign = (Sign) signLocation.getBlock().getState();
             String coloredTag = plugin.getClanManager().getColorTag(clanTag);
             String tagText = (coloredTag != null) ? coloredTag : clanTag;
+            OfflinePlayer leader = Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clanTag));
             sign.getSide(Side.FRONT).line(0, MiniMessage.miniMessage().deserialize("<white>" + tagText));
-            sign.getSide(Side.FRONT).line(2, MiniMessage.miniMessage().deserialize("<gray>" + leader.getName()));
+            sign.getSide(Side.FRONT).line(2, MiniMessage.miniMessage().deserialize("<gray>" + (leader != null ? leader.getName() : "Unknown")));
             sign.getSide(Side.FRONT).line(3, MiniMessage.miniMessage().deserialize("<gray>Active: <#7FD47F>" + plugin.getActiveManager().getActiveMemberCount(clanTag)));
             sign.update();
             
@@ -190,6 +184,30 @@ public class DisplayManager {
             currentLocation.add(this.xIncrement, 0, this.zIncrement);
 
            i++;
+        }
+    }
+    
+    /**
+     * Sets the player head on an armor stand using the clan leader's skin.
+     *
+     * @param armorStand The armor stand to set the head on
+     * @param clanTag The clan tag to get the leader from
+     */
+    private void setArmorStandHead(ArmorStand armorStand, String clanTag) {
+        OfflinePlayer leader = Bukkit.getOfflinePlayer(plugin.getClanManager().getLeader(clanTag));
+        
+        if (leader == null || !leader.hasPlayedBefore()) {
+            plugin.getLogger().warning("Could not set head for clan " + clanTag + " - leader not found or hasn't played before");
+            return;
+        }
+        
+        // Create the skull item with the player's skin (Bukkit handles the skin fetching automatically)
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+        if (skullMeta != null) {
+            skullMeta.setOwningPlayer(leader);
+            head.setItemMeta(skullMeta);
+            armorStand.setItem(EquipmentSlot.HEAD, head);
         }
     }
 }
