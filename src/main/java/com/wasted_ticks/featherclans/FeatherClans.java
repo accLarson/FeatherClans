@@ -4,6 +4,7 @@ import com.wasted_ticks.featherclans.commands.*;
 import com.wasted_ticks.featherclans.commands.completers.ClanTabCompleter;
 import com.wasted_ticks.featherclans.config.FeatherClansConfig;
 import com.wasted_ticks.featherclans.config.FeatherClansMessages;
+import com.wasted_ticks.featherclans.listeners.AsyncChatListener;
 import com.wasted_ticks.featherclans.listeners.EntityDamageByEntityEventListener;
 import com.wasted_ticks.featherclans.listeners.PlayerJoinListener;
 import com.wasted_ticks.featherclans.listeners.ProjectileHitEventListener;
@@ -29,6 +30,7 @@ public final class FeatherClans extends JavaPlugin {
     private DatabaseManager databaseManager;
     private ClanManager clanManager;
     private FriendlyFireManager friendlyFireManager;
+    private ChatToggleManager chatToggleManager;
     private ActiveManager activeManager;
     private DisplayManager displayManager;
     private RequestManager requestManager;
@@ -60,6 +62,7 @@ public final class FeatherClans extends JavaPlugin {
         this.databaseManager = new DatabaseManager(plugin);
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
+        this.chatToggleManager = new ChatToggleManager();
         this.altUtility = new AltUtility(plugin);
         this.activeManager = new ActiveManager(plugin);
         this.displayManager = new DisplayManager(plugin);
@@ -77,6 +80,7 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new EntityDamageByEntityEventListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new ProjectileHitEventListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(plugin), this);
+        this.getServer().getPluginManager().registerEvents(new AsyncChatListener(plugin), this);
     }
 
     private boolean setupEconomy() {
@@ -119,6 +123,10 @@ public final class FeatherClans extends JavaPlugin {
 
     public FriendlyFireManager getFriendlyFireManager() {
         return this.friendlyFireManager;
+    }
+
+    public ChatToggleManager getChatToggleManager() {
+        return this.chatToggleManager;
     }
 
     public ActiveManager getActiveManager() {
@@ -176,9 +184,10 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("settag", new SetTagCommand(plugin));
         handler.register("takeover", new TakeoverCommand(plugin));
         handler.register("ally", new AllyCommand(plugin));
+        handler.register("chattoggle", new ChatToggleCommand(plugin));
+        handler.register("allychattoggle", new AllyChatToggleCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
-
         if (command != null) {
             command.setExecutor(handler);
             command.setTabCompleter(new ClanTabCompleter(plugin));
@@ -200,6 +209,30 @@ public final class FeatherClans extends JavaPlugin {
         if (cacCommand != null) {
             cacCommand.setExecutor(handler);
             cacCommand.setTabCompleter(new ClanTabCompleter(plugin));
+        }
+
+        PluginCommand cctoggleCommand = this.getCommand("cctoggle");
+        if (cctoggleCommand != null) {
+            cctoggleCommand.setExecutor(handler);
+            cctoggleCommand.setTabCompleter(new ClanTabCompleter(plugin));
+        }
+
+        PluginCommand cactoggleCommand = this.getCommand("cactoggle");
+        if (cactoggleCommand != null) {
+            cactoggleCommand.setExecutor(handler);
+            cactoggleCommand.setTabCompleter(new ClanTabCompleter(plugin));
+        }
+
+        PluginCommand chCommand = this.getCommand("ch");
+        if (chCommand != null) {
+            chCommand.setExecutor(handler);
+            chCommand.setTabCompleter(new ClanTabCompleter(plugin));
+        }
+
+        PluginCommand ffCommand = this.getCommand("ff");
+        if (ffCommand != null) {
+            ffCommand.setExecutor(handler);
+            ffCommand.setTabCompleter(new ClanTabCompleter(plugin));
         }
     }
 

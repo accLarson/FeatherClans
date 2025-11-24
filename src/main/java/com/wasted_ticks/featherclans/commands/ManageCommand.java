@@ -50,7 +50,7 @@ public class ManageCommand implements CommandExecutor {
 
         ClanManager manager = plugin.getClanManager();
 
-        if (!sender.hasPermission("feather.clans.manage") || sender instanceof ConsoleCommandSender) {
+        if (!sender.hasPermission("feather.clans.manage") && !(sender instanceof ConsoleCommandSender)) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

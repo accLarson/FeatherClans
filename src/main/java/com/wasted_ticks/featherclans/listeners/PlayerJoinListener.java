@@ -25,5 +25,21 @@ public class PlayerJoinListener implements Listener {
         if (plugin.getActiveManager().isActive(event.getPlayer())) return;
 
         this.plugin.getActiveManager().updateActiveStatus(event.getPlayer(), clanTag);
+        
+        // Check if player has clan chat enabled and send notification
+        if (plugin.getChatToggleManager().hasClanChatEnabled(event.getPlayer().getUniqueId())) {
+            event.getPlayer().sendMessage(
+                plugin.getFeatherClansMessages().get("clan_chattoggle_enabled", null)
+            );
+        }
+        
+        // Check if player has ally chat enabled and send notification (only if clan has an ally)
+        if (plugin.getChatToggleManager().hasAllyChatEnabled(event.getPlayer().getUniqueId())) {
+            if (plugin.getClanManager().hasAlly(clanTag)) {
+                event.getPlayer().sendMessage(
+                    plugin.getFeatherClansMessages().get("clan_allychattoggle_enabled", null)
+                );
+            }
+        }
     }
 }

@@ -40,12 +40,11 @@ public class FriendlyFireCommand implements CommandExecutor {
                 return true;
             }
             
-            if (plugin.getFriendlyFireManager().isPlayerInList(player)) {
-                plugin.getFriendlyFireManager().removePlayer(player);
-                player.sendMessage(messages.get("clan_friendlyfire_disabled", null));
-            } else {
-                plugin.getFriendlyFireManager().addPlayer(player);
+            boolean enabled = plugin.getFriendlyFireManager().toggleFriendlyFire(player.getUniqueId());
+            if (enabled) {
                 player.sendMessage(messages.get("clan_friendlyfire_enabled", null));
+            } else {
+                player.sendMessage(messages.get("clan_friendlyfire_disabled", null));
             }
 
         } else {

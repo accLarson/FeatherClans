@@ -39,6 +39,31 @@ public class Handler implements CommandExecutor {
             return commands.get("allychat").onCommand(sender, command, label, newArgs);
         }
         
+        if (label.equalsIgnoreCase("cctoggle")) {
+            String[] newArgs = new String[1];
+            newArgs[0] = "chattoggle";
+            return commands.get("chattoggle").onCommand(sender, command, label, newArgs);
+        }
+        
+        if (label.equalsIgnoreCase("cactoggle")) {
+            String[] newArgs = new String[1];
+            newArgs[0] = "allychattoggle";
+            return commands.get("allychattoggle").onCommand(sender, command, label, newArgs);
+        }
+        
+        if (label.equalsIgnoreCase("ff")) {
+            String[] newArgs = new String[1];
+            newArgs[0] = "friendlyfire";
+            return commands.get("friendlyfire").onCommand(sender, command, label, newArgs);
+        }
+        
+        if (label.equalsIgnoreCase("ch")) {
+            String[] newArgs = new String[args.length + 1];
+            newArgs[0] = "home";
+            System.arraycopy(args, 0, newArgs, 1, args.length);
+            return commands.get("home").onCommand(sender, command, label, newArgs);
+        }
+        
         if (label.equalsIgnoreCase("cmcc")) {
             String[] newArgs = new String[args.length + 2];
             newArgs[0] = "manage";

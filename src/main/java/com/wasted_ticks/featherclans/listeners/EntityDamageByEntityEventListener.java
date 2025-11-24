@@ -32,7 +32,9 @@ public class EntityDamageByEntityEventListener implements Listener {
                 boolean areAllies = !sameClan && damagerClan.equalsIgnoreCase(manager.getAlly(playerClan.toLowerCase()));
                 
                 if (sameClan || areAllies) {
-                    if (!plugin.getFriendlyFireManager().isAllowingFriendlyFire(player) || !plugin.getFriendlyFireManager().isAllowingFriendlyFire(damager)) {
+                    boolean playerAllows = plugin.getFriendlyFireManager().isAllowingFriendlyFire(player.getUniqueId(), player.hasPermission("feather.clans.forcefriendlyfire"));
+                    
+                    if (!playerAllows) {
                         event.setCancelled(true);
                     }
                 }

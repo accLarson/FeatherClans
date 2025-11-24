@@ -31,9 +31,11 @@ public class ClanTabCompleter implements TabCompleter {
             "help",
             "list",
             "roster",
-            // additional
+            // additional from EVERYONE_COMMANDS above
             "chat",
+            "chattoggle",
             "allychat",
+            "allychattoggle",
             "friendlyfire",
             "home",
             "resign"
@@ -43,11 +45,13 @@ public class ClanTabCompleter implements TabCompleter {
             "list",
             "roster",
             "chat",
+            "chattoggle",
             "allychat",
+            "allychattoggle",
             "friendlyfire",
             "home",
             "resign",
-            // additional
+            // additional from MEMBER_COMMANDS above
             "invite",
             "kick",
             "sethome",
@@ -55,7 +59,9 @@ public class ClanTabCompleter implements TabCompleter {
     );
     private static final List<String> LEADER_COMMANDS = Arrays.asList(
             "chat",
+            "chattoggle",
             "allychat",
+            "allychattoggle",
             "friendlyfire",
             "help",
             "home",
@@ -65,7 +71,7 @@ public class ClanTabCompleter implements TabCompleter {
             "invite",
             "kick",
             "sethome",
-            // additional
+            // additional from OFFICER_COMMANDS above
             "confer",
             "disband",
             "officer",
@@ -86,6 +92,19 @@ public class ClanTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
+
+        // Handle toggle commands that take no arguments - return empty list immediately
+        if (alias.equalsIgnoreCase("cctoggle") || alias.equalsIgnoreCase("cactoggle") || alias.equalsIgnoreCase("ff")) {
+            return completions;
+        }
+
+        // Handle /ch (clan home alias) - show clan names if player has permission
+        if (alias.equalsIgnoreCase("ch")) {
+            if (sender.hasPermission("feather.clans.home.others") && args.length == 1) {
+                StringUtil.copyPartialMatches(args[0], manager.getClans(), completions);
+            }
+            return completions;
+        }
 
         // Handle /clan manage separately - it has its own argument structure
         if (args.length > 0 && args[0].equalsIgnoreCase("manage") && sender.hasPermission("feather.clans.manage")) {

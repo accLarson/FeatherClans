@@ -7,6 +7,139 @@ softdepend:
   - Vault
   - PlaceholderAPI
   - LuckPerms
+
+permissions:
+  # Parent permission for basic clan system access
+  feather.clans.player:
+    description: Grants access to the clan system (all basic player and leadership commands)
+    default: false
+    children:
+      feather.clans.home: true
+      feather.clans.accept: true
+      feather.clans.decline: true
+      feather.clans.resign: true
+      feather.clans.roster: true
+      feather.clans.list: true
+      feather.clans.leaderboard: true
+      feather.clans.banner: true
+      feather.clans.friendlyfire: true
+      feather.clans.chat: true
+      feather.clans.chattoggle: true
+      feather.clans.allychat: true
+      feather.clans.allychattoggle: true
+      feather.clans.create: true
+      feather.clans.invite: true
+      feather.clans.kick: true
+      feather.clans.confer: true
+      feather.clans.officer: true
+      feather.clans.disband: true
+      feather.clans.sethome: true
+      feather.clans.setarmor: true
+      feather.clans.setbanner: true
+      feather.clans.settag: true
+      feather.clans.ally: true
+      feather.clans.takeover: true
+  
+  # Basic player commands - available through feather.clans.player
+  feather.clans.home:
+    description: Allows teleporting to your clan home
+    default: false
+  feather.clans.accept:
+    description: Allows accepting clan invitations
+    default: false
+  feather.clans.decline:
+    description: Allows declining clan invitations
+    default: false
+  feather.clans.resign:
+    description: Allows resigning from your clan
+    default: false
+  feather.clans.roster:
+    description: Allows viewing clan rosters
+    default: false
+  feather.clans.list:
+    description: Allows viewing the list of all clans
+    default: false
+  feather.clans.leaderboard:
+    description: Allows viewing the clan leaderboard
+    default: false
+  feather.clans.banner:
+    description: Allows viewing clan banners
+    default: false
+  feather.clans.friendlyfire:
+    description: Allows toggling friendly fire for yourself
+    default: false
+  feather.clans.chat:
+    description: Allows using clan chat and ally chat
+    default: false
+  feather.clans.chattoggle:
+    description: Allows toggling automatic clan chat mode
+    default: false
+  feather.clans.allychat:
+    description: Allows using ally chat
+    default: false
+  feather.clans.allychattoggle:
+    description: Allows toggling automatic ally chat mode
+    default: false
+  
+  # Clan leadership commands - available through feather.clans.player (code checks if they're actually the leader)
+  feather.clans.create:
+    description: Allows creating a new clan
+    default: false
+  feather.clans.invite:
+    description: Allows inviting players to your clan (leader/officer only)
+    default: false
+  feather.clans.kick:
+    description: Allows kicking members from your clan (leader/officer only)
+    default: false
+  feather.clans.confer:
+    description: Allows transferring clan leadership (leader only)
+    default: false
+  feather.clans.officer:
+    description: Allows promoting/demoting clan officers (leader only)
+    default: false
+  feather.clans.disband:
+    description: Allows disbanding your clan (leader only)
+    default: false
+  feather.clans.sethome:
+    description: Allows setting your clan home location (leader/officer only)
+    default: false
+  feather.clans.setarmor:
+    description: Allows setting your clan armor (leader only)
+    default: false
+  feather.clans.setbanner:
+    description: Allows setting your clan banner (leader only)
+    default: false
+  feather.clans.settag:
+    description: Allows setting your clan's colored tag (leader only)
+    default: false
+  feather.clans.ally:
+    description: Allows proposing and dissolving clan alliances (leader only)
+    default: false
+  feather.clans.takeover:
+    description: Allows taking over leadership of any clan (officers only)
+    default: false
+  
+  # Admin-only commands
+  feather.clans.manage:
+    description: Allows managing any clan as an administrator
+    default: op
+  feather.clans.reload:
+    description: Allows reloading the plugin configuration
+    default: op
+  feather.clans.debug:
+    description: Allows using debug commands
+    default: op
+  feather.clans.home.others:
+    description: Allows teleporting to other clans' homes
+    default: op
+  
+  # Special modifier permissions
+  feather.clans.forcefriendlyfire:
+    description: Forces friendly fire to always be enabled (cannot be toggled off)
+    default: false
+
+
+
 commands:
   clan:
     description: gives access to clan related commands
@@ -20,3 +153,15 @@ commands:
   cac:
     description: shortcut for clan allychat
     usage: /cac <message>
+  cctoggle:
+    description: shortcut for clan chattoggle
+    usage: /cctoggle
+  cactoggle:
+    description: shortcut for clan allychattoggle
+    usage: /cactoggle
+  ch:
+    description: shortcut for clan home
+    usage: /ch [tag]
+  ff:
+    description: shortcut for clan friendlyfire
+    usage: /ff

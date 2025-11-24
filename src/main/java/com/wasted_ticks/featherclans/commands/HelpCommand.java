@@ -74,6 +74,12 @@ public class HelpCommand implements CommandExecutor {
             sender.sendMessage(messages.get("clan_help_chat", null));
         }
         if (sender.hasPermission("feather.clans.chat")) {
+            sender.sendMessage(messages.get("clan_help_chattoggle", null));
+        }
+        if (sender.hasPermission("feather.clans.chat")) {
+            sender.sendMessage(messages.get("clan_help_allychattoggle", null));
+        }
+        if (sender.hasPermission("feather.clans.chat")) {
             sender.sendMessage(messages.get("clan_help_allychat", null));
         }
         if (sender.hasPermission("feather.clans.accept")) {
