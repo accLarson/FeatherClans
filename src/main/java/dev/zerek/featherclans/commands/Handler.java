@@ -26,6 +26,10 @@ public class Handler implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         
         if (label.equalsIgnoreCase("cc")) {
+            if (args.length == 0) {
+                String[] toggleArgs = new String[]{"chattoggle"};
+                return commands.get("chattoggle").onCommand(sender, command, label, toggleArgs);
+            }
             String[] newArgs = new String[args.length + 1];
             newArgs[0] = "chat";
             System.arraycopy(args, 0, newArgs, 1, args.length);
@@ -33,6 +37,10 @@ public class Handler implements CommandExecutor {
         }
         
         if (label.equalsIgnoreCase("cac")) {
+            if (args.length == 0) {
+                String[] toggleArgs = new String[]{"allychattoggle"};
+                return commands.get("allychattoggle").onCommand(sender, command, label, toggleArgs);
+            }
             String[] newArgs = new String[args.length + 1];
             newArgs[0] = "allychat";
             System.arraycopy(args, 0, newArgs, 1, args.length);
