@@ -69,22 +69,46 @@ public class ActiveManager {
     }
 
     public void updateActiveStatus(OfflinePlayer offlinePlayer, String clanTag) {
+        // First, remove any existing entry for this player to prevent stale data
+        activeMembers.remove(offlinePlayer.getUniqueId());
+        
         Map<String, Integer> activeClansCopy = new HashMap<>(activeClans);
         this.assessActiveMemberStatus(offlinePlayer, clanTag);
         this.assessActiveClanStatus(clanTag);
         if (!activeClansCopy.equals(this.activeClans)) this.plugin.getDisplayManager().resetDisplays();
+    }
+    
+    public void removePlayerFromActive(UUID playerUUID, String clanTag) {
+        if (activeMembers.remove(playerUUID) != null) {
+            // Player was in the active members map, reassess the clan status
+            this.assessActiveClanStatus(clanTag);
+            plugin.getLogger().fine("Removed player " + playerUUID + " from active members of clan: " + clanTag);
+        }
     }
 
     private void assessActiveMemberStatus(OfflinePlayer clanMember, String clanTag) {
         long lastLogin = clanMember.getLastSeen();
         long thresholdTime = System.currentTimeMillis() - (inactiveDaysThreshold * 24L * 60L * 60L * 1000L);
         boolean inClan = plugin.getClanManager().isOfflinePlayerInSpecificClan(clanMember, clanTag);
-        if (lastLogin > thresholdTime && inClan && !plugin.getAltUtility().isAlt(clanMember)) activeMembers.put(clanMember.getUniqueId(), clanTag);
-        else activeMembers.remove(clanMember.getUniqueId());
+        
+        if (lastLogin > thresholdTime && inClan && !plugin.getAltUtility().isAlt(clanMember)) {
+            activeMembers.put(clanMember.getUniqueId(), clanTag.toLowerCase());
+            plugin.getLogger().fine("Added active member: " + clanMember.getName() + " to clan: " + clanTag);
+        } else {
+            if (activeMembers.remove(clanMember.getUniqueId()) != null) {
+                plugin.getLogger().fine("Removed active member: " + clanMember.getName() + " from clan: " + clanTag);
+            }
+        }
     }
 
     private void assessActiveClanStatus(String clanTag) {
-        int count = Collections.frequency(activeMembers.values(), clanTag);
+        // Use case-insensitive comparison instead of Collections.frequency
+        int count = (int) activeMembers.values().stream()
+                .filter(tag -> tag.equalsIgnoreCase(clanTag))
+                .count();
+        
+        plugin.getLogger().fine("Assessing clan status for " + clanTag + ": " + count + " active members");
+        
         if (count >= activeMembersRequirement) activeClans.put(clanTag.toLowerCase(), count);
         else activeClans.remove(clanTag.toLowerCase());
     }

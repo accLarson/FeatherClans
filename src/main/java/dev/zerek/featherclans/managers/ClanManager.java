@@ -337,6 +337,10 @@ public class ClanManager {
      */
     public boolean deleteClan(String tag) {
         this.getOfficers(tag).forEach(officers::remove);
+        
+        // Remove clan from active tracking before deleting
+        plugin.getActiveManager().removeClan(tag.toLowerCase());
+        
         String string = "DELETE FROM clans WHERE lower(tag) = ?;";
         try(Connection connection = database.getConnection();
             PreparedStatement delete = connection.prepareStatement(string))
@@ -363,6 +367,8 @@ public class ClanManager {
      */
     public boolean resignOfflinePlayer(OfflinePlayer player) {
         String string = "DELETE FROM clan_members WHERE `mojang_uuid` = ?;";
+        String clanTag = players.get(player.getUniqueId());
+        
         try(Connection connection = database.getConnection();
             PreparedStatement delete = connection.prepareStatement(string))
         {
@@ -372,6 +378,12 @@ public class ClanManager {
                 // Remove from local caches
                 players.remove(player.getUniqueId());
                 officers.remove(player.getUniqueId());
+                
+                // Update active status for the clan they left
+                if (clanTag != null) {
+                    plugin.getActiveManager().removePlayerFromActive(player.getUniqueId(), clanTag);
+                }
+                
                 return true;
             }
         } catch (SQLException e) {
@@ -593,6 +605,10 @@ public class ClanManager {
                             // Update caches: set clan membership and ensure officer flag is cleared in-memory
                             players.put(player.getUniqueId(), tag.toLowerCase());
                             officers.remove(player.getUniqueId());
+                            
+                            // Update active status for the new member
+                            plugin.getActiveManager().updateActiveStatus(player, tag.toLowerCase());
+                            
                             return true;
                         }
                     } catch (SQLException e) {
