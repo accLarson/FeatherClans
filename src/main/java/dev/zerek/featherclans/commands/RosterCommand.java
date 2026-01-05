@@ -1,6 +1,9 @@
 package dev.zerek.featherclans.commands;
 
 import dev.zerek.featherclans.FeatherClans;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import dev.zerek.featherclans.config.FeatherClansMessages;
 import dev.zerek.featherclans.managers.ClanManager;
 import dev.zerek.featherclans.utilities.ChatUtility;
@@ -77,14 +80,22 @@ public class RosterCommand implements CommandExecutor {
 
         List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(clanTag.toLowerCase());
         
+        // Pre-compute alt status for all clan members to avoid repeated blocking calls
+        Map<UUID, Boolean> altCache = new HashMap<>();
+        for (OfflinePlayer member : clanMembers) {
+            altCache.put(member.getUniqueId(), plugin.getAltUtility().isAlt(member));
+        }
+        
+        plugin.getLogger().fine("Pre-computed alt status for " + altCache.size() + " members in clan: " + clanTag);
+        
         // Count members excluding alts
         long onlineNonAltCount = clanMembers.stream()
-            .filter(member -> !plugin.getAltUtility().isAlt(member))
+            .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
             .filter(member -> member.isOnline() && !isVanished(member.getPlayer()))
             .count();
         
         long totalNonAltCount = clanMembers.stream()
-            .filter(member -> !plugin.getAltUtility().isAlt(member))
+            .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
             .count();
         
         // Keep original counts for hover text
@@ -173,7 +184,7 @@ public class RosterCommand implements CommandExecutor {
             else lastSeenText = TimeUtility.formatTimeSince(clanMember.getLastSeen());
 
             // Check if player is an alt account
-            if (plugin.getAltUtility().isAlt(clanMember)) {
+            if (altCache.getOrDefault(clanMember.getUniqueId(), false)) {
                 // Add asterisk prefix and hover text for alt accounts
                 String hoverText2 = "<#949BD1>This is an alt account and is not included in the active count.";
                 Component altLastSeen = parser.deserialize("<#6C719D>*" + lastSeenText)

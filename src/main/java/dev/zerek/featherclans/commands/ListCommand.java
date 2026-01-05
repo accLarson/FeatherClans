@@ -1,6 +1,7 @@
 package dev.zerek.featherclans.commands;
 
 import dev.zerek.featherclans.FeatherClans;
+import java.util.UUID;
 import dev.zerek.featherclans.config.FeatherClansMessages;
 import dev.zerek.featherclans.utilities.ChatUtility;
 import dev.zerek.featherclans.utilities.TimeUtility;
@@ -59,6 +60,19 @@ public class ListCommand implements CommandExecutor {
             return true;
         }
 
+        // Pre-compute alt status for all players to avoid repeated blocking calls during sorting
+        Map<UUID, Boolean> altCache = new HashMap<>();
+        for (String clan : clans) {
+            List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
+            for (OfflinePlayer member : members) {
+                if (!altCache.containsKey(member.getUniqueId())) {
+                    altCache.put(member.getUniqueId(), plugin.getAltUtility().isAlt(member));
+                }
+            }
+        }
+
+        plugin.getLogger().fine("Pre-computed alt status for " + altCache.size() + " unique players");
+
         // Sort clans by active member count first, then online count, then most recent login time, then total member count
         List<String> sortedClans = clans.stream()
                 .sorted(
@@ -69,7 +83,7 @@ public class ListCommand implements CommandExecutor {
                         .thenComparingInt(clan -> {
                             List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
                             return (int) members.stream()
-                                .filter(member -> !plugin.getAltUtility().isAlt(member))
+                                .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
                                 .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer()))
                                 .count();
                         })
@@ -77,7 +91,7 @@ public class ListCommand implements CommandExecutor {
                         .thenComparingInt(clan -> {
                             List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
                             return (int) members.stream()
-                                .filter(member -> !plugin.getAltUtility().isAlt(member))
+                                .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
                                 .count();
                         })
                         .reversed()
@@ -116,12 +130,12 @@ public class ListCommand implements CommandExecutor {
             
             // Count members excluding alts
             long onlineNonAltCount = clanMembers.stream()
-                .filter(member -> !plugin.getAltUtility().isAlt(member))
+                .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
                 .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer()))
                 .count();
             
             long totalNonAltCount = clanMembers.stream()
-                .filter(member -> !plugin.getAltUtility().isAlt(member))
+                .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
                 .count();
             
             // Get the most recent login time from clan members
