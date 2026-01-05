@@ -80,14 +80,14 @@ public class RosterCommand implements CommandExecutor {
 
         List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(clanTag.toLowerCase());
         
-        // Pre-compute alt status for all clan members to avoid repeated blocking calls
+        // Pre-compute alt status and last seen times for all clan members to avoid repeated blocking calls
         Map<UUID, Boolean> altCache = new HashMap<>();
+        Map<UUID, Long> lastSeenCache = new HashMap<>();
         for (OfflinePlayer member : clanMembers) {
             altCache.put(member.getUniqueId(), plugin.getAltUtility().isAlt(member));
+            lastSeenCache.put(member.getUniqueId(), member.getLastSeen());
         }
-        
-        plugin.getLogger().fine("Pre-computed alt status for " + altCache.size() + " members in clan: " + clanTag);
-        
+
         // Count members excluding alts
         long onlineNonAltCount = clanMembers.stream()
             .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
@@ -113,7 +113,7 @@ public class RosterCommand implements CommandExecutor {
         // 3. Regular members at the bottom
         // Within each tier, sort by last seen time (most recently active first)
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream()
-                .sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - m.getLastSeen())))
+                .sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - lastSeenCache.getOrDefault(m.getUniqueId(), 0L))))
                 .sorted(Comparator.comparing((OfflinePlayer m) -> !plugin.getClanManager().isOfflinePlayerLeader(m))
                         .thenComparing(m -> !plugin.getClanManager().isOfflinePlayerOfficer(m)))
                 .collect(Collectors.toList());
@@ -181,7 +181,7 @@ public class RosterCommand implements CommandExecutor {
             Component lastSeen;
             String lastSeenText;
             if (clanMember.isOnline() && !isVanished(clanMember.getPlayer())) lastSeenText = "online";
-            else lastSeenText = TimeUtility.formatTimeSince(clanMember.getLastSeen());
+            else lastSeenText = TimeUtility.formatTimeSince(lastSeenCache.getOrDefault(clanMember.getUniqueId(), 0L));
 
             // Check if player is an alt account
             if (altCache.getOrDefault(clanMember.getUniqueId(), false)) {

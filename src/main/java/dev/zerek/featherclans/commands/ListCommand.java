@@ -60,18 +60,19 @@ public class ListCommand implements CommandExecutor {
             return true;
         }
 
-        // Pre-compute alt status for all players to avoid repeated blocking calls during sorting
+        // Pre-compute alt status and last login times for all players to avoid repeated blocking calls during sorting
         Map<UUID, Boolean> altCache = new HashMap<>();
+        Map<UUID, Long> lastLoginCache = new HashMap<>();
+        
         for (String clan : clans) {
             List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
             for (OfflinePlayer member : members) {
                 if (!altCache.containsKey(member.getUniqueId())) {
                     altCache.put(member.getUniqueId(), plugin.getAltUtility().isAlt(member));
+                    lastLoginCache.put(member.getUniqueId(), member.getLastLogin());
                 }
             }
         }
-
-        plugin.getLogger().fine("Pre-computed alt status for " + altCache.size() + " unique players");
 
         // Sort clans by active member count first, then online count, then most recent login time, then total member count
         List<String> sortedClans = clans.stream()
@@ -139,7 +140,10 @@ public class ListCommand implements CommandExecutor {
                 .count();
             
             // Get the most recent login time from clan members
-            long mostRecentLogin = clanMembers.stream().mapToLong(OfflinePlayer::getLastLogin).max().orElse(0);
+            long mostRecentLogin = clanMembers.stream()
+                .mapToLong(member -> lastLoginCache.getOrDefault(member.getUniqueId(), 0L))
+                .max()
+                .orElse(0);
 
             // Use ActiveManager to get active member count
             String activeCount = String.valueOf(plugin.getActiveManager().getActiveMemberCount(clan));
