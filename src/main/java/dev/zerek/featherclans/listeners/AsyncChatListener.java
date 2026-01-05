@@ -29,7 +29,7 @@ public class AsyncChatListener implements Listener {
         this.allyChatCommand = new AllyChatCommand(plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onAsyncChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         
