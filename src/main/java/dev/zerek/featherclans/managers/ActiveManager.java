@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 public class ActiveManager {
     private final Map<String, Integer> activeClans = new HashMap<>();
     private final Map<UUID, String> activeMembers = new HashMap<>();
+    private final Map<UUID, Long> lastSeenCache = new HashMap<>();
 
     private final FeatherClans plugin;
     private int activeMembersRequirement;
@@ -27,6 +28,7 @@ public class ActiveManager {
 
         plugin.getClanManager().getClans().forEach(clan -> {
             plugin.getClanManager().getOfflinePlayersByClan(clan).forEach(clanMember -> {
+                lastSeenCache.put(clanMember.getUniqueId(), clanMember.getLastSeen());
                 this.assessActiveMemberStatus(clanMember, clan);
             });
             this.assessActiveClanStatus(clan);
@@ -37,6 +39,7 @@ public class ActiveManager {
     public void removeClan(String clanTag) {
         this.activeClans.remove(clanTag);
         this.getActiveMembersInClan(clanTag).forEach(this.activeMembers::remove);
+        this.getActiveMembersInClan(clanTag).forEach(this.lastSeenCache::remove);
     }
 
     public boolean isActive(String clanTag) {
@@ -71,7 +74,8 @@ public class ActiveManager {
     public void updateActiveStatus(OfflinePlayer offlinePlayer, String clanTag) {
         // First, remove any existing entry for this player to prevent stale data
         activeMembers.remove(offlinePlayer.getUniqueId());
-        
+        lastSeenCache.put(offlinePlayer.getUniqueId(), System.currentTimeMillis());
+
         Map<String, Integer> activeClansCopy = new HashMap<>(activeClans);
         this.assessActiveMemberStatus(offlinePlayer, clanTag);
         this.assessActiveClanStatus(clanTag);
@@ -81,6 +85,7 @@ public class ActiveManager {
     public void removePlayerFromActive(UUID playerUUID, String clanTag) {
         if (activeMembers.remove(playerUUID) != null) {
             // Player was in the active members map, reassess the clan status
+            lastSeenCache.remove(playerUUID);
             this.assessActiveClanStatus(clanTag);
             plugin.getLogger().fine("Removed player " + playerUUID + " from active members of clan: " + clanTag);
         }
@@ -91,7 +96,7 @@ public class ActiveManager {
         long thresholdTime = System.currentTimeMillis() - (inactiveDaysThreshold * 24L * 60L * 60L * 1000L);
         boolean inClan = plugin.getClanManager().isOfflinePlayerInSpecificClan(clanMember, clanTag);
         
-        if (lastLogin > thresholdTime && inClan && !plugin.getAltUtility().isAlt(clanMember)) {
+        if (lastLogin > thresholdTime && inClan && !plugin.getAltManager().isAlt(clanMember)) {
             activeMembers.put(clanMember.getUniqueId(), clanTag.toLowerCase());
             plugin.getLogger().fine("Added active member: " + clanMember.getName() + " to clan: " + clanTag);
         } else {
@@ -111,5 +116,18 @@ public class ActiveManager {
         
         if (count >= activeMembersRequirement) activeClans.put(clanTag.toLowerCase(), count);
         else activeClans.remove(clanTag.toLowerCase());
+    }
+
+    /**
+     * Gets the cached last seen time for a player
+     * 
+     * @param uuid The UUID of the player
+     * @return The last seen timestamp in milliseconds, or 0 if not cached
+     */
+    public long getLastSeen(UUID uuid) {
+        Long lastSeen = lastSeenCache.get(uuid);
+        if (lastSeen != null) return lastSeen;
+        // Fallback to Bukkit API if not in cache
+        return plugin.getServer().getOfflinePlayer(uuid).getLastSeen();
     }
 }

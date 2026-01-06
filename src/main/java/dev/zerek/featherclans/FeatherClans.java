@@ -7,10 +7,11 @@ import dev.zerek.featherclans.config.FeatherClansMessages;
 import dev.zerek.featherclans.listeners.AsyncChatListener;
 import dev.zerek.featherclans.listeners.EntityDamageByEntityEventListener;
 import dev.zerek.featherclans.listeners.PlayerJoinListener;
+import dev.zerek.featherclans.listeners.PlayerQuitListener;
 import dev.zerek.featherclans.listeners.ProjectileHitEventListener;
 import dev.zerek.featherclans.managers.*;
 import dev.zerek.featherclans.placeholders.FeatherClansPlaceholderExpansion;
-import dev.zerek.featherclans.utilities.AltUtility;
+import dev.zerek.featherclans.managers.AltManager;
 import dev.zerek.featherclans.utilities.PaginateUtility;
 import net.milkbowl.vault.economy.Economy;
 import net.luckperms.api.LuckPerms;
@@ -35,7 +36,7 @@ public final class FeatherClans extends JavaPlugin {
     private DisplayManager displayManager;
     private RequestManager requestManager;
     private PaginateUtility paginateUtility;
-    private AltUtility altUtility;
+    private AltManager altManager;
     private LuckPerms luckPermsApi;
     private Economy economy;
 
@@ -63,7 +64,7 @@ public final class FeatherClans extends JavaPlugin {
         this.clanManager = new ClanManager(plugin);
         this.friendlyFireManager = new FriendlyFireManager();
         this.chatToggleManager = new ChatToggleManager();
-        this.altUtility = new AltUtility(plugin);
+        this.altManager = new AltManager(plugin);
         this.activeManager = new ActiveManager(plugin);
         this.displayManager = new DisplayManager(plugin);
         this.requestManager = new RequestManager(plugin);
@@ -80,6 +81,7 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new EntityDamageByEntityEventListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new ProjectileHitEventListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(plugin), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new AsyncChatListener(plugin), this);
     }
 
@@ -129,6 +131,10 @@ public final class FeatherClans extends JavaPlugin {
         return this.chatToggleManager;
     }
 
+    public AltManager getAltManager() {
+        return this.altManager;
+    }
+
     public ActiveManager getActiveManager() {
         return this.activeManager;
     }
@@ -139,10 +145,6 @@ public final class FeatherClans extends JavaPlugin {
 
     public PaginateUtility getPaginateUtil() {
         return this.paginateUtility;
-    }
-
-    public AltUtility getAltUtility() {
-        return this.altUtility;
     }
 
     public FeatherClansConfig getFeatherClansConfig() {

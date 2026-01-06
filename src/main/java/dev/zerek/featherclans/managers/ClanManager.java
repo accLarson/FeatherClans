@@ -379,7 +379,10 @@ public class ClanManager {
                 players.remove(player.getUniqueId());
                 officers.remove(player.getUniqueId());
                 
-                // Update active status for the clan they left
+                // Remove from alt and active caches
+                plugin.getAltManager().removeFromCache(player.getUniqueId());
+                
+                // Remove from active tracking for the clan they left
                 if (clanTag != null) {
                     plugin.getActiveManager().removePlayerFromActive(player.getUniqueId(), clanTag);
                 }
@@ -602,11 +605,19 @@ public class ClanManager {
                         insert.setInt(2, id);
                         insert.setBoolean(3, false);
                         if(insert.executeUpdate() != 0) {
-                            // Update caches: set clan membership and ensure officer flag is cleared in-memory
+                            // Update local caches
                             players.put(player.getUniqueId(), tag.toLowerCase());
                             officers.remove(player.getUniqueId());
                             
-                            // Update active status for the new member
+                            // Initialize caches for the new clan member
+                            // 1. Load alt status asynchronously
+                            plugin.getAltManager().loadAltStatusAsync(player);
+                            
+                            // 2. Initialize last seen cache (this will cache the current last seen time)
+                            long lastSeen = plugin.getActiveManager().getLastSeen(player.getUniqueId());
+                            plugin.getLogger().fine("Initialized last seen cache for " + player.getName() + ": " + lastSeen);
+                            
+                            // 3. Update active status (this will add them to active members if they qualify)
                             plugin.getActiveManager().updateActiveStatus(player, tag.toLowerCase());
                             
                             return true;

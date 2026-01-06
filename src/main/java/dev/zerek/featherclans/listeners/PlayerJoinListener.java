@@ -16,8 +16,12 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!plugin.getClanManager().isOfflinePlayerInClan(event.getPlayer())) return;
-
+        // Only load alt status if player is in a clan
+        if (!plugin.getClanManager().isOfflinePlayerInClan(event.getPlayer())) {
+            return;
+        }
+        plugin.getAltManager().loadAltStatusAsync(event.getPlayer());
+        
         String clanTag = plugin.getClanManager().getClanByOfflinePlayer(event.getPlayer());
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {

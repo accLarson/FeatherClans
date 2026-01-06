@@ -60,20 +60,6 @@ public class ListCommand implements CommandExecutor {
             return true;
         }
 
-        // Pre-compute alt status and last login times for all players to avoid repeated blocking calls during sorting
-        Map<UUID, Boolean> altCache = new HashMap<>();
-        Map<UUID, Long> lastLoginCache = new HashMap<>();
-        
-        for (String clan : clans) {
-            List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
-            for (OfflinePlayer member : members) {
-                if (!altCache.containsKey(member.getUniqueId())) {
-                    altCache.put(member.getUniqueId(), plugin.getAltUtility().isAlt(member));
-                    lastLoginCache.put(member.getUniqueId(), member.getLastLogin());
-                }
-            }
-        }
-
         // Sort clans by active member count first, then online count, then most recent login time, then total member count
         List<String> sortedClans = clans.stream()
                 .sorted(
@@ -84,7 +70,7 @@ public class ListCommand implements CommandExecutor {
                         .thenComparingInt(clan -> {
                             List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
                             return (int) members.stream()
-                                .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
+                                .filter(member -> !plugin.getAltManager().isAlt(member))
                                 .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer()))
                                 .count();
                         })
@@ -92,7 +78,7 @@ public class ListCommand implements CommandExecutor {
                         .thenComparingInt(clan -> {
                             List<OfflinePlayer> members = plugin.getClanManager().getOfflinePlayersByClan(clan);
                             return (int) members.stream()
-                                .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
+                                .filter(member -> !plugin.getAltManager().isAlt(member))
                                 .count();
                         })
                         .reversed()
@@ -131,17 +117,17 @@ public class ListCommand implements CommandExecutor {
             
             // Count members excluding alts
             long onlineNonAltCount = clanMembers.stream()
-                .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
+                .filter(member -> !plugin.getAltManager().isAlt(member))
                 .filter(member -> member.isOnline() && !this.isVanished(member.getPlayer()))
                 .count();
             
             long totalNonAltCount = clanMembers.stream()
-                .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
+                .filter(member -> !plugin.getAltManager().isAlt(member))
                 .count();
             
             // Get the most recent login time from clan members
             long mostRecentLogin = clanMembers.stream()
-                .mapToLong(member -> lastLoginCache.getOrDefault(member.getUniqueId(), 0L))
+                .mapToLong(member -> plugin.getActiveManager().getLastSeen(member.getUniqueId()))
                 .max()
                 .orElse(0);
 

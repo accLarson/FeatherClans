@@ -33,8 +33,7 @@ public class AsyncChatListener implements Listener {
     public void onAsyncChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         
-        // Check if player has clan chat toggled
-        if (chatToggleManager.hasClanChatEnabled(player.getUniqueId())) {
+         if (chatToggleManager.hasClanChatEnabled(player.getUniqueId())) {
             event.setCancelled(true);
             String message = PlainTextComponentSerializer.plainText().serialize(event.message());
             

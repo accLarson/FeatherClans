@@ -79,25 +79,17 @@ public class RosterCommand implements CommandExecutor {
         }
 
         List<OfflinePlayer> clanMembers = manager.getOfflinePlayersByClan(clanTag.toLowerCase());
-        
-        // Pre-compute alt status and last seen times for all clan members to avoid repeated blocking calls
-        Map<UUID, Boolean> altCache = new HashMap<>();
-        Map<UUID, Long> lastSeenCache = new HashMap<>();
-        for (OfflinePlayer member : clanMembers) {
-            altCache.put(member.getUniqueId(), plugin.getAltUtility().isAlt(member));
-            lastSeenCache.put(member.getUniqueId(), member.getLastSeen());
-        }
 
         // Count members excluding alts
         long onlineNonAltCount = clanMembers.stream()
-            .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
+            .filter(member -> !plugin.getAltManager().isAlt(member))
             .filter(member -> member.isOnline() && !isVanished(member.getPlayer()))
             .count();
-        
+
         long totalNonAltCount = clanMembers.stream()
-            .filter(member -> !altCache.getOrDefault(member.getUniqueId(), false))
+            .filter(member -> !plugin.getAltManager().isAlt(member))
             .count();
-        
+
         // Keep original counts for hover text
         long onlineCountIncludingAlts = clanMembers.stream()
             .filter(member -> member.isOnline() && !isVanished(member.getPlayer()))
@@ -113,7 +105,7 @@ public class RosterCommand implements CommandExecutor {
         // 3. Regular members at the bottom
         // Within each tier, sort by last seen time (most recently active first)
         List<OfflinePlayer> sortedClanMembers = clanMembers.stream()
-                .sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - lastSeenCache.getOrDefault(m.getUniqueId(), 0L))))
+                .sorted(Comparator.comparingLong(m -> (System.currentTimeMillis() - plugin.getActiveManager().getLastSeen(m.getUniqueId()))))
                 .sorted(Comparator.comparing((OfflinePlayer m) -> !plugin.getClanManager().isOfflinePlayerLeader(m))
                         .thenComparing(m -> !plugin.getClanManager().isOfflinePlayerOfficer(m)))
                 .collect(Collectors.toList());
@@ -134,7 +126,7 @@ public class RosterCommand implements CommandExecutor {
         clanInfoLine = chatUtility.addSpacing(clanInfoLine, 72);
 
         clanInfoLine = clanInfoLine.append(chatUtility.addSpacing(parser.deserialize(allyInfoText), 72));
-        
+
         // Create online component with asterisk and hover text
         String hoverTextOnline = "<#6C719D>Including marked alts: <white>" + onlineCountIncludingAlts + "/" + totalCountIncludingAlts;
         Component onlineComponent = parser.deserialize("<gray>Online: <#949BD1>" + onlineNonAltCount + "/" + totalNonAltCount + " <#6C719D>*")
@@ -181,10 +173,10 @@ public class RosterCommand implements CommandExecutor {
             Component lastSeen;
             String lastSeenText;
             if (clanMember.isOnline() && !isVanished(clanMember.getPlayer())) lastSeenText = "online";
-            else lastSeenText = TimeUtility.formatTimeSince(lastSeenCache.getOrDefault(clanMember.getUniqueId(), 0L));
+            else lastSeenText = TimeUtility.formatTimeSince(plugin.getActiveManager().getLastSeen(clanMember.getUniqueId()));
 
             // Check if player is an alt account
-            if (altCache.getOrDefault(clanMember.getUniqueId(), false)) {
+            if (plugin.getAltManager().isAlt(clanMember)) {
                 // Add asterisk prefix and hover text for alt accounts
                 String hoverText2 = "<#949BD1>This is an alt account and is not included in the active count.";
                 Component altLastSeen = parser.deserialize("<#6C719D>*" + lastSeenText)
