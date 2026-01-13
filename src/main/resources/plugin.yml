@@ -20,6 +20,7 @@ permissions:
       feather.clans.resign: true
       feather.clans.roster: true
       feather.clans.list: true
+      feather.clans.lookup: true
       feather.clans.friendlyfire: true
       feather.clans.chat: true
       feather.clans.chattoggle: true

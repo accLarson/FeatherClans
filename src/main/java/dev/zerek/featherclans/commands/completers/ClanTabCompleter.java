@@ -24,12 +24,14 @@ public class ClanTabCompleter implements TabCompleter {
             "decline",
             "help",
             "list",
+            "lookup",
             "roster"
     );
     private static final List<String> MEMBER_COMMANDS = Arrays.asList(
             "help",
             "list",
             "roster",
+            "lookup",
             // additional from EVERYONE_COMMANDS above
             "chat",
             "chattoggle",
@@ -43,6 +45,7 @@ public class ClanTabCompleter implements TabCompleter {
             "help",
             "list",
             "roster",
+            "lookup",
             "chat",
             "chattoggle",
             "allychat",
@@ -65,6 +68,7 @@ public class ClanTabCompleter implements TabCompleter {
             "help",
             "home",
             "list",
+            "lookup",
             "resign",
             "roster",
             "invite",
@@ -188,6 +192,14 @@ public class ClanTabCompleter implements TabCompleter {
                         if (sender.hasPermission("feather.clans.roster")) StringUtil.copyPartialMatches(args[1], manager.getClans(), completions);
                         break;
 
+                    case "lookup":
+                        if (sender.hasPermission("feather.clans.lookup")) {
+                            StringUtil.copyPartialMatches(args[1], plugin.getServer().getOnlinePlayers().stream()
+                                    .map(Player::getName)
+                                    .collect(Collectors.toList()), completions);
+                        }
+                        break;
+                        
                     case "ally":
                         if (manager.isOfflinePlayerLeader((Player) sender)) {
                             StringUtil.copyPartialMatches(args[1], List.of("propose", "dissolve"), completions);
