@@ -80,7 +80,7 @@ public class Handler implements CommandExecutor {
             if (commands.containsKey(args[0].toLowerCase())) {
                 commands.get(args[0].toLowerCase()).onCommand(sender, command, label, args);
             } else {
-                sender.sendMessage("Unknown clan command."); // Since messages removed, fallback message
+                sender.sendMessage("Unknown clan command.");
             }
         }
         return true;
