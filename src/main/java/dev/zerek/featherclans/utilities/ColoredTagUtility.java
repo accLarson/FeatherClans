@@ -33,7 +33,7 @@ public class ColoredTagUtility {
     }
 
     public static String convert(String tag) {
-        String convertedTag = tag;
+        String convertedTag = tag.toLowerCase();
 
         for (Map.Entry<String, String> entry : colorMap.entrySet()) {
             convertedTag = convertedTag.replace(entry.getKey(), entry.getValue());

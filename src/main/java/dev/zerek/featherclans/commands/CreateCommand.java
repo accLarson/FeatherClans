@@ -46,7 +46,7 @@ public class CreateCommand implements CommandExecutor {
             return true;
         }
 
-        String tag = args[1];
+        String tag = args[1].toLowerCase();
 
         int max = config.getClanMaxTagSize();
 
@@ -80,7 +80,7 @@ public class CreateCommand implements CommandExecutor {
 
         List<String> clans = plugin.getClanManager().getClans();
 
-        if (clans.contains(tag.toLowerCase())) {
+        if (clans.contains(tag)) {
             originator.sendMessage(messages.get("clan_create_error_similar_tag", null));
             return true;
         }
@@ -115,7 +115,7 @@ public class CreateCommand implements CommandExecutor {
             double amount = config.getEconomyCreationPrice();
             if (economy.has(originator, amount)) {
                 economy.withdrawPlayer(originator, amount);
-                created = plugin.getClanManager().createClan(originator, stack, tag.toLowerCase());
+                created = plugin.getClanManager().createClan(originator, stack, tag);
                 if(created) {
                     originator.sendMessage(messages.get("clan_create_success_economy", Map.of(
                             "amount", String.valueOf((int) amount)
@@ -129,7 +129,7 @@ public class CreateCommand implements CommandExecutor {
                 return true;
             }
         } else {
-            created = plugin.getClanManager().createClan(originator, stack, tag.toLowerCase());
+            created = plugin.getClanManager().createClan(originator, stack, tag);
         }
 
         if(!created) {
