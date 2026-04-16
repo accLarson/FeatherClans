@@ -1,0 +1,65 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '9.0.0'
+}
+
+group = 'dev.zerek'
+version = '3.6.1'
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'papermc'
+        url = uri('https://repo.papermc.io/repository/maven-public/')
+    }
+    maven {
+        name = 'sonatype'
+        url = uri('https://oss.sonatype.org/content/groups/public/')
+    }
+    maven {
+        name = 'placeholderapi'
+        url = uri('https://repo.extendedclip.com/releases/')
+    }
+    maven {
+        name = 'jitpack'
+        url = uri('https://jitpack.io')
+    }
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:26.1.2.build.+'
+    compileOnly 'net.luckperms:api:5.5'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
+    compileOnly 'net.kyori:adventure-text-minimessage:4.17.0'
+
+    implementation 'org.apache.commons:commons-collections4:4.5.0'
+    implementation 'com.zaxxer:HikariCP:6.2.1'
+}
+
+processResources {
+    filesMatching('plugin.yml') {
+        expand(project: [version: project.version])
+    }
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    minimize()
+    relocate 'com.zaxxer', 'dev.zerek.featherclans.libs'
+    exclude 'META-INF/*.MF'
+}
+
+jar {
+    enabled = false
+}
+
+tasks.assemble.dependsOn tasks.shadowJar

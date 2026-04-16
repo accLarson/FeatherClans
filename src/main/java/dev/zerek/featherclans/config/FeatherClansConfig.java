@@ -3,6 +3,8 @@ package dev.zerek.featherclans.config;
 import dev.zerek.featherclans.FeatherClans;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -109,7 +111,7 @@ public class FeatherClansConfig {
 
         this.denyTags = config.getStringList("settings.deny_tags");
 
-        this.pingSound = config.getString("settings.chat.ping_sound", "BLOCK_NOTE_BLOCK_HARP");
+        this.pingSound = config.getString("settings.chat.ping_sound", "block.note_block.harp");
         this.pingVolume = (float) config.getDouble("settings.chat.ping_volume", 1.0);
         this.pingPitch = (float) config.getDouble("settings.chat.ping_pitch", 1.0);
 
@@ -253,12 +255,13 @@ public class FeatherClansConfig {
     }
 
     public Sound getPingSound() {
-        try {
-            return Sound.valueOf(pingSound);
-        } catch (IllegalArgumentException e) {
+        NamespacedKey key = NamespacedKey.fromString(pingSound, null);
+        Sound sound = key != null ? Registry.SOUNDS.get(key) : null;
+        if (sound == null) {
             plugin.getLogger().warning("Invalid sound configured for ping: " + pingSound + ", using default.");
-            return Sound.BLOCK_NOTE_BLOCK_HARP;
+            return Registry.SOUNDS.get(NamespacedKey.minecraft("block.note_block.harp"));
         }
+        return sound;
     }
 
     public float getPingVolume() {
