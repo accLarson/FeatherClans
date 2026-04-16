@@ -138,9 +138,6 @@ public class AcceptCommand implements CommandExecutor {
 
         // Handle membership acceptance
         String tag = request.getClan();
-        player.sendMessage(messages.get("clan_accept_success_player", Map.of(
-                "clan", tag
-        )));
 
         if (plugin.getFeatherClansConfig().isEconomyEnabled()) {
             Economy economy = plugin.getEconomy();
