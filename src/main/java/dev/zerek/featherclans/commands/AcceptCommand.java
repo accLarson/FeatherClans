@@ -3,11 +3,14 @@ package dev.zerek.featherclans.commands;
 import dev.zerek.featherclans.FeatherClans;
 import dev.zerek.featherclans.config.FeatherClansMessages;
 import dev.zerek.featherclans.data.Request;
+import dev.zerek.featherclans.utilities.TeleportTimerUtility;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -133,6 +136,40 @@ public class AcceptCommand implements CommandExecutor {
             }
 
             plugin.getInviteManager().clearRequest(player);
+            return true;
+        }
+
+        // Handle rally acceptance
+        if (request.getType() == Request.RequestType.RALLY) {
+            Location destination = request.getLocation();
+            Player originator = request.getOriginator();
+            String originatorName = originator != null ? originator.getName() : request.getClan();
+            int delay = plugin.getFeatherClansConfig().getClanTeleportDelaySeconds();
+
+            plugin.getInviteManager().clearRequest(player);
+
+            if (destination == null) {
+                player.sendMessage(messages.get("clan_rally_error_unavailable", null));
+                return true;
+            }
+
+            player.sendMessage(messages.get("clan_rally_accept_initiate", Map.of(
+                    "player", originatorName,
+                    "delay", String.valueOf(delay)
+            )));
+
+            TeleportTimerUtility timer = new TeleportTimerUtility(plugin, delay, null, () -> {
+                player.sendMessage(messages.get("clan_rally_success_member", Map.of(
+                        "player", originatorName
+                )));
+                player.teleport(destination, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            }, (instance) -> {
+                if (!instance.getStartLocation().getBlock().equals(player.getLocation().getBlock())) {
+                    player.sendMessage(messages.get("clan_home_teleport_failure", null));
+                    instance.cancel();
+                }
+            }, player.getLocation());
+            timer.start();
             return true;
         }
 

@@ -5,6 +5,7 @@ import dev.zerek.featherclans.config.FeatherClansConfig;
 import dev.zerek.featherclans.config.FeatherClansMessages;
 import dev.zerek.featherclans.data.Request;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -32,13 +33,22 @@ public class RequestManager {
     }
 
     public void addRequest(Request.RequestType type, Player target, Player originator, String tag) {
-        if (requests.containsKey(target.getName())) return;
+        addRequest(type, target, originator, tag, null);
+    }
 
-        requests.put(target.getName(), new Request(type, target, originator, tag));
-
+    public void addRequest(Request.RequestType type, Player target, Player originator, String tag, Location location) {
         String actionText = "";
         if (type == Request.RequestType.ALLIANCE) actionText = "ally with";
         else if (type == Request.RequestType.MEMBERSHIP) actionText = "join";
+        else if (type == Request.RequestType.RALLY) actionText = "rally to";
+
+        if (requests.containsKey(target.getName())) {
+            target.sendMessage(messages.get("clan_request_busy_target", Map.of("player", originator.getName())));
+            originator.sendMessage(messages.get("clan_request_busy_originator", Map.of("player", target.getName())));
+            return;
+        }
+
+        requests.put(target.getName(), new Request(type, target, originator, tag, location));
         target.sendMessage(messages.get("clan_request_text", Map.of("player", originator.getName(), "action", actionText, "clan", tag)));
         target.sendMessage(messages.get("clan_request_text_response", null));
 
@@ -54,7 +64,9 @@ public class RequestManager {
             }
         }
 
-        originator.sendMessage(messages.get("clan_request_text_sent", Map.of("player", target.getName())));
+        if (type != Request.RequestType.RALLY) {
+            originator.sendMessage(messages.get("clan_request_text_sent", Map.of("player", target.getName())));
+        }
 
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             if (requests.containsKey(target.getName())) {

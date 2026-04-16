@@ -35,6 +35,7 @@ public final class FeatherClans extends JavaPlugin {
     private ActiveManager activeManager;
     private DisplayManager displayManager;
     private RequestManager requestManager;
+    private RallyManager rallyManager;
     private PaginateUtility paginateUtility;
     private AltManager altManager;
     private LuckPerms luckPermsApi;
@@ -68,6 +69,7 @@ public final class FeatherClans extends JavaPlugin {
         this.activeManager = new ActiveManager(plugin);
         this.displayManager = new DisplayManager(plugin);
         this.requestManager = new RequestManager(plugin);
+        this.rallyManager = new RallyManager(plugin);
         this.paginateUtility = new PaginateUtility(plugin);
 
         if (this.config.isEconomyEnabled()) {
@@ -117,6 +119,10 @@ public final class FeatherClans extends JavaPlugin {
 
     public RequestManager getInviteManager() {
         return this.requestManager;
+    }
+
+    public RallyManager getRallyManager() {
+        return this.rallyManager;
     }
 
     public DatabaseManager getDatabaseManager() {
@@ -189,6 +195,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("chattoggle", new ChatToggleCommand(plugin));
         handler.register("allychattoggle", new AllyChatToggleCommand(plugin));
         handler.register("lookup", new LookupCommand(plugin));
+        handler.register("rally", new RallyCommand(plugin));
 
         PluginCommand command = this.getCommand("clan");
         if (command != null) {

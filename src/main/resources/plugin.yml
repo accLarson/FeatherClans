@@ -36,6 +36,7 @@ permissions:
       feather.clans.settag: true
       feather.clans.ally: true
       feather.clans.takeover: true
+      feather.clans.rally: true
   
   # Basic player commands - available through feather.clans.player
   feather.clans.home:
@@ -114,6 +115,9 @@ permissions:
     default: false
   feather.clans.takeover:
     description: Allows taking over leadership of any clan (officers only)
+    default: false
+  feather.clans.rally:
+    description: Allows rallying online clan members to your location (leader/officer only)
     default: false
   
   # Admin-only commands

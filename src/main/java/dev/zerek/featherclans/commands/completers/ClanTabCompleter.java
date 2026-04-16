@@ -56,6 +56,7 @@ public class ClanTabCompleter implements TabCompleter {
             // additional from MEMBER_COMMANDS above
             "invite",
             "kick",
+            "rally",
             "sethome",
             "takeover" // OFFICER ONLY - NOT AVAILABLE TO LEADER
     );
@@ -73,6 +74,7 @@ public class ClanTabCompleter implements TabCompleter {
             "roster",
             "invite",
             "kick",
+            "rally",
             "sethome",
             // additional from OFFICER_COMMANDS above
             "confer",

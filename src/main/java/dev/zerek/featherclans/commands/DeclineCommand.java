@@ -41,16 +41,28 @@ public class DeclineCommand implements CommandExecutor {
             return true;
         }
 
-        String tag = request.getClan();
-        player.sendMessage(messages.get("clan_decline_success", Map.of(
-                "clan", tag
-        )));
-
         Player originator = request.getOriginator();
-        if (originator != null) {
-            originator.sendMessage(messages.get("clan_decline_originator", Map.of(
-                    "player", player.getName()
+
+        if (request.getType() == Request.RequestType.RALLY) {
+            String originatorName = originator != null ? originator.getName() : request.getClan();
+            player.sendMessage(messages.get("clan_rally_decline_success", Map.of(
+                    "player", originatorName
             )));
+            if (originator != null) {
+                originator.sendMessage(messages.get("clan_rally_decline_originator", Map.of(
+                        "player", player.getName()
+                )));
+            }
+        } else {
+            String tag = request.getClan();
+            player.sendMessage(messages.get("clan_decline_success", Map.of(
+                    "clan", tag
+            )));
+            if (originator != null) {
+                originator.sendMessage(messages.get("clan_decline_originator", Map.of(
+                        "player", player.getName()
+                )));
+            }
         }
 
         plugin.getInviteManager().clearRequest(player);

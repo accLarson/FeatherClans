@@ -38,6 +38,7 @@ public class FeatherClansConfig {
     private int clanInactiveDaysThreshold;
     private int clanRequestTimeout;
     private int clanTeleportDelaySeconds;
+    private int clanRallyCooldownSeconds;
     private int clanMinTagSize;
     private int clanMaxTagSize;
     private int clanMaxMembers;
@@ -87,6 +88,7 @@ public class FeatherClansConfig {
         this.clanInactiveDaysThreshold = config.getInt("settings.clan.inactive_days_threshold");
         this.clanRequestTimeout = config.getInt("settings.clan.invite_timeout");
         this.clanTeleportDelaySeconds = config.getInt("settings.clan.teleport_delay_seconds");
+        this.clanRallyCooldownSeconds = config.getInt("settings.clan.rally_cooldown_seconds");
         this.clanMinTagSize = config.getInt("settings.clan.min_tag_size");
         this.clanMaxTagSize = config.getInt("settings.clan.max_tag_size");
         this.clanMaxMembers = config.getInt("settings.clan.max_members");
@@ -180,6 +182,10 @@ public class FeatherClansConfig {
 
     public int getClanTeleportDelaySeconds() {
         return clanTeleportDelaySeconds;
+    }
+
+    public int getClanRallyCooldownSeconds() {
+        return clanRallyCooldownSeconds;
     }
 
     public int getClanMinTagSize() {
