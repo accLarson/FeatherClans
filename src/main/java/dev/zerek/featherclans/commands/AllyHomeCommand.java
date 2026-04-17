@@ -38,6 +38,34 @@ public class AllyHomeCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        if (player.hasPermission("feather.clans.allyhome.others") && args.length >= 2) {
+
+            String tag = args[1].toLowerCase();
+
+            if (!plugin.getClanManager().getClans().contains(tag)) {
+                player.sendMessage(messages.get("clan_home_teleport_error_admin_no_clan", null));
+                return true;
+            }
+
+            if (!plugin.getClanManager().hasAlly(tag)) {
+                player.sendMessage(messages.get("clan_ally_error_no_alliance", null));
+                return true;
+            }
+
+            Location allyHomeLocation = plugin.getClanManager().getAllyHome(tag);
+            if (allyHomeLocation == null) {
+                player.sendMessage(messages.get("clan_allyhome_teleport_error_no_home", null));
+                return true;
+            }
+
+            String allyTag = plugin.getClanManager().getAlly(tag);
+            player.teleport(allyHomeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            player.sendMessage(messages.get("clan_allyhome_teleport_success", Map.of(
+                    "ally", allyTag
+            )));
+            return true;
+        }
+
         if (!plugin.getClanManager().isOfflinePlayerInClan(player)) {
             player.sendMessage(messages.get("clan_home_teleport_error_no_clan", null));
             return true;

@@ -24,7 +24,7 @@ permissions:
       feather.clans.lookup: true
       feather.clans.friendlyfire: true
       feather.clans.chat: true
-      feather.clans.chattoggle: true
+      feather.clans.allychat: true
       feather.clans.create: true
       feather.clans.invite: true
       feather.clans.kick: true
@@ -62,26 +62,14 @@ permissions:
   feather.clans.list:
     description: Allows viewing the list of all clans
     default: false
-  feather.clans.leaderboard:
-    description: Allows viewing the clan leaderboard
-    default: false
-  feather.clans.banner:
-    description: Allows viewing clan banners
-    default: false
   feather.clans.friendlyfire:
     description: Allows toggling friendly fire for yourself
     default: false
   feather.clans.chat:
-    description: Allows using clan chat and ally chat
-    default: false
-  feather.clans.chattoggle:
-    description: Allows toggling automatic clan chat mode
+    description: Allows using clan chat and toggling automatic clan chat mode
     default: false
   feather.clans.allychat:
-    description: Allows using ally chat
-    default: false
-  feather.clans.allychattoggle:
-    description: Allows toggling automatic ally chat mode
+    description: Allows using ally chat and toggling automatic ally chat mode
     default: false
   
   # Clan leadership commands - available through feather.clans.player (code checks if they're actually the leader)
@@ -129,6 +117,9 @@ permissions:
     default: false
   
   # Admin-only commands
+  feather.clans.banner:
+    description: Allows retrieving any clan's banner as an administrator
+    default: op
   feather.clans.manage:
     description: Allows managing any clan as an administrator
     default: op
@@ -140,6 +131,9 @@ permissions:
     default: op
   feather.clans.home.others:
     description: Allows teleporting to other clans' homes
+    default: op
+  feather.clans.allyhome.others:
+    description: Allows teleporting to other clans' ally homes
     default: op
   
   # Special modifier permissions

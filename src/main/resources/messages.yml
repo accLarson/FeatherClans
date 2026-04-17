@@ -90,7 +90,6 @@ clan_help_accept: "<#949BD1>/clan accept <#656B96>— Accept clan invitation req
 clan_help_decline: "<#949BD1>/clan decline <#656B96>— Deny clan invitation request."
 clan_help_help: "<#949BD1>/clan help <#656B96>— Display this message."
 clan_help_list: "<#949BD1>/clan list <#656B96>— List all clans."
-clan_help_leaderboard: "<#949BD1>/clan leaderboard <#656B96>— List clans by relevant statistic."
 clan_help_manage: "<#949BD1>/clan manage [leader command] <#656B96>— Manage clans."
 clan_help_roster: "<#949BD1>/clan roster [tag] <#656B96>— Show information about a specific clan."
 clan_help_settag: "<#949BD1>/clan settag <tag> <#656B96>— Change the color of your clan tag."

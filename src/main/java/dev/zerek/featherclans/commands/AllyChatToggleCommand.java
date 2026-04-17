@@ -33,7 +33,7 @@ public class AllyChatToggleCommand implements CommandExecutor {
         
         Player player = (Player) sender;
         
-        if (!player.hasPermission("feather.clans.chat")) {
+        if (!player.hasPermission("feather.clans.allychat")) {
             player.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

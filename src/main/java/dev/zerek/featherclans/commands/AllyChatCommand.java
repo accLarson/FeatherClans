@@ -34,7 +34,7 @@ public class AllyChatCommand implements CommandExecutor {
             return true;
         }
 
-        if (!sender.hasPermission("feather.clans.chat")) {
+        if (!sender.hasPermission("feather.clans.allychat")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

@@ -82,10 +82,10 @@ public class HelpCommand implements CommandExecutor {
         if (sender.hasPermission("feather.clans.chat")) {
             sender.sendMessage(messages.get("clan_help_chattoggle", null));
         }
-        if (sender.hasPermission("feather.clans.chat")) {
+        if (sender.hasPermission("feather.clans.allychat")) {
             sender.sendMessage(messages.get("clan_help_allychattoggle", null));
         }
-        if (sender.hasPermission("feather.clans.chat")) {
+        if (sender.hasPermission("feather.clans.allychat")) {
             sender.sendMessage(messages.get("clan_help_allychat", null));
         }
         if (sender.hasPermission("feather.clans.accept")) {
@@ -98,9 +98,6 @@ public class HelpCommand implements CommandExecutor {
 
         if (sender.hasPermission("feather.clans.list")) {
             sender.sendMessage(messages.get("clan_help_list", null));
-        }
-        if (sender.hasPermission("feather.clans.leaderboard")) {
-            sender.sendMessage(messages.get("clan_help_leaderboard", null));
         }
         if (sender.hasPermission("feather.clans.manage")) {
             sender.sendMessage(messages.get("clan_help_manage",null));
