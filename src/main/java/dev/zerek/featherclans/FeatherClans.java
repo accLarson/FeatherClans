@@ -171,6 +171,8 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("accept", new AcceptCommand(plugin));
         handler.register("decline", new DeclineCommand(plugin));
         handler.register("sethome", new SetHomeCommand(plugin));
+        handler.register("setallyhome", new SetAllyHomeCommand(plugin));
+        handler.register("allyhome", new AllyHomeCommand(plugin));
         handler.register("setarmor", new SetArmorCommand(plugin));
         handler.register("setbanner", new SetBannerCommand(plugin));
         handler.register("home", new HomeCommand(plugin));
@@ -237,6 +239,12 @@ public final class FeatherClans extends JavaPlugin {
         if (chCommand != null) {
             chCommand.setExecutor(handler);
             chCommand.setTabCompleter(new ClanTabCompleter(plugin));
+        }
+
+        PluginCommand cahCommand = this.getCommand("cah");
+        if (cahCommand != null) {
+            cahCommand.setExecutor(handler);
+            cahCommand.setTabCompleter(new ClanTabCompleter(plugin));
         }
 
         PluginCommand ffCommand = this.getCommand("ff");

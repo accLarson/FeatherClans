@@ -38,9 +38,9 @@ public class RequestManager {
 
     public void addRequest(Request.RequestType type, Player target, Player originator, String tag, Location location) {
         String actionText = "";
-        if (type == Request.RequestType.ALLIANCE) actionText = "ally with";
-        else if (type == Request.RequestType.MEMBERSHIP) actionText = "join";
-        else if (type == Request.RequestType.RALLY) actionText = "rally to";
+        if (type == Request.RequestType.ALLIANCE) actionText = "ally with <#c0a1d1>" + tag + "<#846d91> clan";
+        else if (type == Request.RequestType.MEMBERSHIP) actionText = "join <#c0a1d1>" + tag + "<#846d91> clan";
+        else if (type == Request.RequestType.RALLY) actionText = "rally to <#c0a1d1>" + originator.getName();
 
         if (requests.containsKey(target.getName())) {
             target.sendMessage(messages.get("clan_request_busy_target", Map.of("player", originator.getName())));
@@ -49,7 +49,7 @@ public class RequestManager {
         }
 
         requests.put(target.getName(), new Request(type, target, originator, tag, location));
-        target.sendMessage(messages.get("clan_request_text", Map.of("player", originator.getName(), "action", actionText, "clan", tag)));
+        target.sendMessage(messages.get("clan_request_text", Map.of("player", originator.getName(), "action", actionText)));
         target.sendMessage(messages.get("clan_request_text_response", null));
 
         if (config.isEconomyEnabled()) {

@@ -15,6 +15,7 @@ permissions:
     default: false
     children:
       feather.clans.home: true
+      feather.clans.allyhome: true
       feather.clans.accept: true
       feather.clans.decline: true
       feather.clans.resign: true
@@ -31,6 +32,7 @@ permissions:
       feather.clans.officer: true
       feather.clans.disband: true
       feather.clans.sethome: true
+      feather.clans.setallyhome: true
       feather.clans.setarmor: true
       feather.clans.setbanner: true
       feather.clans.settag: true
@@ -41,6 +43,9 @@ permissions:
   # Basic player commands - available through feather.clans.player
   feather.clans.home:
     description: Allows teleporting to your clan home
+    default: false
+  feather.clans.allyhome:
+    description: Allows teleporting to your ally's shared home
     default: false
   feather.clans.accept:
     description: Allows accepting clan invitations
@@ -100,6 +105,9 @@ permissions:
     default: false
   feather.clans.sethome:
     description: Allows setting your clan home location (leader/officer only)
+    default: false
+  feather.clans.setallyhome:
+    description: Allows setting the shared ally home for your alliance (leader only)
     default: false
   feather.clans.setarmor:
     description: Allows setting your clan armor (leader only)
@@ -163,6 +171,9 @@ commands:
   ch:
     description: shortcut for clan home
     usage: /ch [tag]
+  cah:
+    description: shortcut for clan allyhome
+    usage: /cah
   ff:
     description: shortcut for clan friendlyfire
     usage: /ff

@@ -34,11 +34,17 @@ public class HelpCommand implements CommandExecutor {
         if (sender.hasPermission("feather.clans.home.others")) {
             sender.sendMessage(messages.get("clan_help_home_others", null));
         }
+        if (sender.hasPermission("feather.clans.allyhome")) {
+            sender.sendMessage(messages.get("clan_help_allyhome", null));
+        }
         if (sender.hasPermission("feather.clans.officer")) {
             sender.sendMessage(messages.get("clan_help_officer", null));
         }
         if (sender.hasPermission("feather.clans.sethome")) {
             sender.sendMessage(messages.get("clan_help_sethome", null));
+        }
+        if (sender.hasPermission("feather.clans.setallyhome")) {
+            sender.sendMessage(messages.get("clan_help_setallyhome", null));
         }
         if (sender.hasPermission("feather.clans.setarmor")) {
             sender.sendMessage(messages.get("clan_help_setarmor", null));

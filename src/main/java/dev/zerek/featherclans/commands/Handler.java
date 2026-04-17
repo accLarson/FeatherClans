@@ -63,6 +63,13 @@ public class Handler implements CommandExecutor {
             System.arraycopy(args, 0, newArgs, 1, args.length);
             return commands.get("home").onCommand(sender, command, label, newArgs);
         }
+
+        if (label.equalsIgnoreCase("cah")) {
+            String[] newArgs = new String[args.length + 1];
+            newArgs[0] = "allyhome";
+            System.arraycopy(args, 0, newArgs, 1, args.length);
+            return commands.get("allyhome").onCommand(sender, command, label, newArgs);
+        }
         
         if (label.equalsIgnoreCase("cmcc")) {
             String[] newArgs = new String[args.length + 2];

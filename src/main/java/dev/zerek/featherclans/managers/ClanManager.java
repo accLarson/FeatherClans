@@ -764,6 +764,66 @@ public class ClanManager {
         return false;
     }
 
+    /**
+     * Gets the ally home location for a given clan's alliance.
+     *
+     * @param tag clan tag (either side of the alliance)
+     * @return location, or null if no ally home is set or no alliance exists
+     */
+    public Location getAllyHome(String tag) {
+        String query = "SELECT ally_home FROM clan_alliances WHERE " +
+                "clan_1 = (SELECT id FROM clans WHERE lower(tag) = ?) OR " +
+                "clan_2 = (SELECT id FROM clans WHERE lower(tag) = ?);";
+        try (Connection connection = database.getConnection();
+             PreparedStatement select = connection.prepareStatement(query)) {
+            select.setString(1, tag.toLowerCase());
+            select.setString(2, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+            if (results != null && results.next()) {
+                String home = results.getString("ally_home");
+                if (home != null) {
+                    return SerializationUtility.stringToLocation(home);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to get ally home for: " + tag.toLowerCase());
+        }
+        return null;
+    }
+
+    /**
+     * Determines if a clan's alliance has an ally home.
+     *
+     * @param tag clan tag (either side of the alliance)
+     * @return boolean
+     */
+    public boolean hasAllyHome(String tag) {
+        return getAllyHome(tag) != null;
+    }
+
+    /**
+     * Sets the ally home for a clan's alliance.
+     *
+     * @param tag clan tag (either side of the alliance)
+     * @param location location to set
+     * @return boolean indicating success
+     */
+    public boolean setAllyHome(String tag, Location location) {
+        String query = "UPDATE clan_alliances SET ally_home = ? WHERE " +
+                "clan_1 = (SELECT id FROM clans WHERE lower(tag) = ?) OR " +
+                "clan_2 = (SELECT id FROM clans WHERE lower(tag) = ?);";
+        try (Connection connection = database.getConnection();
+             PreparedStatement update = connection.prepareStatement(query)) {
+            update.setString(1, SerializationUtility.locationToString(location));
+            update.setString(2, tag.toLowerCase());
+            update.setString(3, tag.toLowerCase());
+            return update.executeUpdate() != 0;
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to set ally home for clan: " + tag);
+        }
+        return false;
+    }
+
     public boolean removeAlliance(String clan1, String clan2) {
         Integer allianceID = getAllianceID(clan1);
         if (allianceID == null) {

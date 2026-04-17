@@ -229,6 +229,11 @@ public class ManageCommand implements CommandExecutor {
 
             case "disband":
 
+                if (manager.hasAlly(tag)) {
+                    sender.sendMessage(messages.get("clan_disband_error_has_alliance", null));
+                    break;
+                }
+
                 for (OfflinePlayer member : manager.getOfflinePlayersByClan(tag)) {
                     manager.resignOfflinePlayer(member);
                 }

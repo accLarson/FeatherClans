@@ -39,6 +39,7 @@ public class ClanTabCompleter implements TabCompleter {
             "allychattoggle",
             "friendlyfire",
             "home",
+            "allyhome",
             "resign"
     );
     private static final List<String> OFFICER_COMMANDS = Arrays.asList(
@@ -52,6 +53,7 @@ public class ClanTabCompleter implements TabCompleter {
             "allychattoggle",
             "friendlyfire",
             "home",
+            "allyhome",
             "resign",
             // additional from MEMBER_COMMANDS above
             "invite",
@@ -68,6 +70,7 @@ public class ClanTabCompleter implements TabCompleter {
             "friendlyfire",
             "help",
             "home",
+            "allyhome",
             "list",
             "lookup",
             "resign",
@@ -83,7 +86,8 @@ public class ClanTabCompleter implements TabCompleter {
             "setarmor",
             "setbanner",
             "settag",
-            "ally"
+            "ally",
+            "setallyhome"
     );
     private final FeatherClans plugin;
     private final ClanManager manager;
@@ -99,7 +103,7 @@ public class ClanTabCompleter implements TabCompleter {
         List<String> completions = new ArrayList<>();
 
         // Handle toggle commands that take no arguments - return empty list immediately
-        if (alias.equalsIgnoreCase("cctoggle") || alias.equalsIgnoreCase("cactoggle") || alias.equalsIgnoreCase("ff")) {
+        if (alias.equalsIgnoreCase("cctoggle") || alias.equalsIgnoreCase("cactoggle") || alias.equalsIgnoreCase("ff") || alias.equalsIgnoreCase("cah")) {
             return completions;
         }
 
@@ -117,9 +121,14 @@ public class ClanTabCompleter implements TabCompleter {
             return completions;
         }
 
-        // Handle /cc and /cac - return an empty list to suppress player name suggestions
+        // Handle /cc and /cac - complete online player names once the current word has at least one letter
         if (alias.equalsIgnoreCase("cc") || alias.equalsIgnoreCase("cac")) {
-            // Return the empty list - no tab completion for chat messages
+            if (args.length == 0) return completions;
+            String current = args[args.length - 1];
+            if (current.isEmpty()) return completions;
+            StringUtil.copyPartialMatches(current, plugin.getServer().getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .collect(Collectors.toList()), completions);
             return completions;
         }
         
