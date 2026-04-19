@@ -33,7 +33,7 @@ public class LookupCommand implements CommandExecutor {
         }
         
         // Check permission
-        if (!sender.hasPermission("feather.clans.roster")) {
+        if (!sender.hasPermission("feather.clans.lookup")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }

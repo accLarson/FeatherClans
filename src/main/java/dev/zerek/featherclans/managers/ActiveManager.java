@@ -86,7 +86,9 @@ public class ActiveManager {
         if (activeMembers.remove(playerUUID) != null) {
             // Player was in the active members map, reassess the clan status
             lastSeenCache.remove(playerUUID);
+            Map<String, Integer> activeClansCopy = new HashMap<>(activeClans);
             this.assessActiveClanStatus(clanTag);
+            if (!activeClansCopy.equals(this.activeClans)) this.plugin.getDisplayManager().resetDisplays();
             plugin.getLogger().fine("Removed player " + playerUUID + " from active members of clan: " + clanTag);
         }
     }

@@ -9,7 +9,9 @@ softdepend:
   - LuckPerms
 
 permissions:
-  # Parent permission for basic clan system access
+  # Parent permission bundling all basic player and leadership commands.
+  # Child perms are not defined standalone — undefined perms default to op,
+  # and leader/officer commands are role-checked in code.
   feather.clans.player:
     description: Grants access to the clan system (all basic player and leadership commands)
     default: false
@@ -39,83 +41,7 @@ permissions:
       feather.clans.ally: true
       feather.clans.takeover: true
       feather.clans.rally: true
-  
-  # Basic player commands - available through feather.clans.player
-  feather.clans.home:
-    description: Allows teleporting to your clan home
-    default: false
-  feather.clans.allyhome:
-    description: Allows teleporting to your ally's shared home
-    default: false
-  feather.clans.accept:
-    description: Allows accepting clan invitations
-    default: false
-  feather.clans.decline:
-    description: Allows declining clan invitations
-    default: false
-  feather.clans.resign:
-    description: Allows resigning from your clan
-    default: false
-  feather.clans.roster:
-    description: Allows viewing clan rosters
-    default: false
-  feather.clans.list:
-    description: Allows viewing the list of all clans
-    default: false
-  feather.clans.friendlyfire:
-    description: Allows toggling friendly fire for yourself
-    default: false
-  feather.clans.chat:
-    description: Allows using clan chat and toggling automatic clan chat mode
-    default: false
-  feather.clans.allychat:
-    description: Allows using ally chat and toggling automatic ally chat mode
-    default: false
-  
-  # Clan leadership commands - available through feather.clans.player (code checks if they're actually the leader)
-  feather.clans.create:
-    description: Allows creating a new clan
-    default: false
-  feather.clans.invite:
-    description: Allows inviting players to your clan (leader/officer only)
-    default: false
-  feather.clans.kick:
-    description: Allows kicking members from your clan (leader/officer only)
-    default: false
-  feather.clans.confer:
-    description: Allows transferring clan leadership (leader only)
-    default: false
-  feather.clans.officer:
-    description: Allows promoting/demoting clan officers (leader only)
-    default: false
-  feather.clans.disband:
-    description: Allows disbanding your clan (leader only)
-    default: false
-  feather.clans.sethome:
-    description: Allows setting your clan home location (leader/officer only)
-    default: false
-  feather.clans.setallyhome:
-    description: Allows setting the shared ally home for your alliance (leader only)
-    default: false
-  feather.clans.setarmor:
-    description: Allows setting your clan armor (leader only)
-    default: false
-  feather.clans.setbanner:
-    description: Allows setting your clan banner (leader only)
-    default: false
-  feather.clans.settag:
-    description: Allows setting your clan's colored tag (leader only)
-    default: false
-  feather.clans.ally:
-    description: Allows proposing and dissolving clan alliances (leader only)
-    default: false
-  feather.clans.takeover:
-    description: Allows taking over leadership of any clan (officers only)
-    default: false
-  feather.clans.rally:
-    description: Allows rallying online clan members to your location (leader/officer only)
-    default: false
-  
+
   # Admin-only commands
   feather.clans.banner:
     description: Allows retrieving any clan's banner as an administrator
@@ -135,7 +61,7 @@ permissions:
   feather.clans.allyhome.others:
     description: Allows teleporting to other clans' ally homes
     default: op
-  
+
   # Special modifier permissions
   feather.clans.forcefriendlyfire:
     description: Forces friendly fire to always be enabled (cannot be toggled off)

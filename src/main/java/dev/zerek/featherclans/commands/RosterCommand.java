@@ -113,13 +113,12 @@ public class RosterCommand implements CommandExecutor {
         ChatUtility chatUtility = new ChatUtility(this.plugin);
         MiniMessage parser = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.color()).resolver(StandardTags.reset()).build()).build();
 
-        String coloredTag = null;
-        if (plugin.getActiveManager().isActive(clanTag)) coloredTag = plugin.getClanManager().getColorTag(clanTag);
+        String coloredTag = plugin.getClanManager().getColorTag(clanTag);
         String formattedTag = (coloredTag == null) ? clanTag : coloredTag;
 
         // variable for ally
         String allyTag = manager.hasAlly(clanTag.toLowerCase()) ? manager.getAlly(clanTag.toLowerCase()) : null;
-        String coloredAlly = (allyTag != null && plugin.getActiveManager().isActive(allyTag)) ? manager.getColorTag(allyTag) : null;
+        String coloredAlly = (allyTag != null) ? manager.getColorTag(allyTag) : null;
         String allyInfoText = (allyTag != null) ? "<gray>Ally: " + ((coloredAlly == null) ? "<#949BD1>" + allyTag : coloredAlly) : "<gray>Ally: <#949BD1>-";
 
         Component clanInfoLine = parser.deserialize("<gray>Clan: <#949BD1>" + formattedTag);

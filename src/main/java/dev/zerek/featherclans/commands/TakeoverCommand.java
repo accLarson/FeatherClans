@@ -75,6 +75,7 @@ public class TakeoverCommand implements CommandExecutor {
             this.plugin.getClanManager().setClanOfficerStatus(originator, false);
             this.plugin.getClanManager().setClanOfficerStatus(leader, true);
             originator.sendMessage(messages.get("clan_takeover_success",Map.of("clan", tag)));
+            this.plugin.getDisplayManager().resetDisplays();
 
         } else originator.sendMessage(messages.get("clan_takeover_error_generic", null));
 

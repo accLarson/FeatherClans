@@ -108,8 +108,7 @@ public class ListCommand implements CommandExecutor {
         clanLines.add(messages.get("clan_line", null));
 
         for (String clan : sortedClans) {
-            String coloredTag = null;
-            if (plugin.getActiveManager().isActive(clan)) coloredTag = plugin.getClanManager().getColorTag(clan);
+            String coloredTag = plugin.getClanManager().getColorTag(clan);
             String formattedTag = (coloredTag == null) ? clan : coloredTag;
 
 
@@ -143,7 +142,7 @@ public class ListCommand implements CommandExecutor {
 
             // variable for ally
             String allyTag = plugin.getClanManager().hasAlly(clan) ? plugin.getClanManager().getAlly(clan.toLowerCase()) : null;
-            String coloredAlly = (allyTag != null && plugin.getActiveManager().isActive(allyTag)) ? plugin.getClanManager().getColorTag(allyTag) : null;
+            String coloredAlly = (allyTag != null) ? plugin.getClanManager().getColorTag(allyTag) : null;
             String allyText = (allyTag != null) ? ((coloredAlly == null) ? "<#949bd1>" + allyTag : coloredAlly) : "<#949bd1>-";
 
             Component tag = chatUtility.addSpacing(parser.deserialize(formattedTag), 45);
