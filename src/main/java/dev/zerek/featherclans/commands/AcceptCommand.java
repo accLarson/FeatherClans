@@ -53,7 +53,7 @@ public class AcceptCommand implements CommandExecutor {
             String acceptorClan = plugin.getClanManager().getClanByOfflinePlayer(player);
 
             if (acceptorClan == null) {
-                player.sendMessage(messages.get("clan_error_not_in_clan", null));
+                player.sendMessage(messages.get("clan_chat_no_clan", null));
                 plugin.getInviteManager().clearRequest(player);
                 return true;
             }

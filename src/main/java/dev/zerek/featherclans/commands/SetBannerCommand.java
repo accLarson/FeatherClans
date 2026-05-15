@@ -72,15 +72,10 @@ public class SetBannerCommand implements CommandExecutor {
                 bannerCopy.setAmount(1);
                 success = plugin.getClanManager().setBanner(tag, bannerCopy);
                 if (success) {
-                    originator.sendMessage(messages.get("clan_setbanner_success_economy", Map.of(
-                            "amount", String.valueOf((int) amount)
-                    )));
                     this.plugin.getDisplayManager().resetDisplays();
                 }
             } else {
-                originator.sendMessage(messages.get("clan_setbanner_error_economy", Map.of(
-                        "amount", String.valueOf((int) amount)
-                )));
+                originator.sendMessage(messages.get("clan_setbanner_error_generic", null));
                 return true;
             }
         } else {

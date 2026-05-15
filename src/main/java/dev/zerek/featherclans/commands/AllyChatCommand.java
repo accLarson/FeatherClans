@@ -53,7 +53,7 @@ public class AllyChatCommand implements CommandExecutor {
         }
 
         if (args.length < 2) {
-            originator.sendMessage(messages.get("clan_allychat_no_message", null));
+            originator.sendMessage(messages.get("clan_chat_no_message", null));
             return true;
         }
 

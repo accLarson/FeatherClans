@@ -724,7 +724,7 @@ public class ClanManager {
     }
 
     public String getAlly(String clan) {
-        return alliances.get(clan);
+        return alliances.get(clan.toLowerCase());
     }
 
     private Integer getAllianceID(String clan) {

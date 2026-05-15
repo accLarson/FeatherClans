@@ -29,7 +29,12 @@ public class DebugCommand implements CommandExecutor {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
-        
+
+        if (args.length < 2) {
+            sender.sendMessage("Usage: /clan debug [updatedisplay|getactive]");
+            return true;
+        }
+
         switch (args[1]) {
             case "updatedisplay":
                 plugin.getDisplayManager().resetDisplays();
@@ -40,10 +45,10 @@ public class DebugCommand implements CommandExecutor {
                     // Get active count and all active members for this clan
                     int activeCount = plugin.getActiveManager().getActiveMemberCount(clanTag);
                     List<UUID> activeMembers = plugin.getActiveManager().getActiveMembersInClan(clanTag);
-                    
+
                     // Display clan tag and active count on first line
                     sender.sendMessage(MiniMessage.miniMessage().deserialize("<gray>" + clanTag + " <dark_gray>(" + activeCount + " active)"));
-                    
+
                     // Display all active members on a single line
                     String playerList = activeMembers.stream().map(uuid -> Bukkit.getOfflinePlayer(uuid).getName()).collect(Collectors.joining(", "));
                     sender.sendMessage(MiniMessage.miniMessage().deserialize("<white>" + playerList));

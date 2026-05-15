@@ -35,7 +35,7 @@ public class ChatUtility {
     public int getWidth(Component component) {
         String string = PlainTextComponentSerializer.plainText().serialize(component);
         int stringWidth = 0;
-        for (char c : string.toCharArray()) stringWidth += dictionary.get(String.valueOf(c));
+        for (char c : string.toCharArray()) stringWidth += dictionary.getOrDefault(String.valueOf(c), 5);
         return stringWidth;
     }
 

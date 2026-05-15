@@ -191,7 +191,7 @@ public class ManageCommand implements CommandExecutor {
                 if (!this.plugin.getClanManager().isOfflinePlayerInSpecificClan(kickee, tag)) {
 
                     if (this.plugin.getClanManager().isUsernameInSpecificClan(args[3], tag)) {
-                        UUID uuid = this.plugin.getClanManager().getUUIDFromUsername(args[1]);
+                        UUID uuid = this.plugin.getClanManager().getUUIDFromUsername(args[3]);
                         kickee = Bukkit.getOfflinePlayer(uuid);
                     } else {
                         sender.sendMessage(messages.get("clan_kick_error_not_in_clan", null));
