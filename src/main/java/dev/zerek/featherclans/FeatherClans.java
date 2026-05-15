@@ -13,6 +13,8 @@ import dev.zerek.featherclans.managers.*;
 import dev.zerek.featherclans.placeholders.FeatherClansPlaceholderExpansion;
 import dev.zerek.featherclans.managers.AltManager;
 import dev.zerek.featherclans.utilities.PaginateUtility;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
@@ -85,6 +87,27 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new AsyncChatListener(plugin), this);
+
+        printBanner();
+    }
+
+    private void printBanner() {
+        String version = getPluginMeta().getVersion();
+        String author = String.join(", ", getPluginMeta().getAuthors());
+        String line1 = "FeatherClans v" + version;
+        String line2 = "Author: " + author;
+        int width = Math.max(line1.length(), line2.length()) + 4;
+        String border = "─".repeat(width);
+        MiniMessage mm = MiniMessage.miniMessage();
+        Component[] lines = {
+                mm.deserialize("<dark_gray>┌" + border + "┐"),
+                mm.deserialize("<dark_gray>│  <light_blue>FeatherClans v" + version + " ".repeat(width - line1.length() - 2) + "<dark_gray>│"),
+                mm.deserialize("<dark_gray>│  <gray>Author: " + author + " ".repeat(width - line2.length() - 2) + "<dark_gray>│"),
+                mm.deserialize("<dark_gray>└" + border + "┘"),
+        };
+        for (Component line : lines) {
+            getServer().getConsoleSender().sendMessage(line);
+        }
     }
 
     private boolean setupEconomy() {

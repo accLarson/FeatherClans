@@ -1,10 +1,21 @@
+import net.schmizz.sshj.SSHClient
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier
+import net.schmizz.sshj.xfer.FileSystemFile
+
+buildscript {
+    repositories { mavenCentral() }
+    dependencies {
+        classpath 'com.hierynomus:sshj:0.38.0'
+    }
+}
+
 plugins {
     id 'java'
     id 'com.gradleup.shadow' version '9.0.0'
 }
 
 group = 'dev.zerek'
-version = '3.8.1'
+version = '3.8.2'
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
@@ -46,6 +57,7 @@ dependencies {
 }
 
 processResources {
+    inputs.property('version', project.version)
     filesMatching('plugin.yml') {
         expand(project: [version: project.version])
     }
@@ -63,3 +75,33 @@ jar {
 }
 
 tasks.assemble.dependsOn tasks.shadowJar
+
+tasks.register('buildToF64Dev') {
+    group = 'build'
+    description = 'Build the plugin and upload it to the dev SFTP server.'
+    dependsOn shadowJar
+
+    def host = providers.gradleProperty('devHost')
+    def port = providers.gradleProperty('devPort').orElse('22')
+    def user = providers.gradleProperty('devUser')
+    def password = providers.gradleProperty('devPassword')
+    def remoteDir = providers.gradleProperty('devRemoteDir').orElse('plugins')
+    def jarProvider = shadowJar.flatMap { it.archiveFile }
+
+    doLast {
+        def jarFile = jarProvider.get().asFile
+        def remotePath = "${remoteDir.get().replaceAll('/$', '')}/${jarFile.name}"
+
+        new SSHClient().withCloseable { ssh ->
+            ssh.addHostKeyVerifier(new PromiscuousVerifier())
+            ssh.connect(host.get(), port.get().toInteger())
+            ssh.authPassword(user.get(), password.get())
+
+            logger.lifecycle("Uploading ${jarFile.name} -> ${user.get()}@${host.get()}:${remotePath}")
+            ssh.newSFTPClient().withCloseable { sftp ->
+                sftp.put(new FileSystemFile(jarFile), remotePath)
+            }
+            logger.lifecycle('Upload complete.')
+        }
+    }
+}

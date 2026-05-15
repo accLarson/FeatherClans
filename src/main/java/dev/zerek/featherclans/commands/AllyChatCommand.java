@@ -111,18 +111,7 @@ public class AllyChatCommand implements CommandExecutor {
         float pitch = plugin.getFeatherClansConfig().getPingPitch();
 
         // Strip punctuation from message
-        String cleanedMessage = message.replace(".", "")
-                .replace(",", "")
-                .replace("\"", "")
-                .replace("!", "")
-                .replace("?", "")
-                .replace("(", "")
-                .replace(")", "")
-                .toLowerCase();
-
-        // Split into words and collect into a list
-        List<String> words = Arrays.stream(cleanedMessage.split(" "))
-                .collect(Collectors.toList());
+        List<String> words = Arrays.asList(message.toLowerCase().split("[^a-z0-9_]+"));
 
         // Filter recipients whose names appear in the word list
         List<Player> playersToPing = recipients.stream()
