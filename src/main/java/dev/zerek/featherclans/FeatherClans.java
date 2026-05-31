@@ -101,7 +101,7 @@ public final class FeatherClans extends JavaPlugin {
         MiniMessage mm = MiniMessage.miniMessage();
         Component[] lines = {
                 mm.deserialize("<dark_gray>┌" + border + "┐"),
-                mm.deserialize("<dark_gray>│  <light_blue>FeatherClans v" + version + " ".repeat(width - line1.length() - 2) + "<dark_gray>│"),
+                mm.deserialize("<dark_gray>│  <green>FeatherClans v" + version + " ".repeat(width - line1.length() - 2) + "<dark_gray>│"),
                 mm.deserialize("<dark_gray>│  <gray>Author: " + author + " ".repeat(width - line2.length() - 2) + "<dark_gray>│"),
                 mm.deserialize("<dark_gray>└" + border + "┘"),
         };
