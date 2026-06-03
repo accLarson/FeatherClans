@@ -15,7 +15,7 @@ plugins {
 }
 
 group = 'dev.zerek'
-version = '3.8.3'
+version = '3.9.0'
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
@@ -86,7 +86,7 @@ tasks.register('buildToF64Dev') {
     def user = providers.gradleProperty('devUser')
     def password = providers.gradleProperty('devPassword')
     def remoteDir = providers.gradleProperty('devRemoteDir').orElse('plugins')
-    def jarProvider = shadowJar.flatMap { it.archiveFile }
+    def jarProvider = shadowJar.archiveFile
 
     doLast {
         def jarFile = jarProvider.get().asFile

@@ -5,6 +5,10 @@ import dev.zerek.featherclans.config.FeatherClansConfig;
 import dev.zerek.featherclans.config.FeatherClansMessages;
 import dev.zerek.featherclans.data.Request;
 import dev.zerek.featherclans.managers.ClanManager;
+import dev.zerek.featherclans.utilities.ChatUtility;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -77,22 +81,21 @@ public class ManageCommand implements CommandExecutor {
 
                 String message = Arrays.stream(args).skip(3).collect(Collectors.joining(" "));
 
+                Component messageBody = ChatUtility.markHiddenMembers(plugin, message, manager.getOfflinePlayersByClan(tag));
+                TagResolver messageResolver = Placeholder.component("message", messageBody);
+
                 for (OfflinePlayer player : manager.getOfflinePlayersByClan(tag)) {
-                    if (player.isOnline()) {
-                        player.getPlayer().sendMessage(messages.get("clan_chat_message", Map.of(
-                                "tag", tag,
-                                "player", sender.getName(),
-                                "message", message
-                        )));
+                    if (player.isOnline() && !plugin.getChatToggleManager().isChatHidden(player.getUniqueId())) {
+                        player.getPlayer().sendMessage(messages.get("clan_chat_message",
+                                Map.of("tag", tag, "player", sender.getName()),
+                                messageResolver));
                     }
                 }
                 for (OfflinePlayer operator : plugin.getServer().getOperators()) {
                     if (operator.isOnline() && sender != operator) {
-                        operator.getPlayer().sendMessage(messages.get("clan_chat_spy_message", Map.of(
-                                "tag", tag,
-                                "player", sender.getName(),
-                                "message", message
-                        )));
+                        operator.getPlayer().sendMessage(messages.get("clan_chat_spy_message",
+                                Map.of("tag", tag, "player", sender.getName()),
+                                messageResolver));
                     }
                 }
                 break;

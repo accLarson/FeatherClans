@@ -10,51 +10,44 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class AllyChatToggleCommand implements CommandExecutor {
-    
-    private final FeatherClans plugin;
+public class HideChatCommand implements CommandExecutor {
+
     private final ClanManager clanManager;
     private final ChatToggleManager chatToggleManager;
     private final FeatherClansMessages messages;
-    
-    public AllyChatToggleCommand(FeatherClans plugin) {
-        this.plugin = plugin;
+
+    public HideChatCommand(FeatherClans plugin) {
         this.clanManager = plugin.getClanManager();
         this.chatToggleManager = plugin.getChatToggleManager();
         this.messages = plugin.getFeatherClansMessages();
     }
-    
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("clan_error_player", null));
             return true;
         }
-        
+
         Player player = (Player) sender;
-        
-        if (!player.hasPermission("feather.clans.allychat")) {
+
+        if (!player.hasPermission("feather.clans.chat")) {
             player.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
-        
+
         if (!clanManager.isOfflinePlayerInClan(player)) {
-            player.sendMessage(messages.get("clan_allychattoggle_no_clan", null));
+            player.sendMessage(messages.get("clan_hidechat_no_clan", null));
             return true;
         }
-        
-        String clan = clanManager.getClanByOfflinePlayer(player);
-        if (!clanManager.hasAlly(clan)) {
-            player.sendMessage(messages.get("clan_allychattoggle_no_ally", null));
+
+        if (chatToggleManager.isChatHidden(player.getUniqueId())) {
+            player.sendMessage(messages.get("clan_hidechat_already", null));
             return true;
         }
-        
-        boolean wasHidden = chatToggleManager.isChatHidden(player.getUniqueId());
-        boolean enabled = chatToggleManager.toggleAllyChat(player.getUniqueId());
-        player.sendMessage(messages.get(enabled ? "clan_allychattoggle_enabled" : "clan_allychattoggle_disabled", null));
-        if (enabled && wasHidden) {
-            player.sendMessage(messages.get("clan_showchat", null));
-        }
+
+        chatToggleManager.setChatHidden(player.getUniqueId(), true);
+        player.sendMessage(messages.get("clan_hidechat", null));
         return true;
     }
 }

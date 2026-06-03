@@ -2,15 +2,22 @@ package dev.zerek.featherclans.utilities;
 
 
 import dev.zerek.featherclans.FeatherClans;
+import dev.zerek.featherclans.config.FeatherClansMessages;
+import dev.zerek.featherclans.managers.ChatToggleManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ChatUtility {
 
@@ -77,5 +84,47 @@ public class ChatUtility {
         else return Component.text("").append(component).append(spaces);
     }
 
+    /**
+     * Renders a chat message body as a component. Each whole-word, case-insensitive occurrence
+     * of a candidate member's name who currently has chat hidden is followed by a hoverable
+     * marker. The player's message text is inserted literally (never parsed as MiniMessage), so a
+     * player's own color or format tags are shown as plain text rather than applied.
+     *
+     * @param plugin     plugin instance
+     * @param message    the raw chat message
+     * @param candidates members whose names should be checked (clan, or clan + ally)
+     * @return the rendered message body component
+     */
+    public static Component markHiddenMembers(FeatherClans plugin, String message, Collection<OfflinePlayer> candidates) {
+        FeatherClansMessages messages = plugin.getFeatherClansMessages();
+        ChatToggleManager toggles = plugin.getChatToggleManager();
 
+        Component body = Component.text(message);
+
+        Map<String, String> hidden = new HashMap<>();
+        for (OfflinePlayer candidate : candidates) {
+            if (toggles.isChatHidden(candidate.getUniqueId())) {
+                String name = candidate.getName();
+                if (name != null) {
+                    hidden.put(name.toLowerCase(), name);
+                }
+            }
+        }
+        if (hidden.isEmpty()) {
+            return body;
+        }
+
+        String alternation = hidden.keySet().stream().map(Pattern::quote).collect(Collectors.joining("|"));
+        Pattern pattern = Pattern.compile("(?i)\\b(?:" + alternation + ")\\b");
+
+        return body.replaceText(config -> config
+                .match(pattern)
+                .replacement((result, matched) -> {
+                    String canonical = hidden.get(result.group().toLowerCase());
+                    Component marker = messages.get("clan_hidechat_marker", null)
+                            .hoverEvent(HoverEvent.showText(
+                                    messages.get("clan_hidechat_hover", Map.of("player", canonical))));
+                    return matched.append(marker);
+                }));
+    }
 }

@@ -14,11 +14,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class FeatherClansMessages {
 
@@ -64,31 +65,35 @@ public class FeatherClansMessages {
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
+    private MiniMessage parser() {
+        return MiniMessage.builder().tags(
+                TagResolver.builder()
+                        .resolver(StandardTags.color())
+                        .resolver(StandardTags.decorations())
+                        .resolver(StandardTags.reset())
+                        .resolver(StandardTags.newline())
+                        .build()
+        ).build();
+    }
+
     public TextComponent get(String key, Map<String, String> placeholders) {
-        if(messages.containsKey(key)) {
+        return get(key, placeholders, new TagResolver[0]);
+    }
 
-            MiniMessage parser = MiniMessage.builder().tags(
-                    TagResolver.builder()
-                            .resolver(StandardTags.color())
-                            .resolver(StandardTags.decorations())
-                            .resolver(StandardTags.reset())
-                            .resolver(StandardTags.newline())
-                            .build()
-            ).build();
+    public TextComponent get(String key, Map<String, String> placeholders, TagResolver... extraResolvers) {
+        if (!messages.containsKey(key)) {
+            return Component.text("");
+        }
 
-            if(placeholders == null) {
-                return (TextComponent) parser.deserialize(messages.get(key));
-            } else {
-                List<TagResolver> rs = placeholders
-                        .entrySet()
-                        .stream()
-                        .map(entry -> (TagResolver) Placeholder.parsed(entry.getKey(), entry.getValue()))
-                        .collect(Collectors.toList());
+        List<TagResolver> rs = new ArrayList<>();
+        if (placeholders != null) {
+            placeholders.forEach((k, v) -> rs.add(Placeholder.parsed(k, v)));
+        }
+        if (extraResolvers != null) {
+            Collections.addAll(rs, extraResolvers);
+        }
 
-                return (TextComponent) parser.deserialize(messages.get(key), TagResolver.resolver(rs));
-            }
-
-        } else return Component.text("");
+        return (TextComponent) parser().deserialize(messages.get(key), TagResolver.resolver(rs));
     }
 
     public String getThemePrimary() {

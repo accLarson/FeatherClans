@@ -2,6 +2,10 @@ package dev.zerek.featherclans.commands;
 
 import dev.zerek.featherclans.FeatherClans;
 import dev.zerek.featherclans.config.FeatherClansMessages;
+import dev.zerek.featherclans.utilities.ChatUtility;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Sound;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -51,31 +55,37 @@ public class ChatCommand implements CommandExecutor {
             return true;
         }
 
+        boolean wasHidden = plugin.getChatToggleManager().isChatHidden(originator.getUniqueId());
+        plugin.getChatToggleManager().setChatHidden(originator.getUniqueId(), false);
+        if (wasHidden) {
+            originator.sendMessage(messages.get("clan_showchat", null));
+        }
+
         String message = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
         String clan = plugin.getClanManager().getClanByOfflinePlayer(originator);
 
         List<OfflinePlayer> players = plugin.getClanManager().getOfflinePlayersByClan(clan);
+
+        Component messageBody = ChatUtility.markHiddenMembers(plugin, message, players);
+        TagResolver messageResolver = Placeholder.component("message", messageBody);
+
         List<Player> onlinePlayers = new ArrayList<>();
         for (OfflinePlayer player : players) {
-            if (player.isOnline()) {
-                player.getPlayer().sendMessage(messages.get("clan_chat_message", Map.of(
-                        "tag", clan,
-                        "player", originator.getName(),
-                        "message", message
-                )));
+            if (player.isOnline() && !plugin.getChatToggleManager().isChatHidden(player.getUniqueId())) {
+                player.getPlayer().sendMessage(messages.get("clan_chat_message",
+                        Map.of("tag", clan, "player", originator.getName()),
+                        messageResolver));
                 onlinePlayers.add(player.getPlayer());
             }
         }
-        
+
         pingPlayers(message, onlinePlayers, originator);
-        
+
         for (OfflinePlayer operator : plugin.getServer().getOperators()) {
             if (operator.isOnline()) {
-                operator.getPlayer().sendMessage(messages.get("clan_chat_spy_message", Map.of(
-                        "tag", clan,
-                        "player", originator.getName(),
-                        "message", message
-                )));
+                operator.getPlayer().sendMessage(messages.get("clan_chat_spy_message",
+                        Map.of("tag", clan, "player", originator.getName()),
+                        messageResolver));
             }
         }
 
@@ -89,12 +99,12 @@ public class ChatCommand implements CommandExecutor {
 
         // Strip punctuation from message
         List<String> words = Arrays.asList(message.toLowerCase().split("[^a-z0-9_]+"));
-        
+
         // Filter recipients whose names appear in the word list
         List<Player> playersToPing = recipients.stream()
                 .filter(player -> words.contains(player.getName().toLowerCase()))
                 .collect(Collectors.toList());
-        
+
         // Play sound for each matched player
         playersToPing.forEach(p -> p.playSound(p.getLocation(), sound, volume, pitch));
     }

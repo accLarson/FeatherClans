@@ -43,8 +43,12 @@ public class ChatToggleCommand implements CommandExecutor {
             return true;
         }
         
+        boolean wasHidden = chatToggleManager.isChatHidden(player.getUniqueId());
         boolean enabled = chatToggleManager.toggleClanChat(player.getUniqueId());
         player.sendMessage(messages.get(enabled ? "clan_chattoggle_enabled" : "clan_chattoggle_disabled", null));
+        if (enabled && wasHidden) {
+            player.sendMessage(messages.get("clan_showchat", null));
+        }
         return true;
     }
 }

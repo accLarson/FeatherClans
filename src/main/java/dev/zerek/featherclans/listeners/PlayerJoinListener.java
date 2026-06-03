@@ -31,9 +31,12 @@ public class PlayerJoinListener implements Listener {
                 event.getPlayer().sendMessage(plugin.getFeatherClansMessages().get("clan_chattoggle_enabled", null));
             }
             
-            if (plugin.getChatToggleManager().hasAllyChatEnabled(event.getPlayer().getUniqueId())
-                    && plugin.getClanManager().hasAlly(clanTag)) {
+            if (plugin.getChatToggleManager().hasAllyChatEnabled(event.getPlayer().getUniqueId())) {
                 event.getPlayer().sendMessage(plugin.getFeatherClansMessages().get("clan_allychattoggle_enabled", null));
+            }
+
+            if (plugin.getChatToggleManager().isChatHidden(event.getPlayer().getUniqueId())) {
+                event.getPlayer().sendMessage(plugin.getFeatherClansMessages().get("clan_hidechat", null));
             }
         }, 20L);
         

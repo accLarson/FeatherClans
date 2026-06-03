@@ -381,7 +381,10 @@ public class ClanManager {
                 
                 // Remove from alt and active caches
                 plugin.getAltManager().removeFromCache(player.getUniqueId());
-                
+
+                // Clear chat toggles since the player is no longer in a clan
+                plugin.getChatToggleManager().clearToggles(player.getUniqueId());
+
                 // Remove from active tracking for the clan they left
                 if (clanTag != null) {
                     plugin.getActiveManager().removePlayerFromActive(player.getUniqueId(), clanTag);
@@ -838,6 +841,15 @@ public class ClanManager {
             if (rowsAffected > 0) {
                 alliances.remove(clan1.toLowerCase());
                 alliances.remove(clan2.toLowerCase());
+
+                // Clear ally chat toggles for both clans since the alliance has ended
+                for (OfflinePlayer member : getOfflinePlayersByClan(clan1.toLowerCase())) {
+                    plugin.getChatToggleManager().disableAllyChat(member.getUniqueId());
+                }
+                for (OfflinePlayer member : getOfflinePlayersByClan(clan2.toLowerCase())) {
+                    plugin.getChatToggleManager().disableAllyChat(member.getUniqueId());
+                }
+
                 return true;
             }
         } catch (SQLException e) {
