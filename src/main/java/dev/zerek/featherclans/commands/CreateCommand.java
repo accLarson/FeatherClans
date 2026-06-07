@@ -138,6 +138,7 @@ public class CreateCommand implements CommandExecutor {
             plugin.getServer()
                 .getOnlinePlayers()
                 .forEach(p -> p.sendMessage(messages.get("clan_create_success", Map.of("clan", tag.toLowerCase()))));
+            plugin.getDisplayManager().updateLatest();
         }
         return true;
     }

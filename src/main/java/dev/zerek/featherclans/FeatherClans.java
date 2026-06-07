@@ -12,6 +12,7 @@ import dev.zerek.featherclans.listeners.ProjectileHitEventListener;
 import dev.zerek.featherclans.managers.*;
 import dev.zerek.featherclans.placeholders.FeatherClansPlaceholderExpansion;
 import dev.zerek.featherclans.managers.AltManager;
+import dev.zerek.featherclans.tasks.InitiateTask;
 import dev.zerek.featherclans.utilities.PaginateUtility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -88,6 +89,9 @@ public final class FeatherClans extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
         this.getServer().getPluginManager().registerEvents(new AsyncChatListener(plugin), this);
 
+        // Build the mannequin display row once worlds and active-clan state are ready.
+        this.getServer().getScheduler().runTaskLater(this, new InitiateTask(this), 40L);
+
         printBanner();
     }
 
@@ -124,12 +128,8 @@ public final class FeatherClans extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (this.displayManager != null) this.displayManager.removeAll();
         this.databaseManager.close();
-    }
-
-    public void reload() {
-        this.config = new FeatherClansConfig(plugin);
-        this.messages = new FeatherClansMessages(plugin);
     }
 
     public Logger getLog() {
@@ -207,7 +207,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("allychat", new AllyChatCommand(plugin));
         handler.register("list", new ListCommand(plugin));
         handler.register("help", new HelpCommand(plugin));
-        handler.register("reload", new ReloadCommand(plugin));
+        handler.register("cycleinactive", new CycleInactiveCommand(plugin));
         handler.register("banner", new BannerCommand(plugin));
         handler.register("friendlyfire", new FriendlyFireCommand(plugin));
         handler.register("manage", new ManageCommand(plugin));

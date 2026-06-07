@@ -111,6 +111,7 @@ public class DatabaseManager {
         addColumnIfNotExists("clans", "tag", "VARCHAR(255) NOT NULL");
         addColumnIfNotExists("clans", "colored_tag", "VARCHAR(255) NULL");
         addColumnIfNotExists("clans", "home", "TEXT NULL");
+        addColumnIfNotExists("clans", "helmet", "TEXT NULL");
         addColumnIfNotExists("clans", "chestplate", "TEXT NULL");
         addColumnIfNotExists("clans", "leggings", "TEXT NULL");
         addColumnIfNotExists("clans", "boots", "TEXT NULL");

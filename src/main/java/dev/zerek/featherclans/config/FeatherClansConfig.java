@@ -9,16 +9,16 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FeatherClansConfig {
 
     private final FeatherClans plugin;
     private FileConfiguration config;
-    private Location displayLocation;
-    private String displayFacing;
-    private int displayCount;
-    private String signType;
+    private DisplaySettings activeDisplay;
+    private DisplaySettings latestDisplay;
+    private DisplaySettings inactiveDisplay;
 
     /* SETTINGS */
     private boolean economyEnabled;
@@ -104,12 +104,9 @@ public class FeatherClansConfig {
         this.mysqlPassword = config.getString("settings.mysql.password");
         this.mysqlDatabase = config.getString("settings.mysql.database");
 
-        List<Double> coords = config.getDoubleList("settings.display.location");
-        World world = Bukkit.getWorlds().get(0);
-        this.displayLocation = new Location(world, coords.get(0), coords.get(1), coords.get(2));
-        this.displayFacing = config.getString("settings.display.facing");
-        this.displayCount = config.getInt("settings.display.count");
-        this.signType = config.getString("settings.display.sign_type");
+        this.activeDisplay = readDisplaySettings("active", 10);
+        this.latestDisplay = readDisplaySettings("latest", 1);
+        this.inactiveDisplay = readDisplaySettings("inactive", 1);
 
         this.denyTags = config.getStringList("settings.deny_tags");
 
@@ -118,6 +115,38 @@ public class FeatherClansConfig {
         this.pingPitch = (float) config.getDouble("settings.chat.ping_pitch", 1.0);
 
         this.linesPerPage = config.getInt("page-formats.lines-per-page");
+    }
+
+    /**
+     * Resolves one display section under {@code settings.display.<section>}, combining its
+     * section-specific keys with the shared {@code scale} / {@code base} / {@code banner-height} /
+     * {@code sign_type} keys.
+     */
+    private DisplaySettings readDisplaySettings(String section, int defaultCount) {
+        String base = "settings.display." + section + ".";
+
+        boolean enabled = config.getBoolean(base + "enabled", false);
+
+        List<Integer> anchorCoords = config.getIntegerList(base + "anchor-block");
+        if (anchorCoords.size() < 3) anchorCoords = List.of(0, 0, 0);
+        World world = Bukkit.getWorlds().get(0);
+        Location anchor = new Location(world, anchorCoords.get(0), anchorCoords.get(1), anchorCoords.get(2));
+
+        String facing = config.getString(base + "facing", "NORTH");
+        int count = config.getInt(base + "count", defaultCount);
+        int spacing = config.getInt(base + "spacing", 0);
+
+        double scale = config.getDouble("settings.display.scale", 0.6);
+        boolean showBase = config.getBoolean("settings.display.base", true);
+        int bannerHeight = config.getInt("settings.display.banner-height", 3);
+        String signType = config.getString("settings.display.sign_type", "OAK");
+
+        List<String> signLines = new ArrayList<>(4);
+        for (int i = 1; i <= 4; i++) {
+            signLines.add(config.getString(base + "sign.line-" + i, ""));
+        }
+
+        return new DisplaySettings(enabled, anchor, facing, count, spacing, scale, showBase, bannerHeight, signType, signLines);
     }
 
     public boolean isEconomyEnabled() {
@@ -236,20 +265,16 @@ public class FeatherClansConfig {
         return linesPerPage;
     }
 
-    public Location getDisplayLocation() {
-        return displayLocation;
+    public DisplaySettings getActiveDisplay() {
+        return activeDisplay;
     }
 
-    public String getDisplayFacing() {
-        return displayFacing;
+    public DisplaySettings getLatestDisplay() {
+        return latestDisplay;
     }
 
-    public int getDisplayCount() {
-        return displayCount;
-    }
-
-    public String getSignType() {
-        return signType;
+    public DisplaySettings getInactiveDisplay() {
+        return inactiveDisplay;
     }
 
     public String getOfficerIndicator() {

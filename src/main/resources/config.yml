@@ -35,10 +35,56 @@ settings:
     max_tag_size: 5
     max_members: 30
   display:
-    location: [0, 0, 0]
-    facing: NORTH
-    count: 10
-    sign_type: OAK
+    # Shared across all displays.
+    # Mannequin size.
+    scale: 0.6
+    # Show the decorative hopper pedestal under each mannequin.
+    base: true
+    # Blocks above the anchor block to place the clan's wall banner.
+    banner-height: 3
+    # Wall sign wood type.
+    sign_type: SPRUCE
+
+    # Row of the top active clans, filled in active-member order. Extra active clans beyond
+    # 'count' are not shown; the row extends to the viewer's RIGHT from the anchor block.
+    active:
+      enabled: true
+      # First anchor block (a slab is recommended).
+      anchor-block: [0, 0, 0]
+      # Direction the mannequins / signs / banners face (toward viewers).
+      facing: NORTH
+      # Max display slots.
+      count: 10
+      # Empty blocks between each display (0 = adjacent).
+      spacing: 0
+      # Sign lines (MiniMessage). Placeholders: <tag>, <leader>, <active>.
+      sign:
+        line-1: "<white><tag>"
+        line-2: ""
+        line-3: "<white><leader>"
+        line-4: "<gray>Active: <#7FD47F><active>"
+
+    # Single mannequin showing the newest clan created.
+    latest:
+      enabled: true
+      anchor-block: [0, 0, 0]
+      facing: NORTH
+      sign:
+        line-1: "<white><tag>"
+        line-2: ""
+        line-3: "<white><leader>"
+        line-4: "<#FFEB8B>Newest Clan"
+
+    # Single mannequin showing an inactive clan; advance with /clan cycle (op).
+    inactive:
+      enabled: true
+      anchor-block: [0, 0, 0]
+      facing: NORTH
+      sign:
+        line-1: "<white><tag>"
+        line-2: ""
+        line-3: "<white><leader>"
+        line-4: "<gray>Inactive"
   indicators:
     officer: "◂ "
     leader: "▸ "

@@ -49,11 +49,11 @@ permissions:
   feather.clans.manage:
     description: Allows managing any clan as an administrator
     default: op
-  feather.clans.reload:
-    description: Allows reloading the plugin configuration
-    default: op
   feather.clans.debug:
     description: Allows using debug commands
+    default: op
+  feather.clans.cycleinactive:
+    description: Allows cycling the inactive-clan display to the next inactive clan
     default: op
   feather.clans.home.others:
     description: Allows teleporting to other clans' homes

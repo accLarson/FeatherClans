@@ -10,6 +10,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -340,16 +341,15 @@ public class ManageCommand implements CommandExecutor {
                 }
 
                 Player armorPlayer = (Player) sender;
+                ItemStack helmet = armorPlayer.getInventory().getHelmet();
                 ItemStack chestplate = armorPlayer.getInventory().getChestplate();
                 ItemStack leggings = armorPlayer.getInventory().getLeggings();
                 ItemStack boots = armorPlayer.getInventory().getBoots();
 
-                if (chestplate == null || leggings == null || boots == null) {
-                    sender.sendMessage(messages.get("clan_setarmor_error_missing", null));
-                    return true;
-                }
+                // Every piece is optional; an empty slot stores no armor there. An elytra is not a display chestplate.
+                if (chestplate != null && chestplate.getType() == Material.ELYTRA) chestplate = null;
 
-                if (manager.setClanArmor(tag, chestplate, leggings, boots)) {
+                if (manager.setClanArmor(tag, helmet, chestplate, leggings, boots)) {
                     sender.sendMessage(messages.get("clan_setarmor_success", null));
                     this.plugin.getDisplayManager().resetDisplays();
                 } else {

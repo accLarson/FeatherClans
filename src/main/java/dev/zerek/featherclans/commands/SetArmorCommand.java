@@ -43,14 +43,13 @@ public class SetArmorCommand implements CommandExecutor {
         }
 
         String tag = plugin.getClanManager().getClanByOfflinePlayer(originator);
+        ItemStack helmet = originator.getInventory().getHelmet();
         ItemStack chestplate = originator.getInventory().getChestplate();
         ItemStack leggings = originator.getInventory().getLeggings();
         ItemStack boots = originator.getInventory().getBoots();
 
-        if (chestplate == null || leggings == null || boots == null || chestplate.getType().equals(Material.ELYTRA)) {
-            originator.sendMessage(messages.get("clan_setarmor_error_missing", null));
-            return true;
-        }
+        // Every piece is optional; an empty slot stores no armor there. An elytra is not a display chestplate.
+        if (chestplate != null && chestplate.getType() == Material.ELYTRA) chestplate = null;
 
         if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
             if (this.plugin.getFeatherClansConfig().isEconomyEnabled()) {
@@ -67,7 +66,7 @@ public class SetArmorCommand implements CommandExecutor {
             double amount = this.plugin.getFeatherClansConfig().getEconomySetArmorPrice();
             if (economy.has(originator, amount)) {
                 economy.withdrawPlayer(originator, amount);
-                success = plugin.getClanManager().setClanArmor(tag, chestplate, leggings, boots);
+                success = plugin.getClanManager().setClanArmor(tag, helmet, chestplate, leggings, boots);
                 if(success) {
                     originator.sendMessage(messages.get("clan_setarmor_success_economy", Map.of(
                             "amount", String.valueOf((int) amount)
@@ -81,7 +80,7 @@ public class SetArmorCommand implements CommandExecutor {
                 return true;
             }
         } else {
-            success = plugin.getClanManager().setClanArmor(tag, chestplate, leggings, boots);
+            success = plugin.getClanManager().setClanArmor(tag, helmet, chestplate, leggings, boots);
         }
 
         if (!success) {

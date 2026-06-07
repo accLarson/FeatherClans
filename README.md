@@ -58,8 +58,8 @@ Admin (default: op):
 
     feather.clans.banner              -     Retrieve any clan's banner
     feather.clans.manage              -     Manage any clan as an administrator
-    feather.clans.reload              -     Reload plugin configuration
     feather.clans.debug               -     Use debug commands
+    feather.clans.cycleinactive       -     Cycle the inactive-clan display
     feather.clans.home.others         -     Teleport to another clan's home
     feather.clans.allyhome.others     -     Teleport to another clan's ally home
 

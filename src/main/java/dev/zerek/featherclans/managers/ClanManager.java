@@ -431,19 +431,25 @@ public class ClanManager {
      * @param boots boots item
      * @return boolean indicating success
      */
-    public boolean setClanArmor(String tag, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
-        String query = "UPDATE clans SET chestplate = ?, leggings = ?, boots = ? WHERE lower(tag) = ?;";
+    public boolean setClanArmor(String tag, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
+        String query = "UPDATE clans SET helmet = ?, chestplate = ?, leggings = ?, boots = ? WHERE lower(tag) = ?;";
         try(Connection connection = database.getConnection();
             PreparedStatement update = connection.prepareStatement(query)) {
-            update.setString(1, SerializationUtility.stackToString(chestplate));
-            update.setString(2, SerializationUtility.stackToString(leggings));
-            update.setString(3, SerializationUtility.stackToString(boots));
-            update.setString(4, tag.toLowerCase());
+            // Every piece is optional — store SQL NULL for empty slots so the mannequin shows bare skin there.
+            update.setString(1, encodeArmor(helmet));
+            update.setString(2, encodeArmor(chestplate));
+            update.setString(3, encodeArmor(leggings));
+            update.setString(4, encodeArmor(boots));
+            update.setString(5, tag.toLowerCase());
             return update.executeUpdate() != 0;
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to set clan armor for clan: " + tag);
         }
         return false;
+    }
+
+    private static String encodeArmor(ItemStack item) {
+        return item != null ? SerializationUtility.stackToString(item) : null;
     }
 
     /**
@@ -466,6 +472,32 @@ public class ClanManager {
             plugin.getLogger().severe("Failed to set clan banner for clan: " + tag);
         }
         return false;
+    }
+
+    /**
+     * Gets the helmet for a given clan.
+     *
+     * @param tag
+     * @return ItemStack representing the clan's helmet, or null if not set
+     */
+    public ItemStack getHelmet(String tag) {
+        String query = "SELECT `helmet` FROM clans WHERE lower(tag) = ?;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement select = connection.prepareStatement(query)) {
+
+            select.setString(1, tag.toLowerCase());
+            ResultSet results = select.executeQuery();
+
+            if(results != null && results.next()) {
+                String helmet = results.getString("helmet");
+                if(helmet != null) {
+                    return SerializationUtility.stringToStack(helmet);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to get helmet for clan: " + tag);
+        }
+        return null;
     }
 
     /**
@@ -718,6 +750,27 @@ public class ClanManager {
             }
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to get banner for: " + tag);
+        }
+        return null;
+    }
+
+    /**
+     * Gets the tag of the most recently created clan (highest auto-increment id).
+     *
+     * @return the newest clan's tag (lowercase), or null if there are no clans.
+     */
+    public String getNewestClan() {
+        String query = "SELECT `tag` FROM clans ORDER BY `id` DESC LIMIT 1;";
+        try(Connection connection = database.getConnection();
+            PreparedStatement select = connection.prepareStatement(query)) {
+
+            ResultSet results = select.executeQuery();
+            if(results != null && results.next()) {
+                String tag = results.getString("tag");
+                if(tag != null) return tag.toLowerCase();
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to get newest clan.");
         }
         return null;
     }

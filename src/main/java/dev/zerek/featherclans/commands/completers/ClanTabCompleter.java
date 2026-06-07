@@ -159,7 +159,7 @@ public class ClanTabCompleter implements TabCompleter {
 
                 else StringUtil.copyPartialMatches(args[0], EVERYONE_COMMANDS, completions);
 
-                if(sender.isOp()) StringUtil.copyPartialMatches(args[0], List.of("banner","manage", "debug"), completions);
+                if(sender.isOp()) StringUtil.copyPartialMatches(args[0], List.of("banner","manage", "debug", "cycleinactive"), completions);
                 if(manager.isOfflinePlayerLeader((OfflinePlayer) sender)) StringUtil.copyPartialMatches(args[0], List.of("ally"), completions);
 
                 break;
