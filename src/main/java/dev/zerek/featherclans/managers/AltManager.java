@@ -4,6 +4,7 @@ import dev.zerek.featherclans.FeatherClans;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,21 +20,16 @@ public class AltManager {
     }
 
     /**
-     * Initialize the cache with all known clan members on plugin startup
+     * Initialize the cache with all known clan members on plugin startup.
+     *
+     * ActiveManager assesses active membership synchronously during enable, before this async load
+     * finishes, so alts are initially counted as active. Once the real alt data is in, re-assess
+     * active status and refresh the display signs so their counts exclude alts.
      */
     private void initializeCache() {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            plugin.getLogger().info("Initializing alt status cache...");
-            int count = 0;
-            
-            for (String clan : plugin.getClanManager().getClans()) {
-                for (OfflinePlayer member : plugin.getClanManager().getOfflinePlayersByClan(clan)) {
-                    loadAltStatusAsync(member.getUniqueId());
-                    count++;
-                }
-            }
-            
-            plugin.getLogger().info("Alt status cache initialized with " + count + " players.");
+        refreshCache(() -> {
+            plugin.getActiveManager().reassessAll();
+            plugin.getDisplayManager().resetDisplays();
         });
     }
 
@@ -93,11 +89,27 @@ public class AltManager {
     }
 
     /**
-     * Refreshes the entire cache (useful for admin reload commands)
+     * Rebuilds the alt-status cache from LuckPerms for every current clan member off the main thread,
+     * then runs {@code onComplete} on the main thread (may be null). Used at startup and by
+     * /clan updatedisplay so that group.alt changes are picked up without a LuckPerms listener.
+     *
+     * @param onComplete a main-thread callback to run once the cache is rebuilt, or null
      */
-    public void refreshCache() {
-        altStatusCache.clear();
-        initializeCache();
+    public void refreshCache(Runnable onComplete) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            plugin.getLogger().info("Refreshing alt status cache...");
+            Map<UUID, Boolean> rebuilt = new HashMap<>();
+            for (String clan : plugin.getClanManager().getClans()) {
+                for (OfflinePlayer member : plugin.getClanManager().getOfflinePlayersByClan(clan)) {
+                    rebuilt.put(member.getUniqueId(), checkAltStatusBlocking(member.getUniqueId()));
+                }
+            }
+            // Update in place (never empties the cache for concurrent readers), then drop departed members.
+            altStatusCache.putAll(rebuilt);
+            altStatusCache.keySet().retainAll(rebuilt.keySet());
+            plugin.getLogger().info("Alt status cache initialized with " + rebuilt.size() + " players.");
+            if (onComplete != null) Bukkit.getScheduler().runTask(plugin, onComplete);
+        });
     }
 
     /**

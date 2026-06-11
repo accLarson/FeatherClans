@@ -37,8 +37,12 @@ public class DebugCommand implements CommandExecutor {
 
         switch (args[1]) {
             case "updatedisplay":
-                plugin.getDisplayManager().resetDisplays();
-                sender.sendMessage(messages.get("clan_updatedisplay_success", null));
+                // Re-detect alts first (no LuckPerms listener), then reassess active status and rebuild.
+                plugin.getAltManager().refreshCache(() -> {
+                    plugin.getActiveManager().reassessAll();
+                    plugin.getDisplayManager().resetDisplays();
+                    sender.sendMessage(messages.get("clan_updatedisplay_success", null));
+                });
                 break;
             case "getactive":
                 plugin.getActiveManager().getActiveClansOrdered().forEach(clanTag -> {

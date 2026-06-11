@@ -25,7 +25,14 @@ public class ActiveManager {
     private void init() {
         this.activeMembersRequirement = this.plugin.getFeatherClansConfig().getClanActiveMembersRequirement();
         this.inactiveDaysThreshold = this.plugin.getFeatherClansConfig().getClanInactiveDaysThreshold();
+        this.reassessAll();
+    }
 
+    /**
+     * Recomputes active-member and active-clan status for every clan from current last-seen and alt
+     * data. Run at startup and again once the alt cache is loaded/refreshed so alts are excluded.
+     */
+    public void reassessAll() {
         plugin.getClanManager().getClans().forEach(clan -> {
             plugin.getClanManager().getOfflinePlayersByClan(clan).forEach(clanMember -> {
                 lastSeenCache.put(clanMember.getUniqueId(), clanMember.getLastSeen());
@@ -33,7 +40,6 @@ public class ActiveManager {
             });
             this.assessActiveClanStatus(clan);
         });
-
     }
 
     public void removeClan(String clanTag) {
