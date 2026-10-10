@@ -114,8 +114,8 @@ public class HelpCommand implements CommandExecutor {
         if (sender.hasPermission("feather.clans.debug")) {
             sender.sendMessage(messages.get("clan_help_debug", null));
         }
-        if (sender.hasPermission("feather.clans.cycleinactive")) {
-            sender.sendMessage(messages.get("clan_help_cycleinactive", null));
+        if (sender.hasPermission("feather.clans.cyclerotating")) {
+            sender.sendMessage(messages.get("clan_help_cyclerotating", null));
         }
         if (sender.hasPermission("feather.clans.roster")) {
             sender.sendMessage(messages.get("clan_help_roster", null));

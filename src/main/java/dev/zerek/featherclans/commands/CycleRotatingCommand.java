@@ -10,14 +10,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * Advances the inactive-clan display to the next inactive clan (alphabetical, wrapping). Op-only.
+ * Advances the rotating display to the next clan (alphabetical, wrapping). Op-only.
  */
-public class CycleInactiveCommand implements CommandExecutor {
+public class CycleRotatingCommand implements CommandExecutor {
 
     private final FeatherClans plugin;
     private final FeatherClansMessages messages;
 
-    public CycleInactiveCommand(FeatherClans plugin) {
+    public CycleRotatingCommand(FeatherClans plugin) {
         this.plugin = plugin;
         this.messages = plugin.getFeatherClansMessages();
     }
@@ -25,17 +25,17 @@ public class CycleInactiveCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if (!sender.hasPermission("feather.clans.cycleinactive")) {
+        if (!sender.hasPermission("feather.clans.cyclerotating")) {
             sender.sendMessage(messages.get("clan_error_permission", null));
             return true;
         }
 
-        if (!plugin.getDisplayManager().isInactiveDisplayEnabled()) {
+        if (!plugin.getDisplayManager().isRotatingDisplayEnabled()) {
             sender.sendMessage(messages.get("clan_cycle_disabled", null));
             return true;
         }
 
-        String tag = plugin.getDisplayManager().cycleInactive();
+        String tag = plugin.getDisplayManager().cycleRotatingDisplay();
         if (tag == null) {
             sender.sendMessage(messages.get("clan_cycle_empty", null));
         } else {

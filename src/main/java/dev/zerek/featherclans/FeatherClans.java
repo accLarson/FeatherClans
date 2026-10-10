@@ -207,7 +207,7 @@ public final class FeatherClans extends JavaPlugin {
         handler.register("allychat", new AllyChatCommand(plugin));
         handler.register("list", new ListCommand(plugin));
         handler.register("help", new HelpCommand(plugin));
-        handler.register("cycleinactive", new CycleInactiveCommand(plugin));
+        handler.register("cyclerotating", new CycleRotatingCommand(plugin));
         handler.register("banner", new BannerCommand(plugin));
         handler.register("friendlyfire", new FriendlyFireCommand(plugin));
         handler.register("manage", new ManageCommand(plugin));

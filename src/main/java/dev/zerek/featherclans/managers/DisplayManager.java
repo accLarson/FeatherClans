@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -24,10 +25,11 @@ import java.util.stream.Collectors;
  * <ul>
  *   <li><b>active</b> — a row of the top active clans (ordered), filling to the viewer's right.</li>
  *   <li><b>latest</b> — a single mannequin showing the newest clan created.</li>
- *   <li><b>inactive</b> — a single mannequin showing one inactive clan, advanced by {@code /clan cycle}.</li>
+ *   <li><b>rotating</b> — a single mannequin rotating through clans not on the active row (inactive
+ *       clans plus any active overflow), advanced by {@code /clan cycle}.</li>
  * </ul>
- * All groups are kept consistent through {@link #resetDisplays()}, which the existing command and
- * active-status call sites already invoke.
+ * All groups are kept consistent through {@link #resetDisplays()}, which the command and
+ * active-status call sites invoke.
  */
 public class DisplayManager {
 
@@ -39,9 +41,9 @@ public class DisplayManager {
     private ClanDisplay latestDisplay;
     private DisplaySettings latestSettings;
 
-    private ClanDisplay inactiveDisplay;
-    private DisplaySettings inactiveSettings;
-    private String inactiveCursor;
+    private ClanDisplay rotatingDisplay;
+    private DisplaySettings rotatingDisplaySettings;
+    private String rotatingDisplayCursor;
 
     private boolean loaded;
 
@@ -57,7 +59,7 @@ public class DisplayManager {
         var config = plugin.getFeatherClansConfig();
         this.activeSettings = config.getActiveDisplay();
         this.latestSettings = config.getLatestDisplay();
-        this.inactiveSettings = config.getInactiveDisplay();
+        this.rotatingDisplaySettings = config.getRotatingDisplay();
 
         List<CompletableFuture<Boolean>> futures = new ArrayList<>();
 
@@ -85,15 +87,15 @@ public class DisplayManager {
 
         // Single displays.
         this.latestDisplay = buildSingle(latestSettings, futures, "Latest");
-        this.inactiveDisplay = buildSingle(inactiveSettings, futures, "Inactive");
-        // The inactive sign must persist across restarts so its cursor can be restored from it.
-        if (inactiveDisplay != null) inactiveDisplay.setKeepSign(true);
+        this.rotatingDisplay = buildSingle(rotatingDisplaySettings, futures, "Rotating");
+        // The rotating display sign persists across restarts so its cursor can be restored from it.
+        if (rotatingDisplay != null) rotatingDisplay.setKeepSign(true);
 
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                 .thenRun(() -> plugin.getServer().getScheduler().runTask(plugin, () -> {
                     try {
                         approveAndPlace();
-                        restoreInactiveCursor();
+                        restoreRotatingDisplayCursor();
                         loaded = true;
                         resetDisplays();
                     } catch (Exception e) {
@@ -103,23 +105,23 @@ public class DisplayManager {
     }
 
     /**
-     * On startup, recovers the inactive display's cursor from its persisted sign (the inactive sign is
-     * a real block that survives restarts). If the tag read back still exists and is still inactive,
-     * the cursor resumes there; otherwise it's left unset and {@link #refreshInactive} falls back to
-     * the first inactive clan alphabetically.
+     * On startup, recovers the rotating display mannequin's cursor from its persisted sign (that sign is a
+     * real block that survives restarts). If the tag read back still exists and is still off the active
+     * row, the cursor resumes there; otherwise it's left unset and {@link #refreshRotatingDisplay} falls back
+     * to the first pool entry alphabetically.
      */
-    private void restoreInactiveCursor() {
-        if (inactiveDisplay == null) return;
-        int tagLine = tagLineIndex(inactiveSettings.signLines());
+    private void restoreRotatingDisplayCursor() {
+        if (rotatingDisplay == null) return;
+        int tagLine = tagLineIndex(rotatingDisplaySettings.signLines());
         if (tagLine < 0) return;
-        String shown = inactiveDisplay.readSignLinePlain(tagLine);
+        String shown = rotatingDisplay.readSignLinePlain(tagLine);
         if (shown.isEmpty()) return;
         String match = plugin.getClanManager().getClans().stream()
                 .filter(tag -> tag.equalsIgnoreCase(shown))
                 .findFirst()
                 .orElse(null);
-        if (match != null && !plugin.getActiveManager().isActive(match)) {
-            inactiveCursor = match;
+        if (match != null && rotatingDisplayClans().contains(match)) {
+            rotatingDisplayCursor = match;
         }
     }
 
@@ -135,7 +137,7 @@ public class DisplayManager {
      * Validates each display group as a whole and places only fully-valid groups. The active row is
      * all-or-nothing: if any one of its slots failed validation (missing/non-solid anchor, blocked
      * air column, occupied banner/sign), the entire row is discarded and nothing is placed. The
-     * latest and inactive single displays are each judged independently. Validation places nothing,
+     * latest and rotating single displays are each judged independently. Validation places nothing,
      * so a discarded group leaves no blocks behind — only its chunk tickets are released.
      */
     private void approveAndPlace() {
@@ -153,7 +155,7 @@ public class DisplayManager {
         }
         // Single displays are independent of the active row and of each other.
         latestDisplay = approveSingle(latestDisplay, "Latest");
-        inactiveDisplay = approveSingle(inactiveDisplay, "Inactive");
+        rotatingDisplay = approveSingle(rotatingDisplay, "Rotating");
     }
 
     private ClanDisplay approveSingle(ClanDisplay display, String name) {
@@ -182,20 +184,27 @@ public class DisplayManager {
 
     /**
      * Re-fills all three display groups from the current clan state. No-op until {@link #load()} has
-     * finished binding the slots; every existing caller (commands + active-status changes) routes
-     * through here, so latest and inactive stay consistent alongside the active row.
+     * finished binding the slots; all callers (commands + active-status changes) route through here,
+     * so latest and rotating stay consistent alongside the active row.
      */
     public void resetDisplays() {
         if (!loaded) return;
 
         List<String> activeClans = plugin.getActiveManager().getActiveClansOrdered();
-        for (int i = 0; i < activeSlots.size(); i++) {
+        // Center mode offsets the filled block into the middle of the row; integer division floors the
+        // left gap, so an uneven remainder leaves the smaller gap on the viewer's left. Left mode anchors
+        // the block at the start.
+        int slots = activeSlots.size();
+        int filled = Math.min(slots, activeClans.size());
+        int leftPad = centerAligned(activeSettings.align()) ? (slots - filled) / 2 : 0;
+        for (int i = 0; i < slots; i++) {
             ClanDisplay slot = activeSlots.get(i);
             try {
-                if (i >= activeClans.size()) {
+                int clanIdx = i - leftPad;
+                if (clanIdx < 0 || clanIdx >= filled) {
                     slot.clear();
                 } else {
-                    fillSlot(slot, activeClans.get(i), activeSettings.signLines());
+                    fillSlot(slot, activeClans.get(clanIdx), activeSettings.signLines());
                 }
             } catch (Exception e) {
                 plugin.getLogger().severe("Failed to update active display slot " + i + ": " + e.getMessage());
@@ -208,9 +217,9 @@ public class DisplayManager {
             plugin.getLogger().severe("Failed to update latest-clan display: " + e.getMessage());
         }
         try {
-            refreshInactive(false);
+            refreshRotatingDisplay(false);
         } catch (Exception e) {
-            plugin.getLogger().severe("Failed to update inactive-clan display: " + e.getMessage());
+            plugin.getLogger().severe("Failed to update rotating display: " + e.getMessage());
         }
     }
 
@@ -226,47 +235,49 @@ public class DisplayManager {
     }
 
     /**
-     * Re-validates the inactive display against the current inactive set. If {@code reset} (or the
-     * cursor is no longer inactive), it snaps back to the first inactive clan; clears if none remain.
+     * Re-validates the rotating display mannequin against the current rotation pool. If {@code reset} (or
+     * the cursor's clan is now on the active row), it snaps back to the first pool entry; clears if
+     * the pool is empty.
      */
-    private void refreshInactive(boolean reset) {
-        if (inactiveDisplay == null) return;
-        List<String> inactive = orderedInactiveClans();
-        if (inactive.isEmpty()) {
-            inactiveDisplay.clear();
-            inactiveCursor = null;
+    private void refreshRotatingDisplay(boolean reset) {
+        if (rotatingDisplay == null) return;
+        List<String> pool = rotatingDisplayClans();
+        if (pool.isEmpty()) {
+            rotatingDisplay.clear();
+            rotatingDisplayCursor = null;
             return;
         }
-        if (reset || inactiveCursor == null || !inactive.contains(inactiveCursor)) {
-            inactiveCursor = inactive.get(0);
+        if (reset || rotatingDisplayCursor == null || !pool.contains(rotatingDisplayCursor)) {
+            rotatingDisplayCursor = pool.get(0);
         }
-        fillSlot(inactiveDisplay, inactiveCursor, inactiveSettings.signLines());
+        fillSlot(rotatingDisplay, rotatingDisplayCursor, rotatingDisplaySettings.signLines());
     }
 
     /**
-     * Advances the inactive display to the next inactive clan (alphabetical, wrapping).
+     * Advances the rotating display mannequin to the next clan not on the active row (alphabetical,
+     * wrapping).
      *
-     * @return the now-shown clan tag, or null if the display is disabled/not loaded or there are no
-     *         inactive clans.
+     * @return the now-shown clan tag, or null if the display is disabled/not loaded or the rotation
+     *         pool is empty.
      */
-    public String cycleInactive() {
-        if (!loaded || inactiveDisplay == null) return null;
-        List<String> inactive = orderedInactiveClans();
-        if (inactive.isEmpty()) {
-            inactiveDisplay.clear();
-            inactiveCursor = null;
+    public String cycleRotatingDisplay() {
+        if (!loaded || rotatingDisplay == null) return null;
+        List<String> pool = rotatingDisplayClans();
+        if (pool.isEmpty()) {
+            rotatingDisplay.clear();
+            rotatingDisplayCursor = null;
             return null;
         }
-        int idx = (inactiveCursor == null) ? -1 : inactive.indexOf(inactiveCursor);
-        int next = (idx < 0) ? 0 : (idx + 1) % inactive.size();
-        inactiveCursor = inactive.get(next);
-        fillSlot(inactiveDisplay, inactiveCursor, inactiveSettings.signLines());
-        return inactiveCursor;
+        int idx = (rotatingDisplayCursor == null) ? -1 : pool.indexOf(rotatingDisplayCursor);
+        int next = (idx < 0) ? 0 : (idx + 1) % pool.size();
+        rotatingDisplayCursor = pool.get(next);
+        fillSlot(rotatingDisplay, rotatingDisplayCursor, rotatingDisplaySettings.signLines());
+        return rotatingDisplayCursor;
     }
 
-    /** Whether the inactive display is configured/enabled (regardless of whether any clan is inactive). */
-    public boolean isInactiveDisplayEnabled() {
-        return inactiveDisplay != null;
+    /** Whether the rotating display is configured/enabled (regardless of whether any clan qualifies for it). */
+    public boolean isRotatingDisplayEnabled() {
+        return rotatingDisplay != null;
     }
 
     public void removeAll() {
@@ -276,18 +287,28 @@ public class DisplayManager {
             latestDisplay.remove();
             latestDisplay = null;
         }
-        if (inactiveDisplay != null) {
-            inactiveDisplay.remove();
-            inactiveDisplay = null;
+        if (rotatingDisplay != null) {
+            rotatingDisplay.remove();
+            rotatingDisplay = null;
         }
-        inactiveCursor = null;
+        rotatingDisplayCursor = null;
         loaded = false;
     }
 
-    /** All clans that are not currently active, ordered alphabetically by tag. */
-    private List<String> orderedInactiveClans() {
+    /**
+     * Every clan not currently shown on the active row, ordered alphabetically by tag. This is the
+     * rotation pool for the single rotating display mannequin: truly-inactive clans plus any active clans
+     * that ranked beyond the active row's capacity — so a clan is never left shown nowhere.
+     */
+    private List<String> rotatingDisplayClans() {
+        List<String> activeOrdered = plugin.getActiveManager().getActiveClansOrdered();
+        int shown = Math.min(activeSlots.size(), activeOrdered.size());
+        Set<String> onRow = activeOrdered.stream()
+                .limit(shown)
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
         return plugin.getClanManager().getClans().stream()
-                .filter(tag -> !plugin.getActiveManager().isActive(tag))
+                .filter(tag -> !onRow.contains(tag.toLowerCase()))
                 .sorted()
                 .collect(Collectors.toList());
     }
@@ -347,6 +368,19 @@ public class DisplayManager {
             plugin.getLogger().warning("Invalid sign_type in config: " + configSignType + ". Defaulting to OAK_WALL_SIGN");
             return Material.OAK_WALL_SIGN;
         }
+    }
+
+    /** Whether the active row centers its filled slots ({@code center}) or anchors them left ({@code left}). */
+    private boolean centerAligned(String align) {
+        if (align == null) return true;
+        return switch (align.toLowerCase()) {
+            case "left" -> false;
+            case "center", "centre" -> true;
+            default -> {
+                plugin.getLogger().warning("Invalid display align in config: " + align + ". Defaulting to center.");
+                yield true;
+            }
+        };
     }
 
     private BlockFace parseFacing(String facing) {

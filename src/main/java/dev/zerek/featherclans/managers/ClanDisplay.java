@@ -33,11 +33,10 @@ import java.util.concurrent.CompletableFuture;
  * A single clan display slot: a player-skinned {@link Mannequin} standing on an anchor block, with
  * an auto-placed wall sign, an optional decorative hopper pedestal, and a wall banner floating above.
  *
- * Ported from FeatherQueenOfTheHill's DisplayManager, parameterized so a whole row of these can be
- * built from one anchor coordinate. Entities are non-persistent and the chunk(s) are held loaded via
- * plugin chunk tickets, so the display is rebuilt each load. A slot is "loaded" once its anchor, sign
- * and (optional) base are bound; the mannequin and banner are only present while the slot is occupied
- * by an active clan (see {@link #fill} / {@link #clear}).
+ * A whole row of these can be built from one anchor coordinate. Entities are non-persistent and the
+ * chunk(s) are held loaded via plugin chunk tickets, so the display is rebuilt each load. A slot is
+ * "loaded" once its anchor, sign and (optional) base are bound; the mannequin and banner are only
+ * present while the slot is occupied by an active clan (see {@link #fill} / {@link #clear}).
  */
 public class ClanDisplay {
 
@@ -235,8 +234,11 @@ public class ClanDisplay {
         baseDisplay.forEach(BlockDisplay::remove);
         baseDisplay.clear();
         if (sign != null) {
-            for (int i = 0; i < 4; i++) sign.line(i, Component.empty());
-            sign.update();
+            Sign live = liveSign();
+            if (live != null) {
+                for (int i = 0; i < 4; i++) live.line(i, Component.empty());
+                live.update();
+            }
         }
         clearBanner();
     }
@@ -260,10 +262,22 @@ public class ClanDisplay {
 
     private void setSignLines(Component[] lines) {
         if (sign == null || lines == null) return;
+        Sign live = liveSign();
+        if (live == null) return;
         for (int i = 0; i < 4; i++) {
-            sign.line(i, i < lines.length && lines[i] != null ? lines[i] : Component.empty());
+            live.line(i, i < lines.length && lines[i] != null ? lines[i] : Component.empty());
         }
-        sign.update();
+        live.update();
+    }
+
+    /**
+     * A fresh {@link Sign} snapshot read from the world for this slot, or null if the bound block is no
+     * longer a sign. Each write reads its own snapshot: a reused long-lived snapshot makes repeated
+     * {@link Sign#update()} calls silently no-op, so every write starts from current world state.
+     */
+    private Sign liveSign() {
+        if (anchorBlock == null) return null;
+        return anchorBlock.getRelative(facing).getState() instanceof Sign live ? live : null;
     }
 
     /** Reads the trimmed plain text of a bound sign line (the persisted value from a previous run), or "" if no sign. */
@@ -322,7 +336,7 @@ public class ClanDisplay {
         baseDisplay.clear();
         clearBanner();
         // Remove our sign block so it can't linger as an orphan when the row shrinks or an anchor moves.
-        // The inactive display keeps its sign so its cursor can be restored from it on the next start.
+        // The rotating display keeps its sign so its cursor can be restored from it on the next start.
         if (!keepSign && anchorBlock != null) {
             Block signBlock = anchorBlock.getRelative(facing);
             if (signBlock.getState() instanceof Sign) {
@@ -337,7 +351,7 @@ public class ClanDisplay {
         heldChunks.clear();
     }
 
-    /** Marks this display's sign to survive {@link #remove()} (used by the inactive display for cursor restore). */
+    /** Marks this display's sign to survive {@link #remove()} (used by the rotating display for cursor restore). */
     public void setKeepSign(boolean keepSign) {
         this.keepSign = keepSign;
     }

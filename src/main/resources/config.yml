@@ -57,6 +57,10 @@ settings:
       count: 10
       # Empty blocks between each display (0 = adjacent).
       spacing: 0
+      # Where the filled displays sit when fewer clans are active than 'count':
+      #   center = centered in the row (offset left when uneven)
+      #   left   = left-aligned, starting at the anchor block
+      align: center
       # Sign lines (MiniMessage). Placeholders: <tag>, <leader>, <active>.
       sign:
         line-1: "<white><tag>"
@@ -75,8 +79,9 @@ settings:
         line-3: "<white><leader>"
         line-4: "<#FFEB8B>Newest Clan"
 
-    # Single mannequin showing an inactive clan; advance with /clan cycle (op).
-    inactive:
+    # Single mannequin that rotates through clans not on the active row — inactive clans plus any
+    # active clans that didn't fit the active row's 'count'; advance with /clan cycle (op).
+    rotate-display:
       enabled: true
       anchor-block: [0, 0, 0]
       facing: NORTH
@@ -84,7 +89,7 @@ settings:
         line-1: "<white><tag>"
         line-2: ""
         line-3: "<white><leader>"
-        line-4: "<gray>Inactive"
+        line-4: ""
   indicators:
     officer: "◂ "
     leader: "▸ "

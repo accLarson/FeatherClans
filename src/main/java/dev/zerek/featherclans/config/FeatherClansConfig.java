@@ -18,7 +18,7 @@ public class FeatherClansConfig {
     private FileConfiguration config;
     private DisplaySettings activeDisplay;
     private DisplaySettings latestDisplay;
-    private DisplaySettings inactiveDisplay;
+    private DisplaySettings rotatingDisplay;
 
     /* SETTINGS */
     private boolean economyEnabled;
@@ -106,7 +106,7 @@ public class FeatherClansConfig {
 
         this.activeDisplay = readDisplaySettings("active", 10);
         this.latestDisplay = readDisplaySettings("latest", 1);
-        this.inactiveDisplay = readDisplaySettings("inactive", 1);
+        this.rotatingDisplay = readDisplaySettings("rotate-display", 1);
 
         this.denyTags = config.getStringList("settings.deny_tags");
 
@@ -135,6 +135,7 @@ public class FeatherClansConfig {
         String facing = config.getString(base + "facing", "NORTH");
         int count = config.getInt(base + "count", defaultCount);
         int spacing = config.getInt(base + "spacing", 0);
+        String align = config.getString(base + "align", "center");
 
         double scale = config.getDouble("settings.display.scale", 0.6);
         boolean showBase = config.getBoolean("settings.display.base", true);
@@ -146,7 +147,7 @@ public class FeatherClansConfig {
             signLines.add(config.getString(base + "sign.line-" + i, ""));
         }
 
-        return new DisplaySettings(enabled, anchor, facing, count, spacing, scale, showBase, bannerHeight, signType, signLines);
+        return new DisplaySettings(enabled, anchor, facing, count, spacing, scale, showBase, bannerHeight, signType, align, signLines);
     }
 
     public boolean isEconomyEnabled() {
@@ -273,8 +274,8 @@ public class FeatherClansConfig {
         return latestDisplay;
     }
 
-    public DisplaySettings getInactiveDisplay() {
-        return inactiveDisplay;
+    public DisplaySettings getRotatingDisplay() {
+        return rotatingDisplay;
     }
 
     public String getOfficerIndicator() {

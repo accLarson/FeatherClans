@@ -52,8 +52,8 @@ permissions:
   feather.clans.debug:
     description: Allows using debug commands
     default: op
-  feather.clans.cycleinactive:
-    description: Allows cycling the inactive-clan display to the next inactive clan
+  feather.clans.cyclerotating:
+    description: Allows cycling the rotating display to the next clan
     default: op
   feather.clans.home.others:
     description: Allows teleporting to other clans' homes
