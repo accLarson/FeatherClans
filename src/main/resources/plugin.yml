@@ -3,6 +3,8 @@ version: ${project.version}
 main: dev.zerek.featherclans.FeatherClans
 api-version: 1.21
 authors: [ Zerek, Wasted_Ticks ]
+depend:
+  - FeatherEconomy
 softdepend:
   - Vault
   - PlaceholderAPI
