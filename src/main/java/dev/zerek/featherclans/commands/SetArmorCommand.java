@@ -2,7 +2,9 @@ package dev.zerek.featherclans.commands;
 
 import dev.zerek.featherclans.FeatherClans;
 import dev.zerek.featherclans.config.FeatherClansMessages;
+import dev.zerek.feathereconomy.api.FeatherEconomyAPI;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -65,7 +67,8 @@ public class SetArmorCommand implements CommandExecutor {
             Economy economy = plugin.getEconomy();
             double amount = this.plugin.getFeatherClansConfig().getEconomySetArmorPrice();
             if (economy.has(originator, amount)) {
-                economy.withdrawPlayer(originator, amount);
+                EconomyResponse response = economy.withdrawPlayer(originator, amount);
+                FeatherEconomyAPI.describe(response, messages.get("lapislog_armor", null));
                 success = plugin.getClanManager().setClanArmor(tag, helmet, chestplate, leggings, boots);
                 if(success) {
                     originator.sendMessage(messages.get("clan_setarmor_success_economy", Map.of(

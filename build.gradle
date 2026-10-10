@@ -15,7 +15,7 @@ plugins {
 }
 
 group = 'dev.zerek'
-version = '3.14.2'
+version = '3.15.0'
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
@@ -50,6 +50,7 @@ dependencies {
     compileOnly 'net.luckperms:api:5.5'
     compileOnly 'me.clip:placeholderapi:2.11.6'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
+    compileOnly 'com.github.accLarson:FeatherEconomy:v3.0.0'
     compileOnly 'net.kyori:adventure-text-minimessage:4.17.0'
 
     implementation 'org.apache.commons:commons-collections4:4.5.0'

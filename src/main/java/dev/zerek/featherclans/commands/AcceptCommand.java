@@ -4,6 +4,7 @@ import dev.zerek.featherclans.FeatherClans;
 import dev.zerek.featherclans.config.FeatherClansMessages;
 import dev.zerek.featherclans.data.Request;
 import dev.zerek.featherclans.utilities.TeleportTimerUtility;
+import dev.zerek.feathereconomy.api.FeatherEconomyAPI;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -107,9 +108,9 @@ public class AcceptCommand implements CommandExecutor {
                 }
 
                 // Withdraw from both players
-                economy.withdrawPlayer(player, amount);
+                FeatherEconomyAPI.describe(economy.withdrawPlayer(player, amount), messages.get("lapislog_alliance", null));
                 if (originator != null) {
-                    economy.withdrawPlayer(originator, amount);
+                    FeatherEconomyAPI.describe(economy.withdrawPlayer(originator, amount), messages.get("lapislog_alliance", null));
                 }
             }
 
@@ -180,7 +181,7 @@ public class AcceptCommand implements CommandExecutor {
             Economy economy = plugin.getEconomy();
             double amount = plugin.getFeatherClansConfig().getEconomyMembershipPrice();
             if (economy.has(player, amount)) {
-                economy.withdrawPlayer(player, amount);
+                FeatherEconomyAPI.describe(economy.withdrawPlayer(player, amount), messages.get("lapislog_membership", null));
                 if (plugin.getClanManager().addOfflinePlayerToClan(player, tag)) {
                     plugin.getInviteManager().clearRequest(player);
                     player.sendMessage(messages.get("clan_accept_success_player", Map.of(

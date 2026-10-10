@@ -2,7 +2,9 @@ package dev.zerek.featherclans.commands;
 
 import dev.zerek.featherclans.FeatherClans;
 import dev.zerek.featherclans.config.FeatherClansMessages;
+import dev.zerek.feathereconomy.api.FeatherEconomyAPI;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -67,7 +69,8 @@ public class SetBannerCommand implements CommandExecutor {
             Economy economy = plugin.getEconomy();
             double amount = this.plugin.getFeatherClansConfig().getEconomySetBannerPrice();
             if (economy.has(originator, amount)) {
-                economy.withdrawPlayer(originator, amount);
+                EconomyResponse response = economy.withdrawPlayer(originator, amount);
+                FeatherEconomyAPI.describe(response, messages.get("lapislog_banner", null));
                 ItemStack bannerCopy = mainHand.clone();
                 bannerCopy.setAmount(1);
                 success = plugin.getClanManager().setBanner(tag, bannerCopy);

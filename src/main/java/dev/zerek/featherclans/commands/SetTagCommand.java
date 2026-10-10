@@ -4,7 +4,9 @@ import dev.zerek.featherclans.FeatherClans;
 import dev.zerek.featherclans.config.FeatherClansMessages;
 import dev.zerek.featherclans.utilities.ColoredTagUtility;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import dev.zerek.feathereconomy.api.FeatherEconomyAPI;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -80,7 +82,8 @@ public class SetTagCommand implements CommandExecutor {
             Economy economy = plugin.getEconomy();
             double amount = this.plugin.getFeatherClansConfig().getEconomySetTagPrice();
             if (economy.has(originator, amount)) {
-                economy.withdrawPlayer(originator, amount);
+                EconomyResponse response = economy.withdrawPlayer(originator, amount);
+                FeatherEconomyAPI.describe(response, messages.get("lapislog_tag", null));
                 success = plugin.getClanManager().setColorTag(tag, coloredTag);
                 if (success) {
                     originator.sendMessage(messages.get("clan_settag_success_economy", Map.of(

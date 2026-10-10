@@ -3,7 +3,9 @@ package dev.zerek.featherclans.commands;
 import dev.zerek.featherclans.FeatherClans;
 import dev.zerek.featherclans.config.FeatherClansConfig;
 import dev.zerek.featherclans.config.FeatherClansMessages;
+import dev.zerek.feathereconomy.api.FeatherEconomyAPI;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -114,7 +116,8 @@ public class CreateCommand implements CommandExecutor {
             Economy economy = plugin.getEconomy();
             double amount = config.getEconomyCreationPrice();
             if (economy.has(originator, amount)) {
-                economy.withdrawPlayer(originator, amount);
+                EconomyResponse response = economy.withdrawPlayer(originator, amount);
+                FeatherEconomyAPI.describe(response, messages.get("lapislog_create", null));
                 created = plugin.getClanManager().createClan(originator, stack, tag);
                 if(created) {
                     originator.sendMessage(messages.get("clan_create_success_economy", Map.of(

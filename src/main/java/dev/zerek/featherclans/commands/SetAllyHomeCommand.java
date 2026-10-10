@@ -2,7 +2,9 @@ package dev.zerek.featherclans.commands;
 
 import dev.zerek.featherclans.FeatherClans;
 import dev.zerek.featherclans.config.FeatherClansMessages;
+import dev.zerek.feathereconomy.api.FeatherEconomyAPI;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -68,7 +70,8 @@ public class SetAllyHomeCommand implements CommandExecutor {
             Economy economy = plugin.getEconomy();
             double amount = plugin.getFeatherClansConfig().getEconomySetHomePrice();
             if (economy.has(originator, amount)) {
-                economy.withdrawPlayer(originator, amount);
+                EconomyResponse response = economy.withdrawPlayer(originator, amount);
+                FeatherEconomyAPI.describe(response, messages.get("lapislog_ally_home", null));
                 success = plugin.getClanManager().setAllyHome(tag, location);
                 if (success) {
                     originator.sendMessage(messages.get("clan_setallyhome_success_economy", Map.of(
